@@ -1,5 +1,6 @@
 package dev.zygon.argus.location;
 
+import lombok.Builder;
 import lombok.NonNull;
 
 import java.time.Instant;
@@ -17,6 +18,7 @@ import java.time.Instant;
  * @param time  the time the location was captured.
  *              May only be relevant for some purposes.
  */
+@Builder
 public record Location(double x, double y, double z, int w,
                        boolean local, @NonNull Instant time) {
 }

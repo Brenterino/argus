@@ -1,5 +1,6 @@
 package dev.zygon.argus.group;
 
+import lombok.Builder;
 import lombok.NonNull;
 
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.Objects;
  *                 This could include permission levels required for certain
  *                 actions or other info which is relevant to group members.
  */
+@Builder
 public record Group(@NonNull String name, @NonNull Map<String, Object> metadata) {
 
     /**

@@ -1,5 +1,6 @@
 package dev.zygon.argus.user;
 
+import lombok.Builder;
 import lombok.NonNull;
 
 import java.util.Collections;
@@ -17,6 +18,7 @@ import java.util.Objects;
  *             to other users.
  * @param metadata any metadata associated with this user which may be useful.
  */
+@Builder
 public record User(@NonNull String uuid, @NonNull String name, @NonNull Map<String, Object> metadata) {
 
     public User(@NonNull String uuid, @NonNull String name) {

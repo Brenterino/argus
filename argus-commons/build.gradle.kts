@@ -1,7 +1,6 @@
 plugins {
 	`java-library`
 	id("io.freefair.lombok")
-	id("org.javamodularity.moduleplugin")
 }
 
 java {
