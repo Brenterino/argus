@@ -1,4 +1,4 @@
-rootProject.name = "civcraft-argus"
+rootProject.name = "argus"
 
 include(
     "argus-auth-services",

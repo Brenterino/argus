@@ -19,9 +19,7 @@ dependencies {
 	implementation("org.slf4j:slf4j-api")
 
 	// Test Dependencies
-	testImplementation("org.junit.jupiter:junit-jupiter-api")
-	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks {
