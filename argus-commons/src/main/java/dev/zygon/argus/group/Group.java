@@ -11,7 +11,7 @@ import java.util.Objects;
  * Record which represents an Argus group. Users are organized into groups
  * which they have permissions to interact with those groups.
  *
- * @param name the name of the group, must be unique within an Argus instance.
+ * @param name     the name of the group, must be unique within an Argus instance.
  * @param metadata any additional metadata that is associated with this group.
  *                 This could include permission levels required for certain
  *                 actions or other info which is relevant to group members.
@@ -34,12 +34,13 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
      * metadata associated with the group. Once assigned, metadata cannot
      * be added or removed.
      *
-     * @param name the name of the group.
+     * @param name     the name of the group.
      * @param metadata the metadata assigned to the group.
      */
-    public Group(@NonNull String name, @NonNull Map<String, Object> metadata) {
+    public Group(@NonNull String name, Map<String, Object> metadata) {
         this.name = name;
-        this.metadata = Collections.unmodifiableMap(metadata);
+        this.metadata = metadata != null ? Collections.unmodifiableMap(metadata) :
+                Collections.emptyMap();
     }
 
     /**
@@ -51,10 +52,10 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
      * name of the group alone.
      * </p>
      *
-     * @param o   the reference object with which to compare against this
-     *            object.
+     * @param o the reference object with which to compare against this
+     *          object.
      * @return if this object equals the provided object per the standard
-     *         contract for {@link Object#equals(Object)}.
+     * contract for {@link Object#equals(Object)}.
      */
     @Override
     public boolean equals(Object o) {
@@ -72,7 +73,7 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
      * </p>
      *
      * @return the hashCode of this record based on the standard contract for
-     *          {@link Object#hashCode()}.
+     * {@link Object#hashCode()}.
      */
     @Override
     public int hashCode() {

@@ -1,32 +1,32 @@
 plugins {
-	`java-library`
-	id("io.freefair.lombok")
+    `java-library`
+    id("io.freefair.lombok")
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 val quarkusVersion: String by project
 
 dependencies {
-	// Quarkus BoM
-	implementation(enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}"))
+    // Quarkus BoM
+    implementation(enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}"))
 
-	// Slf4j
-	implementation("org.slf4j:slf4j-api")
+    // Slf4j
+    implementation("org.slf4j:slf4j-api")
 
-	// Test Dependencies
-	testImplementation("org.junit.jupiter:junit-jupiter")
+    // Test Dependencies
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks {
-	test {
-		useJUnitPlatform()
-	}
+    test {
+        useJUnitPlatform()
+    }
 }
 
 tasks.withType<JavaCompile> {
-	options.encoding = "UTF-8"
+    options.encoding = "UTF-8"
 }

@@ -3,11 +3,13 @@ package dev.zygon.argus.location.codec;
 import dev.zygon.argus.location.Locations;
 import io.vertx.core.json.JsonObject;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
+@Slf4j
 public class LocationsDecoder implements Decoder.Text<Locations> {
 
     @Override
@@ -15,7 +17,7 @@ public class LocationsDecoder implements Decoder.Text<Locations> {
         try {
             return new JsonObject(text)
                     .mapTo(Locations.class);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new DecodeException(text, "Locations could not be decoded from JSON", e);
         }
     }

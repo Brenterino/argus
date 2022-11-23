@@ -14,9 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class PermissionsTest {
 
     @Test
-    void permissionsCannotBeNull() {
-        assertThrows(NullPointerException.class, () ->
-                new Permissions(null));
+    void permissionsCanBeNull() {
+        var permissions = new Permissions(null);
+
+        assertTrue(permissions.permissions().isEmpty());
     }
 
     @Test

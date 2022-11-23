@@ -15,7 +15,7 @@ public class LocationsEncoder implements Encoder.Text<Locations> {
         try {
             return JsonObject.mapFrom(locations)
                     .encode();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new EncodeException(locations, "Data could not be encoded to JSON", e);
         }
     }

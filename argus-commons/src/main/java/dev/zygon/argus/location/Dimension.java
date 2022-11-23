@@ -8,15 +8,15 @@ package dev.zygon.argus.location;
  * Example conversion to Minecraft equivalent ID:
  * <p>
  * <code>
- *     var dimension = Dimension.OVERWORLD; <br/>
- *     var dimensionId = dimension.ordinal() - 1;
+ * var dimension = Dimension.OVERWORLD; <br/>
+ * var dimensionId = dimension.ordinal() - 1;
  * </code>
  * </p>
  * </p>
  */
 public enum Dimension {
 
-	NETHER,
-	OVERWORLD,
-	END
+    NETHER,
+    OVERWORLD,
+    END
 }

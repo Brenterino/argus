@@ -25,14 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @QuarkusTest
 public class LocationsSocketIT {
 
-    @TestHTTPResource("/locations")
-    private URI uri;
-
-    private Session alice;
-    private Session bob;
-
     private static final LinkedBlockingDeque<Locations> RECEIVED =
             new LinkedBlockingDeque<>();
+    @TestHTTPResource("/locations")
+    private URI uri;
+    private Session alice;
+    private Session bob;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -90,8 +88,8 @@ public class LocationsSocketIT {
     }
 
     @ClientEndpoint(encoders = LocationsEncoder.class,
-                    decoders = LocationsDecoder.class,
-                    configurator = CustomConfigurator.class)
+            decoders = LocationsDecoder.class,
+            configurator = CustomConfigurator.class)
     public static class LocationClient {
 
         @OnOpen

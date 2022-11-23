@@ -16,10 +16,10 @@ public record UserLocation(@NonNull User user, @NonNull Location location) {
      * equality of the user alone.
      * </p>
      *
-     * @param o   the reference object with which to compare against this
-     *            object.
+     * @param o the reference object with which to compare against this
+     *          object.
      * @return if this object equals the provided object per the standard
-     *         contract for {@link Object#equals(Object)}.
+     * contract for {@link Object#equals(Object)}.
      */
     @Override
     public boolean equals(Object o) {
@@ -37,7 +37,7 @@ public record UserLocation(@NonNull User user, @NonNull Location location) {
      * </p>
      *
      * @return the hashCode of this record based on the standard contract for
-     *          {@link Object#hashCode()}.
+     * {@link Object#hashCode()}.
      */
     @Override
     public int hashCode() {

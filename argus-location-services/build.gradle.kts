@@ -29,6 +29,7 @@ dependencies {
 
     // Test Dependencies
     testImplementation("io.quarkus:quarkus-junit5")
+    testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:${assertJVersion}")
 }
