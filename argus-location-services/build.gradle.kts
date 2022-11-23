@@ -11,10 +11,18 @@ java {
 }
 
 val quarkusVersion: String by project
+val assertJVersion: String by project
 
 dependencies {
     // Quarkus BoM
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}"))
+
+    // Quarkus
+    implementation("io.quarkus:quarkus-websockets")
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+
+    // Argus
+    implementation(project(":argus-commons"))
 
     // Slf4j
     implementation("org.slf4j:slf4j-api")
@@ -22,9 +30,8 @@ dependencies {
 
     // Test Dependencies
     testImplementation("io.quarkus:quarkus-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.assertj:assertj-core:${assertJVersion}")
 }
 
 tasks {
