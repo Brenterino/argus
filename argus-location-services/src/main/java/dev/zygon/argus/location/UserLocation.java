@@ -5,6 +5,17 @@ import lombok.NonNull;
 
 import java.util.Objects;
 
+/**
+ * Wrapper record which contains a pair of user and location data together.
+ * <p>
+ * The implementation of hashCode and equals only take the specified user into
+ * account.
+ * </p>
+ *
+ * @param user the user which is located at a specific location.
+ * @param location the location record which contains position data for the
+ *                 user.
+ */
 public record UserLocation(@NonNull User user, @NonNull Location location) {
 
     /**

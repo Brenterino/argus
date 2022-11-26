@@ -9,6 +9,12 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
+/**
+ * Implementation of {@link Decoder.Text} which allows for conversion of
+ * JSON into a {@link Locations} record using {@link JsonObject}.
+ *
+ * @see Decoder.Text for more information on methods.
+ */
 @Slf4j
 public class LocationsDecoder implements Decoder.Text<Locations> {
 
