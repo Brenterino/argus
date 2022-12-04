@@ -18,6 +18,7 @@ dependencies {
 
     // Quarkus
     implementation("io.quarkus:quarkus-websockets")
+    implementation("io.quarkus:quarkus-smallrye-jwt")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 
     // Argus

@@ -6,3 +6,6 @@ build
 
 # Ignore IntelliJ directory
 .idea
+
+# Output directory for build
+out

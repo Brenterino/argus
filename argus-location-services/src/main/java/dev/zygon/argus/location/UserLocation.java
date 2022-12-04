@@ -12,7 +12,7 @@ import java.util.Objects;
  * account.
  * </p>
  *
- * @param user the user which is located at a specific location.
+ * @param user     the user which is located at a specific location.
  * @param location the location record which contains position data for the
  *                 user.
  */

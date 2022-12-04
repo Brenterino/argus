@@ -18,6 +18,11 @@ import java.util.Set;
  */
 public record Locations(@NonNull Set<UserLocation> data) {
 
+    /**
+     * Constructor for Locations which the data of user locations.
+     *
+     * @param data the user location data.
+     */
     public Locations(Set<UserLocation> data) {
         this.data = data != null ? Collections.unmodifiableSet(data) :
                 Collections.emptySet();

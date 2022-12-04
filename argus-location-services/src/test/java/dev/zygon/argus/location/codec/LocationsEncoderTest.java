@@ -64,36 +64,6 @@ class LocationsEncoderTest {
     }
 
     @Test
-    void canEncodeMultipleLocation() throws EncodeException {
-        var user = new User("1", "Zygon");
-        var userTwo = new User("2", "Creepi0n");
-        var location = Location.builder()
-                .x(100.2)
-                .y(200.1)
-                .z(300.0)
-                .w(1)
-                .local(false)
-                .time(Instant.parse("2022-11-23T18:17:44.323877200Z"))
-                .build();
-        var locationTwo = Location.builder()
-                .x(1000.2)
-                .y(-50.1)
-                .z(200.0)
-                .w(1)
-                .local(false)
-                .time(Instant.parse("2022-11-25T18:17:44.323877200Z"))
-                .build();
-        var userLocation = new UserLocation(user, location);
-        var userLocationTwo = new UserLocation(userTwo, locationTwo);
-        var locations = new Locations(Set.of(userLocation, userLocationTwo));
-
-        var json = encoder.encode(locations);
-
-        assertEquals("{\"data\":[{\"user\":{\"uuid\":\"1\",\"name\":\"Zygon\",\"metadata\":{}},\"location\":{\"x\":100.2,\"y\":200.1,\"z\":300.0,\"w\":1,\"local\":false,\"time\":\"2022-11-23T18:17:44.323877200Z\"}},{\"user\":{\"uuid\":\"2\",\"name\":\"Creepi0n\",\"metadata\":{}},\"location\":{\"x\":1000.2,\"y\":-50.1,\"z\":200.0,\"w\":1,\"local\":false,\"time\":\"2022-11-25T18:17:44.323877200Z\"}}]}",
-                json);
-    }
-
-    @Test
     void initHasNoSideEffects() {
         var config = mock(EndpointConfig.class);
 
