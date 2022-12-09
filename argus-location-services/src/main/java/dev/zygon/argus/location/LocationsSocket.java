@@ -4,7 +4,7 @@ import dev.zygon.argus.group.Group;
 import dev.zygon.argus.location.auth.SessionAuthorizer;
 import dev.zygon.argus.location.codec.LocationsDecoder;
 import dev.zygon.argus.location.codec.LocationsEncoder;
-import dev.zygon.argus.location.messaging.GroupLocationsRemoteRelay;
+import dev.zygon.argus.location.messaging.GroupLocationsLocalRelay;
 import dev.zygon.argus.location.session.SessionRegistry;
 import io.quarkus.security.Authenticated;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +21,14 @@ public class LocationsSocket {
 
     private final SessionAuthorizer authorizer;
     private final SessionRegistry<Group> registry;
-    private final GroupLocationsRemoteRelay remote;
+    private final GroupLocationsLocalRelay relay;
 
     public LocationsSocket(SessionAuthorizer authorizer,
                            SessionRegistry<Group> registry,
-                           GroupLocationsRemoteRelay remoteRelay) {
+                           GroupLocationsLocalRelay relay) {
         this.authorizer = authorizer;
         this.registry = registry;
-        this.remote = remoteRelay;
+        this.relay = relay;
     }
 
     @OnOpen
@@ -64,6 +64,6 @@ public class LocationsSocket {
                     session.getId(), locations);
         }
         authorizer.writeGroups(session)
-                .forEach(group -> remote.send(group, locations));
+                .forEach(group -> relay.receive(group, locations));
     }
 }

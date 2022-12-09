@@ -36,9 +36,6 @@ public class GroupSessionRegistry implements SessionRegistry<Group> {
         var pool = findPool(group);
         if (pool.active()) {
             pool.broadcast(locations);
-        } else {
-            log.warn("Attempted to write locations to group ({}) that is not active.",
-                    group);
         }
     }
 

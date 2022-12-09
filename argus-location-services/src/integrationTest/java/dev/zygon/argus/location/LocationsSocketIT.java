@@ -6,11 +6,10 @@ import dev.zygon.argus.location.codec.LocationsDecoder;
 import dev.zygon.argus.location.codec.LocationsEncoder;
 import dev.zygon.argus.user.User;
 import io.quarkus.test.common.http.TestHTTPResource;
-import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.TestProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.websocket.*;
@@ -22,9 +21,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@QuarkusTest
-@TestProfile(IntegrationProfile.class)
-public class LocationsSocketJwtIT {
+@Disabled("Only meant to be used as a base test and should not run directly.")
+public class LocationsSocketIT {
 
     private static final LinkedBlockingDeque<Locations> ALICE_RECEIVED =
             new LinkedBlockingDeque<>();

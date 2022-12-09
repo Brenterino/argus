@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
-
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Set;
