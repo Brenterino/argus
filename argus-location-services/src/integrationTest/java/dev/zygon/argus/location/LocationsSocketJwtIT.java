@@ -18,7 +18,6 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,45 +57,29 @@ public class LocationsSocketJwtIT {
 
         alice.getAsyncRemote()
                 .sendObject(aliceLocations);
-        var aliceToAlice = ALICE_RECEIVED.poll(2, TimeUnit.SECONDS);
-        var aliceToBob = BOB_RECEIVED.poll(2, TimeUnit.SECONDS);
         bob.getAsyncRemote()
                 .sendObject(bobLocations);
-        var bobToAlice = ALICE_RECEIVED.poll(2, TimeUnit.SECONDS);
-        var bobToBob = BOB_RECEIVED.poll(2, TimeUnit.SECONDS);
+        Thread.sleep(2000); // wait for relay to be situated
+        var allAliceLocations = ALICE_RECEIVED.pollLast();
+        var allBobLocations = BOB_RECEIVED.pollLast();
 
-        // Alice sent a message, only Alice receives it
-        assertThat(aliceToAlice)
+        assertThat(allAliceLocations)
                 .isNotNull();
-        assertThat(aliceToAlice.data())
+        assertThat(allAliceLocations.data())
                 .isNotNull()
                 .extracting(UserLocation::user)
-                .containsExactly(userAlice);
-        assertThat(aliceToAlice.data())
+                .containsExactlyInAnyOrder(userBob, userAlice);
+        assertThat(allAliceLocations.data())
                 .isNotNull()
                 .extracting(UserLocation::location)
-                .containsExactly(locationAlice);
-        assertThat(aliceToBob)
-                .isNull();
-
-        // Bob sent a message, both parties receive it
-        assertThat(bobToAlice)
+                .containsExactlyInAnyOrder(locationBob, locationAlice);
+        assertThat(allBobLocations)
                 .isNotNull();
-        assertThat(bobToAlice.data())
+        assertThat(allBobLocations.data())
                 .isNotNull()
                 .extracting(UserLocation::user)
                 .containsExactly(userBob);
-        assertThat(bobToAlice.data())
-                .isNotNull()
-                .extracting(UserLocation::location)
-                .containsExactly(locationBob);
-        assertThat(bobToBob)
-                .isNotNull();
-        assertThat(bobToBob.data())
-                .isNotNull()
-                .extracting(UserLocation::user)
-                .containsExactly(userBob);
-        assertThat(bobToBob.data())
+        assertThat(allBobLocations.data())
                 .isNotNull()
                 .extracting(UserLocation::location)
                 .containsExactly(locationBob);
@@ -107,6 +90,7 @@ public class LocationsSocketJwtIT {
         alice.close();
         bob.close();
         ALICE_RECEIVED.clear();
+        BOB_RECEIVED.clear();
     }
 
     @ClientEndpoint(encoders = LocationsEncoder.class,
