@@ -1,9 +1,5 @@
 package dev.zygon.argus.location;
 
-import dev.zygon.argus.location.client.AliceJwtConfigurator;
-import dev.zygon.argus.location.client.BobJwtConfigurator;
-import dev.zygon.argus.location.codec.LocationsDecoder;
-import dev.zygon.argus.location.codec.LocationsEncoder;
 import dev.zygon.argus.user.User;
 import io.quarkus.test.common.http.TestHTTPResource;
 import lombok.extern.slf4j.Slf4j;
@@ -12,22 +8,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.websocket.*;
+import javax.websocket.ContainerProvider;
+import javax.websocket.Session;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingDeque;
 
+import static dev.zygon.argus.location.client.LocationsClients.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @Disabled("Only meant to be used as a base test and should not run directly.")
 public class LocationsSocketIT {
-
-    private static final LinkedBlockingDeque<Locations> ALICE_RECEIVED =
-            new LinkedBlockingDeque<>();
-    private static final LinkedBlockingDeque<Locations> BOB_RECEIVED =
-            new LinkedBlockingDeque<>();
     @TestHTTPResource("/locations")
     private URI uri;
 
@@ -89,37 +81,5 @@ public class LocationsSocketIT {
         bob.close();
         ALICE_RECEIVED.clear();
         BOB_RECEIVED.clear();
-    }
-
-    @ClientEndpoint(encoders = LocationsEncoder.class,
-            decoders = LocationsDecoder.class,
-            configurator = AliceJwtConfigurator.class)
-    public static class AliceClient {
-
-        @OnOpen
-        public void onOpen(Session session) {
-            log.info("Opened Alice client.");
-        }
-
-        @OnMessage
-        public void onMessage(Session session, Locations locations) {
-            ALICE_RECEIVED.add(locations);
-        }
-    }
-
-    @ClientEndpoint(encoders = LocationsEncoder.class,
-            decoders = LocationsDecoder.class,
-            configurator = BobJwtConfigurator.class)
-    public static class BobClient {
-
-        @OnOpen
-        public void onOpen(Session session) {
-            log.info("Opened Bob client.");
-        }
-
-        @OnMessage
-        public void onMessage(Session session, Locations locations) {
-            BOB_RECEIVED.add(locations);
-        }
     }
 }

@@ -7,6 +7,9 @@ import io.smallrye.jwt.build.Jwt;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.websocket.ClientEndpointConfig;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +32,17 @@ public class JwtConfigurator extends ClientEndpointConfig.Configurator {
         return new Permissions(permissions);
     }
 
-    public String generateToken(Permissions permissions) {
+    protected String generateToken(Permissions permissions) {
+        var expiration = Instant.now(Clock.systemUTC())
+                .plus(5, ChronoUnit.SECONDS);
+        return generateToken(permissions, expiration);
+    }
+
+    protected String generateToken(Permissions permissions, Instant expiration) {
         return Jwt.issuer("https://argus.zygon.dev/issuer")
                 .upn("alice")
                 .groups(permissions.toRaw())
+                .expiresAt(expiration)
                 .sign();
     }
 }
