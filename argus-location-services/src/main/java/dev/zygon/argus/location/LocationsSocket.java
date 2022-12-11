@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.enterprise.context.RequestScoped;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
 
 @Slf4j
 @ServerEndpoint(value = "/locations", decoders = LocationsDecoder.class, encoders = LocationsEncoder.class)
@@ -33,7 +32,7 @@ public class LocationsSocket {
 
     @OnOpen
     @Authenticated
-    public void onOpen(Session session) throws IOException {
+    public void onOpen(Session session) throws Exception {
         log.info("Session with ID ({}) opened", session.getId());
         if (authorizer.authorize(session)) {
             authorizer.readGroups(session)

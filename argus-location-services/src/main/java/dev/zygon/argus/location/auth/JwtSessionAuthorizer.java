@@ -8,13 +8,14 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.RequestScoped;
 import javax.websocket.Session;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
 @RequestScoped
 public class JwtSessionAuthorizer implements SessionAuthorizer {
 
-    private static final String PERMISSION_ATTRIBUTE_NAME = "PERMISSIONS";
+    protected static final String PERMISSION_ATTRIBUTE_NAME = "PERMISSIONS";
 
     private final JsonWebToken token;
 
@@ -35,11 +36,9 @@ public class JwtSessionAuthorizer implements SessionAuthorizer {
     }
 
     private void authorizeInternal(Session session) throws UnauthorizedException {
-        if (token != null) {
-            extractAndAttachPermissions(session, token);
-        } else {
-            throw new UnauthorizedException("There is not JWT attached to this session.");
-        }
+        var actualToken = Optional.ofNullable(token)
+                .orElseThrow(() -> new UnauthorizedException("There is not JWT attached to this session."));
+        extractAndAttachPermissions(session, actualToken);
     }
 
     private void extractAndAttachPermissions(Session session, JsonWebToken token) {

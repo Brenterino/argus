@@ -2,6 +2,8 @@ package dev.zygon.argus.location.session;
 
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.location.Locations;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class GroupSessionRegistry implements SessionRegistry<Group> {
 
+    @Getter(AccessLevel.PACKAGE)
     private final Map<Group, GroupSessionPool> pools;
 
     public GroupSessionRegistry() {
