@@ -11,6 +11,12 @@ import javax.websocket.Session;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Implementation of {@link SessionRegistry} which groups sessions by the
+ * {@link Group} record type.
+ *
+ * @see SessionRegistry
+ */
 @Slf4j
 @ApplicationScoped
 public class GroupSessionRegistry implements SessionRegistry<Group> {

@@ -13,6 +13,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
+/**
+ * Provides the endpoint for location service.
+ *
+ * @see ServerEndpoint
+ */
 @Slf4j
 @ServerEndpoint(value = "/locations", decoders = LocationsDecoder.class, encoders = LocationsEncoder.class)
 @RequestScoped
@@ -30,6 +35,17 @@ public class LocationsSocket {
         this.relay = relay;
     }
 
+    /**
+     * Called when a session is open per the specification of {@link OnOpen}.
+     * Must be {@link Authenticated} in order for the session to be opened
+     * completely. If the session is authenticated, but not authorized for
+     * access, then the session will be closed.  If the session is authorized
+     * for read access, then it will be added to the registry.
+     *
+     * @param session the session which was opened.
+     * @throws Exception if something goes wrong during the logic for
+     *                   session opening, then an exception is thrown.
+     */
     @OnOpen
     @Authenticated
     public void onOpen(Session session) throws Exception {
@@ -42,6 +58,13 @@ public class LocationsSocket {
         }
     }
 
+    /**
+     * Called when the session is closed per the specification of
+     * {@link OnClose}. If the session was authorized for any read access, then
+     * it will be removed from the registry.
+     *
+     * @param session the session which was closed.
+     */
     @OnClose
     public void onClose(Session session) {
         log.info("Session with ID ({}) closed", session.getId());
@@ -49,12 +72,28 @@ public class LocationsSocket {
                 .forEach(group -> registry.remove(group, session));
     }
 
+    /**
+     * Called when an error occurs while handling the session per the
+     * specification of {@link OnError}.
+     *
+     * @param session the session which the error occurred with.
+     * @param cause   the error.
+     */
     @OnError
     public void onError(Session session, Throwable cause) {
         log.error("Session with ID ({}) closed due to error",
                 session.getId(), cause);
     }
 
+    /**
+     * Called when the session receives a message per the specification of
+     * {@link OnMessage}. Must be {@link Authenticated} in order for the
+     * message to be received. If the session was authorized for any write
+     * access, then the location data will be relayed to the groups.
+     *
+     * @param session   the session which the message was received from.
+     * @param locations the locations which were received from the session.
+     */
     @OnMessage
     @Authenticated
     public void onMessage(Session session, Locations locations) {

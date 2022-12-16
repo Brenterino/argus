@@ -12,7 +12,7 @@ import javax.websocket.EndpointConfig;
  * Implementation of {@link Encoder.Text} which allows for conversion of
  * a {@link Locations} record into JSON using {@link JsonObject}.
  *
- * @see Encoder.Text for more information on methods.
+ * @see Encoder.Text
  */
 public class LocationsEncoder implements Encoder.Text<Locations> {
 

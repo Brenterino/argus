@@ -9,6 +9,11 @@ import javax.websocket.Session;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Implementation of {@link SessionPool} which pools sessions in groups.
+ *
+ * @see SessionPool
+ */
 @Slf4j
 public class GroupSessionPool implements SessionPool {
 

@@ -13,12 +13,21 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import javax.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 
+/**
+ * Implementation of {@link GroupLocationsRemoteSynchronizer} which uses the
+ * local storage for the purpose of synchronizing location data across multiple
+ * instances. This synchronizer is only active when the build profile is set to
+ * 'scale' as this is the profile which indicates multiple instances will be
+ * spun up. The implementation uses MP reactive messaging which does not have
+ * a local pair. It is important that the corresponding pair of the incoming or
+ * outgoing portion is configured properly.
+ */
 @IfBuildProfile("scale")
 @ApplicationScoped
 public class GroupLocationsRemoteStorageSynchronizer implements GroupLocationsRemoteSynchronizer {
 
     @Setter(AccessLevel.PACKAGE)
-    @ConfigProperty(name = "group.locations.relay.remote.publish.delay.millis", defaultValue = "1000")
+    @ConfigProperty(name = "group.locations.relay.remote.publish.delay.millis", defaultValue = "100")
     private long remoteRelayPublishDelayMillis;
 
     private final GroupLocationsStorage storage;

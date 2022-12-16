@@ -15,6 +15,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of {@link GroupLocationsStorage} which stores the location
+ * data within the instance. Location data is updated by utilizing
+ * {@link LocationPriorityStrategy} to determine if the currently held location
+ * data needs to be evicted and replace with newly received data.
+ *
+ * @see GroupLocationsStorage
+ * @see LocationPriorityStrategy
+ */
 @Slf4j
 @ApplicationScoped
 public class LocalGroupLocationsStorage implements GroupLocationsStorage {

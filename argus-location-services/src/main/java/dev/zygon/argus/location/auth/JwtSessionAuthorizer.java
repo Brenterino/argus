@@ -11,6 +11,13 @@ import javax.websocket.Session;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of {@link SessionAuthorizer} which requires the principal
+ * attached to the session to be of the JWT (JSON Web Token) variety. Access to
+ * resources would be determined by reviewing the groups attached.
+ *
+ * @see SessionAuthorizer
+ */
 @Slf4j
 @RequestScoped
 public class JwtSessionAuthorizer implements SessionAuthorizer {

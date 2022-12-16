@@ -16,12 +16,20 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import javax.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 
+/**
+ * Implementation of {@link GroupLocationsLocalRelay} which is backed by local
+ * storage to store current location data within. The relay {@link Multi} will
+ * be used to push messages which can then be distributed to the appropriate
+ * group by broadcasting via {@link SessionRegistry}.
+ *
+ * @see GroupLocationsLocalRelay
+ */
 @Slf4j
 @ApplicationScoped
 public class GroupLocationsLocalStorageRelay implements GroupLocationsLocalRelay {
 
     @Setter(AccessLevel.PACKAGE)
-    @ConfigProperty(name = "group.locations.relay.local.publish.delay.millis", defaultValue = "1000")
+    @ConfigProperty(name = "group.locations.relay.local.publish.delay.millis", defaultValue = "100")
     private long localRelayPublishDelayMillis;
 
     private final GroupLocationsStorage storage;

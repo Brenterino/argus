@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.websocket.Session;
-
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
