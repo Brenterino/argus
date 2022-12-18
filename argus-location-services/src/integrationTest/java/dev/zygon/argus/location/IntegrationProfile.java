@@ -10,7 +10,7 @@ public class IntegrationProfile implements QuarkusTestProfile {
     public Map<String, String> getConfigOverrides() {
         return Map.of(
                 // Logging
-                "quarkus.log.level", "DEBUG",
+                "quarkus.log.level", "INFO",
 
                 // Verify JWT
                 "mp.jwt.verify.publickey.location", "public.pem",

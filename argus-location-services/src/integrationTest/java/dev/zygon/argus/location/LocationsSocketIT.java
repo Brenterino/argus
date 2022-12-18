@@ -32,6 +32,8 @@ public class LocationsSocketIT {
                 .connectToServer(AliceClient.class, uri);
         bob = ContainerProvider.getWebSocketContainer()
                 .connectToServer(BobClient.class, uri);
+        ALICE_RECEIVED.clear();
+        BOB_RECEIVED.clear();
     }
 
     @Test
