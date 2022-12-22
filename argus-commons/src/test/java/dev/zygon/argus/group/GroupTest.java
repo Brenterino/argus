@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,10 +26,11 @@ class GroupTest {
     }
 
     @Test
-    void hashCodeIsNameHashcode() {
+    void hashCodeIsNamespaceAndNameHashcode() {
         var argus = new Group("Argus");
+        var hash = Objects.hash(argus.namespace(), argus.name());
 
-        assertEquals("Argus".hashCode(), argus.hashCode());
+        assertEquals(hash, argus.hashCode());
     }
 
     @Test

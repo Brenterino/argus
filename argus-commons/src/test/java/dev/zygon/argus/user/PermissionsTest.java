@@ -72,19 +72,19 @@ class PermissionsTest {
         var permissions = new Permissions(permissionsMap);
         var raw = permissions.toRaw();
 
-        assertTrue(raw.contains("Estalia-READ"));
-        assertTrue(raw.contains("Kallos-WRITE"));
-        assertTrue(raw.contains("Butternut-READWRITE"));
-        assertTrue(raw.contains("MemeTeam-ADMIN"));
+        assertTrue(raw.contains("DEFAULT-Estalia-READ"));
+        assertTrue(raw.contains("DEFAULT-Kallos-WRITE"));
+        assertTrue(raw.contains("DEFAULT-Butternut-READWRITE"));
+        assertTrue(raw.contains("DEFAULT-MemeTeam-ADMIN"));
     }
 
     @Test
     void permissionsFromRawMapsCorrectly() {
         var rawPermissions = Set.of(
-                "Butternut-READ",
-                "Kallos-WRITE",
-                "DC-READWRITE",
-                "Estalia-ADMIN"
+                "DEFAULT-Butternut-READ",
+                "DEFAULT-Kallos-WRITE",
+                "DEFAULT-DC-READWRITE",
+                "DEFAULT-Estalia-ADMIN"
         );
         var permissions = Permissions.fromRaw(rawPermissions);
         var write = permissions.writeGroups();

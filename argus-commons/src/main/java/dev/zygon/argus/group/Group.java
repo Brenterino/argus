@@ -9,35 +9,64 @@ import java.util.Objects;
 
 /**
  * Record which represents an Argus group. Users are organized into groups
- * which they have permissions to interact with those groups.
+ * which they have permissions to interact with those groups. Groups are
+ * organized into namespaces for which they must be unique.
  *
- * @param name     the name of the group, must be unique within an Argus instance.
- * @param metadata any additional metadata that is associated with this group.
- *                 This could include permission levels required for certain
- *                 actions or other info which is relevant to group members.
+ * @param namespace the namespace of the group, must be unique within an Argus instance.
+ * @param name      the name of the group, must be unique within a namespace.
+ * @param metadata  any additional metadata that is associated with this group.
+ *                  This could include permission levels required for certain
+ *                  actions or other info which is relevant to group members.
  */
 @Builder
-public record Group(@NonNull String name, @NonNull Map<String, Object> metadata) {
+public record Group(@NonNull String namespace, @NonNull String name, @NonNull Map<String, Object> metadata) {
+
+    private static final String DEFAULT_NAMESPACE = "DEFAULT";
 
     /**
      * Constructor for Group which accepts only the name of the group. This
-     * implies that there is no metadata associated with this group.
+     * implies usage of the default namespace and that there is no metadata
+     * associated with this group.
      *
      * @param name the name of the group.
      */
     public Group(@NonNull String name) {
-        this(name, Collections.emptyMap());
+        this(DEFAULT_NAMESPACE, name, Collections.emptyMap());
     }
 
     /**
-     * Constructor for Group which accepts both the name of the group and
-     * metadata associated with the group. Once assigned, metadata cannot
-     * be added or removed.
+     * Constructor for Group which accepts only the fully qualified name of the
+     * group. This implies that there is no metadata associated with this group.
      *
-     * @param name     the name of the group.
-     * @param metadata the metadata assigned to the group.
+     * @param namespace the namespace of the group.
+     * @param name      the name of the group.
+     */
+    public Group(@NonNull String namespace, @NonNull String name) {
+        this(namespace, name, Collections.emptyMap());
+    }
+
+    /**
+     * Constructor for Group which accepts the name of the group and metadata.
+     * This uses the default namespace.
+     *
+     * @param name      the name of the group.
+     * @param metadata  the metadata assigned to the group.
      */
     public Group(@NonNull String name, Map<String, Object> metadata) {
+        this(DEFAULT_NAMESPACE, name, metadata);
+    }
+
+    /**
+     * Constructor for Group which accepts both the fully qualified name of
+     * the group and metadata associated with the group. Once assigned,
+     * metadata cannot be added or removed without creating a new record.
+     *
+     * @param namespace the namespace of the group.
+     * @param name      the name of the group.
+     * @param metadata  the metadata assigned to the group.
+     */
+    public Group(@NonNull String namespace, @NonNull String name, Map<String, Object> metadata) {
+        this.namespace = namespace;
         this.name = name;
         this.metadata = metadata != null ? Collections.unmodifiableMap(metadata) :
                 Collections.emptyMap();
@@ -49,7 +78,7 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
      * information on the criteria which this implementation must satisfy.
      * <p>
      * As it pertains to this implementation, equality can be determined by the
-     * name of the group alone.
+     * fully qualified name of the group alone.
      * </p>
      *
      * @param o the reference object with which to compare against this
@@ -60,6 +89,7 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
     @Override
     public boolean equals(Object o) {
         return o instanceof Group group &&
+                Objects.equals(namespace, group.namespace) &&
                 Objects.equals(name, group.name);
     }
 
@@ -69,7 +99,7 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
      * information on the criteria which this implementation must satisfy.
      * <p>
      * As it pertains to this implementation, hashCode can be computed by the
-     * name of the group alone.
+     * fully qualified name of the group alone.
      * </p>
      *
      * @return the hashCode of this record based on the standard contract for
@@ -77,7 +107,7 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hash(namespace, name);
     }
 
     /**
@@ -86,13 +116,13 @@ public record Group(@NonNull String name, @NonNull Map<String, Object> metadata)
      * information on the criteria which this implementation must satisfy.
      * <p>
      * As it pertains to this implementation, toString can be computed by the
-     * name of the group alone.
+     * fully qualified name of the group.
      * </p>
      *
      * @return a string representation of the group.
      */
     @Override
     public String toString() {
-        return name;
+        return namespace + "-" + name;
     }
 }

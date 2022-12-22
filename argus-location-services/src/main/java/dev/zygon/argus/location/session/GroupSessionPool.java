@@ -27,6 +27,10 @@ public class GroupSessionPool implements SessionPool {
 
     @Override
     public void add(Session session) {
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to add session with ID ({}) to group ({})",
+                    session.getId(), group);
+        }
         if (sessions.putIfAbsent(session.getId(), session) != null) {
             log.warn("Session with duplicate ID ({}) was attempted to be added to group ({})",
                     session.getId(), group);
@@ -35,6 +39,10 @@ public class GroupSessionPool implements SessionPool {
 
     @Override
     public void remove(Session session) {
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to remove session with ID ({}) to group ({})",
+                    session.getId(), group);
+        }
         if (sessions.remove(session.getId()) == null) {
             log.warn("Attempted to remove non-existing session with ID ({}) from group ({})",
                     session.getId(), group);
@@ -43,6 +51,10 @@ public class GroupSessionPool implements SessionPool {
 
     @Override
     public void broadcast(Locations locations) {
+        if (log.isDebugEnabled()) {
+            log.debug("Broadcasting locations to group ({}): {}",
+                    group, locations);
+        }
         sessions.values()
                 .stream()
                 .map(Session::getAsyncRemote)

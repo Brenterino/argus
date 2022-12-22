@@ -11,8 +11,7 @@ public class AliceJwtConfigurator extends JwtConfigurator {
     @Override
     protected Permissions generatePermissions() {
         var alice = new Group("alice");
-        var bob = new Group("bob");
-        var permissions = Map.of(alice, Permission.ADMIN, bob, Permission.READ);
+        var permissions = Map.of(alice, Permission.ADMIN);
         return new Permissions(permissions);
     }
 }

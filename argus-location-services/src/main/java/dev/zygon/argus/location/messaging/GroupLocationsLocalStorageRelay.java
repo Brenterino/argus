@@ -43,6 +43,10 @@ public class GroupLocationsLocalStorageRelay implements GroupLocationsLocalRelay
 
     @Override
     public void receive(Group group, Locations locations) {
+        if (log.isDebugEnabled()) {
+            log.debug("Received message for group ({}): {}",
+                    group, locations);
+        }
         storage.track(group, locations);
     }
 
@@ -63,6 +67,10 @@ public class GroupLocationsLocalStorageRelay implements GroupLocationsLocalRelay
     public void relay(GroupLocations locations) {
         var group = locations.group();
         var data = locations.locations();
+        if (log.isDebugEnabled()) {
+            log.debug("Relaying message for group ({}): {}",
+                    group, locations);
+        }
         registry.broadcast(group, data);
     }
 }

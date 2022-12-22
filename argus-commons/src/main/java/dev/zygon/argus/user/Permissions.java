@@ -49,7 +49,7 @@ public record Permissions(@NonNull Map<Group, Permission> permissions) {
     public static Permissions fromRaw(Set<String> raw) {
         var permissions = raw.stream()
                 .map(group -> group.split(GROUPS_SEPARATOR))
-                .filter(split -> split.length == 2)
+                .filter(split -> split.length == 3)
                 .map(PermissionTuple::new)
                 .collect(Collectors.toMap(PermissionTuple::group, PermissionTuple::permission));
         return new Permissions(permissions);
@@ -140,11 +140,11 @@ public record Permissions(@NonNull Map<Group, Permission> permissions) {
         }
 
         public PermissionTuple(String[] raw) {
-            this(new Group(raw[0]), Permission.valueOf(raw[1]));
+            this(new Group(raw[0], raw[1]), Permission.valueOf(raw[2]));
         }
 
         public String toRaw() {
-            return group + GROUPS_SEPARATOR + permission;
+            return group.namespace() + GROUPS_SEPARATOR + group.name() + GROUPS_SEPARATOR + permission;
         }
     }
 }
