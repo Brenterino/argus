@@ -1,7 +1,6 @@
 plugins {
     java
     id("io.freefair.lombok")
-    id("org.javamodularity.moduleplugin")
     id("io.quarkus")
 }
 

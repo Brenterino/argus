@@ -34,10 +34,12 @@ class GroupTest {
     }
 
     @Test
-    void toStringIsName() {
+    void toStringIsNamespaceAndName() {
         var butternut = new Group("Butternut");
+        var blue = new Group("Helios", "Blue");
 
-        assertEquals("Butternut", butternut.toString());
+        assertEquals("DEFAULT-Butternut", butternut.toString());
+        assertEquals("Helios-Blue", blue.toString());
     }
 
     @Nested
