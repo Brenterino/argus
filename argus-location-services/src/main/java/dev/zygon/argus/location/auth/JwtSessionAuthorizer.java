@@ -4,11 +4,13 @@ import dev.zygon.argus.group.Group;
 import dev.zygon.argus.user.Permissions;
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.RequestScoped;
 import javax.websocket.Session;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -44,12 +46,14 @@ public class JwtSessionAuthorizer implements SessionAuthorizer {
 
     private void authorizeInternal(Session session) throws UnauthorizedException {
         var actualToken = Optional.ofNullable(token)
-                .orElseThrow(() -> new UnauthorizedException("There is not JWT attached to this session."));
+                .orElseThrow(() -> new UnauthorizedException("There is no JWT attached to this session."));
         extractAndAttachPermissions(session, actualToken);
     }
 
     private void extractAndAttachPermissions(Session session, JsonWebToken token) {
-        var permissions = Permissions.fromRaw(token.getGroups());
+        var permissions = token.<Set<String>>claim(Claims.groups)
+                .map(Permissions::fromRaw)
+                .orElseThrow(() -> new UnauthorizedException("The attached JWT does not claim a valid UPN."));
         var groupPermissions = permissions.permissions();
         if (!groupPermissions.isEmpty()) {
             var sessionProperties = session.getUserProperties();

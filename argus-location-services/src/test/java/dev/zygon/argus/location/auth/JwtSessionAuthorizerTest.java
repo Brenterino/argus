@@ -4,6 +4,7 @@ import dev.zygon.argus.group.Group;
 import dev.zygon.argus.group.Permission;
 import dev.zygon.argus.user.Permissions;
 import org.assertj.core.api.InstanceOfAssertFactories;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import javax.websocket.Session;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static dev.zygon.argus.location.auth.JwtSessionAuthorizer.PERMISSION_ATTRIBUTE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,14 +54,31 @@ class JwtSessionAuthorizerTest {
     }
 
     @Test
-    void whenTokenHasNoClaimedGroupsSessionIsNotAuthorized() {
-        when(token.getGroups())
-                .thenReturn(Collections.emptySet());
+    void whenTokenHasNullClaimedGroupsSessionIsNotAuthorized() {
+        when(token.claim(Claims.groups))
+                .thenReturn(Optional.empty());
 
         var result = authorizer.authorize(session);
 
         verify(token, times(1))
-                .getGroups();
+                .claim(Claims.groups);
+        verify(session, times(1))
+                .getId();
+        verifyNoMoreInteractions(token, session);
+
+        assertThat(result)
+                .isFalse();
+    }
+
+    @Test
+    void whenTokenHasNoClaimedGroupsSessionIsNotAuthorized() {
+        when(token.claim(Claims.groups))
+                .thenReturn(Optional.of(Collections.emptySet()));
+
+        var result = authorizer.authorize(session);
+
+        verify(token, times(1))
+                .claim(Claims.groups);
         verify(session, times(1))
                 .getId();
         verifyNoMoreInteractions(token, session);
@@ -72,15 +91,15 @@ class JwtSessionAuthorizerTest {
     void whenTokenHasClaimedGroupsSessionIsAuthorized() {
         var propertyMap = new HashMap<String, Object>();
 
-        when(token.getGroups())
-                .thenReturn(permissions.toRaw());
+        when(token.claim(Claims.groups))
+                .thenReturn(Optional.of(permissions.toRaw()));
         when(session.getUserProperties())
                 .thenReturn(propertyMap);
 
         var result = authorizer.authorize(session);
 
         verify(token, times(1))
-                .getGroups();
+                .claim(Claims.groups);
         verify(session, times(1))
                 .getUserProperties();
         verifyNoMoreInteractions(token, session);

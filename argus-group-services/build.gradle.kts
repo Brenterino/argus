@@ -17,7 +17,10 @@ dependencies {
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}"))
 
     // Quarkus
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("io.quarkus:quarkus-smallrye-jwt")
+    implementation("io.quarkus:quarkus-jdbc-postgresql")
+    implementation("io.quarkus:quarkus-flyway")
 
     // Argus
     implementation(project(":argus-commons"))
