@@ -1,7 +1,6 @@
-package dev.zygon.argus.user;
+package dev.zygon.argus.permission;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.group.Permission;
 import lombok.NonNull;
 
 import java.util.Collections;

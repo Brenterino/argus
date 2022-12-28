@@ -8,7 +8,6 @@ import dev.zygon.argus.location.UserLocation;
 import dev.zygon.argus.location.storage.GroupLocationsStorage;
 import dev.zygon.argus.user.User;
 import io.vertx.core.json.JsonObject;
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,8 +20,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,21 +41,18 @@ class GroupLocationsRemoteStorageSynchronizerTest {
 
     @BeforeEach
     void setUp() {
-        var ping = new User("PING-1", "AnimeReviewer");
-        var brit = new User("1", "BritishWanderer");
-        var creepi0n = new User("2", "Creepi0n");
-        var gobblin = new User("3", "Gobblin");
-        var locationPing = new Location(500, 70, -3000, 0, true, Instant.now());
+        var brit = new User(UUID.randomUUID(), "BritishWanderer");
+        var creepi0n = new User(UUID.randomUUID(), "Creepi0n");
+        var gobblin = new User(UUID.randomUUID(), "Gobblin");
         var locationBrit = new Location(500, 65, -3000, 0, true, Instant.now());
         var locationCreepi0n = new Location(-2000, -32, 2000, 0, true, Instant.now());
         var locationGobblin = new Location(0, 0, 0, 1, false, Instant.now());
-        var userLocationPing = new UserLocation(ping, locationPing);
         var userLocationBrit = new UserLocation(brit, locationBrit);
         var userLocationCreepi0n = new UserLocation(creepi0n, locationCreepi0n);
         var userLocationGobblin = new UserLocation(gobblin, locationGobblin);
 
         pavia = new Group("Pavia");
-        locations = new Locations(Set.of(userLocationPing, userLocationBrit,
+        locations = new Locations(Set.of(userLocationBrit,
                 userLocationCreepi0n, userLocationGobblin));
         var groupLocations = new GroupLocations(pavia, locations);
         message = new GroupLocationsMessage(Set.of(groupLocations));
@@ -84,7 +82,7 @@ class GroupLocationsRemoteStorageSynchronizerTest {
 
         assertThat(captor.getValue())
                 .extracting(Locations::data)
-                .asInstanceOf(InstanceOfAssertFactories.COLLECTION)
+                .asInstanceOf(COLLECTION)
                 .containsExactlyInAnyOrderElementsOf(locations.data());
     }
 

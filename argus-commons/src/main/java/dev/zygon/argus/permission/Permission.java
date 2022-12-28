@@ -1,4 +1,4 @@
-package dev.zygon.argus.group;
+package dev.zygon.argus.permission;
 
 /**
  * Enumeration of available permissions to a group that may be assigned to
@@ -6,6 +6,15 @@ package dev.zygon.argus.group;
  */
 public enum Permission {
 
+    /**
+     * Permissions which denotes the user has the ability to access resources
+     * related to the group but has not elected their access.
+     * <p>
+     * This is the default assigned elected permission for a user once they
+     * are newly added to a group.
+     * </p>
+     */
+    ACCESS,
     /**
      * Permission which grants the ability to read information from/about the
      * group.

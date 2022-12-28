@@ -1,8 +1,8 @@
 package dev.zygon.argus.location.client;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.group.Permission;
-import dev.zygon.argus.user.Permissions;
+import dev.zygon.argus.permission.Permission;
+import dev.zygon.argus.permission.Permissions;
 
 import java.util.Map;
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +14,7 @@ class GroupTest {
 
     @Test
     void cannotCreateGroupWithoutName() {
-        assertThrows(NullPointerException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 new Group(null));
     }
 
@@ -56,7 +57,7 @@ class GroupTest {
             maybeKallos = new Group("Kallos", Map.of("sussy", "baka"));
             sometimesKallos = new Group("Kallos", Map.of("raiding?", "aaa, you know what it is"));
             notKallos = new Group("Butternut");
-            definitelyNotKallos = new User("1", "xxTBxx");
+            definitelyNotKallos = new User(UUID.randomUUID(), "xxTBxx");
         }
 
         @Test

@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -101,14 +102,14 @@ public class LocationsSocketLoadIT {
                 .connectToServer(AliceClient.class, uri);
         session.setMaxTextMessageBufferSize(MAX_BUFFER_SIZE_BYTES);
         session.setMaxBinaryMessageBufferSize(MAX_BUFFER_SIZE_BYTES);
-        return new SessionRunnable(id, session);
+        return new SessionRunnable(session);
     }
 
     @SneakyThrows
     private SessionRunnable createBobSocket(int id) {
         var session = ContainerProvider.getWebSocketContainer()
                 .connectToServer(BobClient.class, uri);
-        return new SessionRunnable(id, session);
+        return new SessionRunnable(session);
     }
 
     private static class SessionRunnable implements Runnable {
@@ -120,8 +121,8 @@ public class LocationsSocketLoadIT {
         private final User user;
         private final Session session;
 
-        public SessionRunnable(int id, Session session) {
-            this.user = new User(String.valueOf(id), "User");
+        public SessionRunnable(Session session) {
+            this.user = new User(UUID.randomUUID(), "User");
             this.session = session;
             this.location = Location.builder()
                     .x(0.0)

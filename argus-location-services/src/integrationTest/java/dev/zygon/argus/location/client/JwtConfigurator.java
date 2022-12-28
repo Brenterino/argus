@@ -1,8 +1,8 @@
 package dev.zygon.argus.location.client;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.group.Permission;
-import dev.zygon.argus.user.Permissions;
+import dev.zygon.argus.permission.Permission;
+import dev.zygon.argus.permission.Permissions;
 import io.smallrye.jwt.build.Jwt;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,7 +40,7 @@ public class JwtConfigurator extends ClientEndpointConfig.Configurator {
 
     protected String generateToken(Permissions permissions, Instant expiration) {
         return Jwt.issuer("https://argus.zygon.dev/issuer")
-                .upn("alice")
+                .upn("user@test")
                 .groups(permissions.toRaw())
                 .expiresAt(expiration)
                 .sign();

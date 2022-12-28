@@ -1,4 +1,4 @@
-package dev.zygon.argus.location;
+package dev.zygon.argus.location.profile;
 
 public class ScaleIntegrationProfile extends IntegrationProfile {
 

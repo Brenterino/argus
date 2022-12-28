@@ -17,8 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -40,9 +40,9 @@ class GroupLocationsLocalStorageRelayTest {
 
     @BeforeEach
     void setUp() {
-        var mickale = new User("1", "Mickale", Map.of("Note", "Jorving Jarl"));
-        var hoover = new User("2", "ItzHoover", Map.of("Note", "Jorving All Day Every Day"));
-        var s4nta = new User("3", "S4NTA", Map.of("Note", "Hates Christmas"));
+        var mickale = new User(UUID.randomUUID(), "Mickale");
+        var hoover = new User(UUID.randomUUID(), "ItzHoover");
+        var s4nta = new User(UUID.randomUUID(), "S4NTA");
         var locationMickale = new Location(-1066, 0, -1200, 0, true, Instant.now());
         var locationHoover = new Location(-1000, 25, 200, 0, true, Instant.now());
         var locationS4nta = new Location(0, -50, 0, 1, true, Instant.now());

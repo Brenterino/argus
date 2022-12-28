@@ -1,8 +1,8 @@
 package dev.zygon.argus.location.auth;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.group.Permission;
-import dev.zygon.argus.user.Permissions;
+import dev.zygon.argus.permission.Permission;
+import dev.zygon.argus.permission.Permissions;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;

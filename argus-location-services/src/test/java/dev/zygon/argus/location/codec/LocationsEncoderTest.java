@@ -12,6 +12,7 @@ import javax.websocket.EndpointConfig;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,7 +30,7 @@ class LocationsEncoderTest {
 
     @Test
     void encodingNullThrowsException() {
-        assertThrows(NullPointerException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 encoder.encode(null));
     }
 
@@ -44,7 +45,8 @@ class LocationsEncoderTest {
 
     @Test
     void canEncodeSingleLocation() throws EncodeException {
-        var user = new User("1", "Zygon");
+        var uuid = UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c");
+        var user = new User(uuid, "Zygon");
         var location = Location.builder()
                 .x(100.2)
                 .y(200.1)
@@ -58,7 +60,7 @@ class LocationsEncoderTest {
 
         var json = encoder.encode(locations);
 
-        assertEquals("{\"data\":[{\"user\":{\"uuid\":\"1\",\"name\":\"Zygon\",\"metadata\":{}},\"location\":{\"x\":100.2,\"y\":200.1,\"z\":300.0,\"w\":1,\"local\":false,\"time\":\"2022-11-23T18:17:44.323877200Z\"}}]}",
+        assertEquals("{\"data\":[{\"user\":{\"uuid\":\"5fc03087-d265-11e7-b8c6-83e29cd24f4c\",\"name\":\"Zygon\"},\"location\":{\"x\":100.2,\"y\":200.1,\"z\":300.0,\"w\":1,\"local\":false,\"time\":\"2022-11-23T18:17:44.323877200Z\"}}]}",
                 json);
     }
 

@@ -1,7 +1,7 @@
 package dev.zygon.argus.location.auth;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.user.Permissions;
+import dev.zygon.argus.permission.Permissions;
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.Claims;

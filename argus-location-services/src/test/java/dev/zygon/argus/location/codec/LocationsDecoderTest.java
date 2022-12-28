@@ -10,6 +10,7 @@ import javax.websocket.DecodeException;
 import javax.websocket.EndpointConfig;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.InstanceOfAssertFactories.DOUBLE;
@@ -94,7 +95,7 @@ class LocationsDecoderTest {
                             "data": [
                                 {
                                     "user": {
-                                        "uuid": "1",
+                                        "uuid": "5fc03087-d265-11e7-b8c6-83e29cd24f4c",
                                         "name": "Walkers"
                                     },
                                     "location": {
@@ -120,10 +121,8 @@ class LocationsDecoderTest {
                 .extracting(UserLocation::user)
                 .singleElement()
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("uuid", "1")
-                .hasFieldOrPropertyWithValue("name", "Walkers")
-                .extracting(User::metadata)
-                .isEqualTo(Collections.emptyMap());
+                .hasFieldOrPropertyWithValue("uuid", UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c"))
+                .hasFieldOrPropertyWithValue("name", "Walkers");
         assertThat(locations.data())
                 .extracting(UserLocation::location)
                 .singleElement()

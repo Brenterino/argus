@@ -6,7 +6,6 @@ import dev.zygon.argus.location.Location;
 import dev.zygon.argus.location.Locations;
 import dev.zygon.argus.location.UserLocation;
 import dev.zygon.argus.user.User;
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -36,10 +37,10 @@ class LocalGroupLocationsStorageTest {
 
     @BeforeEach
     void setUp() {
-        var thoths = new User("1", "Thoths_Librarian");
-        var zygon = new User("2", "JZygon");
-        var soccer = new User("3", "Soccer37222");
-        var ladez = new User("4", "Ladezkik");
+        var thoths = new User(UUID.randomUUID(), "Thoths_Librarian");
+        var zygon = new User(UUID.randomUUID(), "JZygon");
+        var soccer = new User(UUID.randomUUID(), "Soccer37222");
+        var ladez = new User(UUID.randomUUID(), "Ladezkik");
         var originalLocationThoths = new Location(99, 9, 999, 0, true, Instant.now());
         var originalLocationZygon = new Location(2000, 25, 1000, 0, true, Instant.now());
         var originalLocationSoccer = new Location(0, -50, 0, 0, true, Instant.now());
@@ -78,7 +79,7 @@ class LocalGroupLocationsStorageTest {
                 .extracting(GroupLocations::locations)
                 .first()
                 .extracting(Locations::data)
-                .asInstanceOf(InstanceOfAssertFactories.COLLECTION)
+                .asInstanceOf(COLLECTION)
                 .containsExactlyInAnyOrderElementsOf(originalLocations.data());
     }
 
@@ -95,7 +96,7 @@ class LocalGroupLocationsStorageTest {
                 .extracting(GroupLocations::locations)
                 .first()
                 .extracting(Locations::data)
-                .asInstanceOf(InstanceOfAssertFactories.COLLECTION)
+                .asInstanceOf(COLLECTION)
                 .containsExactlyInAnyOrderElementsOf(locations.data());
     }
 }

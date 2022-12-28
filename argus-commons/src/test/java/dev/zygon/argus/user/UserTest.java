@@ -4,7 +4,7 @@ import dev.zygon.argus.group.Group;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,29 +12,23 @@ class UserTest {
 
     @Test
     void cannotCreateUserWithoutUUIDAndName() {
-        assertThrows(NullPointerException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 new User(null, null));
-        assertThrows(NullPointerException.class, () ->
-                new User("1", null));
-        assertThrows(NullPointerException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
+                new User(UUID.randomUUID(), null));
+        assertThrows(IllegalArgumentException.class, () ->
                 new User(null, "acuhdemiic"));
     }
 
     @Test
-    void metadataCannotBeMutated() {
-        var sauce = new User("1", "ShadySauce", Map.of("note", "POS"));
-
-        assertThrows(UnsupportedOperationException.class, () ->
-                sauce.metadata().remove("note"));
-    }
-
-    @Test
     void hashCodeIsUUIDHashcode() {
-        var sauce = new User("1", "ShadySauce", Map.of("note", "POS"));
-        var creep = new User("2", "Creepi0n", Map.of("note", "Explosive"));
+        var sauceUuid = UUID.randomUUID();
+        var creepUuid = UUID.randomUUID();
+        var sauce = new User(sauceUuid, "ShadySauce");
+        var creep = new User(creepUuid, "Creepi0n");
 
-        assertEquals("1".hashCode(), sauce.hashCode());
-        assertEquals("2".hashCode(), creep.hashCode());
+        assertEquals(sauceUuid.hashCode(), sauce.hashCode());
+        assertEquals(creepUuid.hashCode(), creep.hashCode());
     }
 
     @Nested
@@ -47,14 +41,12 @@ class UserTest {
         private final Group definitelyNotWalkers;
 
         EqualsHashCodeCases() {
-            walkers = new User("3", "Walkers", Map.of("alias", "WalkersGaming",
-                    "note", "gaming"));
-            maybeWalkers = new User("3", "Chicken", Map.of("alias", "Flappy",
-                    "note", "Not Gaming"));
-            sometimesWalkers = new User("3", "WalkersGaming", Map.of("alias", "",
-                    "note", "GAMING"));
-            notWalkers = new User("4", "FriedChicken", Map.of("alias", "Tasty",
-                    "note", "Mango Habanero"));
+            var sharedUuid = UUID.randomUUID();
+            var uniqueUuid = UUID.randomUUID();
+            walkers = new User(sharedUuid, "Walkers");
+            maybeWalkers = new User(sharedUuid, "Chicken");
+            sometimesWalkers = new User(sharedUuid, "WalkersGaming");
+            notWalkers = new User(uniqueUuid, "FriedChicken");
             definitelyNotWalkers = new Group("Walkers");
         }
 

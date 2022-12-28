@@ -1,7 +1,8 @@
 package dev.zygon.argus.user;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.group.Permission;
+import dev.zygon.argus.permission.Permission;
+import dev.zygon.argus.permission.Permissions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

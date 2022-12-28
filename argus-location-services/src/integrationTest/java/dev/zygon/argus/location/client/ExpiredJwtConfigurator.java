@@ -1,6 +1,6 @@
 package dev.zygon.argus.location.client;
 
-import dev.zygon.argus.user.Permissions;
+import dev.zygon.argus.permission.Permissions;
 
 import java.time.Clock;
 import java.time.Instant;

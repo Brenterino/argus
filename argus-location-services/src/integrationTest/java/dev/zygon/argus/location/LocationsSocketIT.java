@@ -13,6 +13,7 @@ import javax.websocket.Session;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Set;
+import java.util.UUID;
 
 import static dev.zygon.argus.location.client.LocationsClients.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @Disabled("Only meant to be used as a base test and should not run directly.")
 public class LocationsSocketIT {
+
     @TestHTTPResource("/locations")
     private URI uri;
 
@@ -38,8 +40,10 @@ public class LocationsSocketIT {
 
     @Test
     public void testLocationMessage() throws Exception {
-        var userAlice = new User("1", "Alice");
-        var userBob = new User("2", "Bob");
+        var aliceUUID = UUID.fromString("3b8274a9-aa64-47bc-89a7-64cf896aae93");
+        var bobUUID = UUID.fromString("b3c53ad9-cbd9-4644-8371-c2468d8a0e57");
+        var userAlice = new User(aliceUUID, "Alice");
+        var userBob = new User(bobUUID, "Bob");
         var locationAlice = new Location(101, 50, 2100, 0, true, Instant.now());
         var locationBob = new Location(-100, 0, -100, 0, true, Instant.now());
         var userLocationAlice = new UserLocation(userAlice, locationAlice);

@@ -1,11 +1,11 @@
 package dev.zygon.argus.group;
 
-import lombok.Builder;
 import lombok.NonNull;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Record which represents an Argus group. Users are organized into groups
@@ -18,10 +18,10 @@ import java.util.Objects;
  *                  This could include permission levels required for certain
  *                  actions or other info which is relevant to group members.
  */
-@Builder
 public record Group(@NonNull String namespace, @NonNull String name, @NonNull Map<String, Object> metadata) {
 
     private static final String DEFAULT_NAMESPACE = "DEFAULT";
+    private static final Pattern VALID_NAME_PATTERN = Pattern.compile("^\\w+$");
 
     /**
      * Constructor for Group which accepts only the name of the group. This
@@ -67,9 +67,13 @@ public record Group(@NonNull String namespace, @NonNull String name, @NonNull Ma
      */
     public Group(@NonNull String namespace, @NonNull String name, Map<String, Object> metadata) {
         this.namespace = namespace;
-        this.name = name;
+        this.name = name.trim();
         this.metadata = metadata != null ? Collections.unmodifiableMap(metadata) :
                 Collections.emptyMap();
+        var nameMatcher = VALID_NAME_PATTERN.matcher(this.name);
+        if (!nameMatcher.matches()) {
+            throw new IllegalArgumentException("Group name contains invalid characters.");
+        }
     }
 
     /**

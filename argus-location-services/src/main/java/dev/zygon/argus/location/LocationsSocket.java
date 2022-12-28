@@ -9,7 +9,7 @@ import dev.zygon.argus.location.session.SessionRegistry;
 import io.quarkus.security.Authenticated;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
@@ -19,8 +19,8 @@ import javax.websocket.server.ServerEndpoint;
  * @see ServerEndpoint
  */
 @Slf4j
+@ApplicationScoped
 @ServerEndpoint(value = "/locations", decoders = LocationsDecoder.class, encoders = LocationsEncoder.class)
-@RequestScoped
 public class LocationsSocket {
 
     private final SessionAuthorizer authorizer;

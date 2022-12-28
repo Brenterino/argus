@@ -1,4 +1,4 @@
-package dev.zygon.argus.location;
+package dev.zygon.argus.location.profile;
 
 import io.quarkus.test.junit.QuarkusTestProfile;
 

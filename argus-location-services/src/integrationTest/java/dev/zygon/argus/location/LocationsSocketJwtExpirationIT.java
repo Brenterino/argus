@@ -3,6 +3,7 @@ package dev.zygon.argus.location;
 import dev.zygon.argus.location.client.LocationsClients.AliceClient;
 import dev.zygon.argus.location.client.LocationsClients.BobClient;
 import dev.zygon.argus.location.client.LocationsClients.ExpiredTokenClient;
+import dev.zygon.argus.location.profile.IntegrationProfile;
 import dev.zygon.argus.user.User;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakeException;
 import io.quarkus.test.common.http.TestHTTPResource;
@@ -19,6 +20,7 @@ import javax.websocket.Session;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static dev.zygon.argus.location.client.LocationsClients.ALICE_RECEIVED;
@@ -66,8 +68,10 @@ public class LocationsSocketJwtExpirationIT {
 
     @Test
     public void sessionCanWriteBeforeAndAfterTokenExpiration() throws Exception {
-        var userAlice = new User("1", "Alice");
-        var userBob = new User("2", "Bob");
+        var aliceUUID = UUID.fromString("3b8274a9-aa64-47bc-89a7-64cf896aae93");
+        var bobUUID = UUID.fromString("b3c53ad9-cbd9-4644-8371-c2468d8a0e57");
+        var userAlice = new User(aliceUUID, "Alice");
+        var userBob = new User(bobUUID, "Bob");
 
         var locationAlice = new Location(101, 50, 2100, 0, true, Instant.now());
         var userLocationAlice = new UserLocation(userAlice, locationAlice);

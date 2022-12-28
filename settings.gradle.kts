@@ -10,7 +10,7 @@ include(
 pluginManagement {
     val quarkusVersion: String by settings
     val lombokPluginVersion: String by settings
-    val modulePluginVersion: String by settings
+    val jooqPluginVersion: String by settings
 
     repositories {
         mavenCentral()
@@ -19,6 +19,6 @@ pluginManagement {
     plugins {
         id("io.quarkus") version quarkusVersion
         id("io.freefair.lombok") version lombokPluginVersion
-        id("org.javamodularity.moduleplugin") version modulePluginVersion
+        id("nu.studer.jooq") version jooqPluginVersion
     }
 }
