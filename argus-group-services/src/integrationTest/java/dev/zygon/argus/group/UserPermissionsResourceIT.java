@@ -23,7 +23,6 @@ import static dev.zygon.argus.permission.Permission.*;
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jboss.resteasy.reactive.RestResponse.StatusCode.*;
 
@@ -87,9 +86,7 @@ public class UserPermissionsResourceIT {
 
             assertThat(status)
                     .isEqualTo(OK);
-            assertThat(body)
-                    .extracting(GroupPermissions::permissions)
-                    .asInstanceOf(COLLECTION)
+            assertThat(body.permissions())
                     .isEmpty();
         }
 
@@ -109,9 +106,7 @@ public class UserPermissionsResourceIT {
 
             assertThat(status)
                     .isEqualTo(OK);
-            assertThat(body)
-                    .extracting(GroupPermissions::permissions)
-                    .asInstanceOf(COLLECTION)
+            assertThat(body.permissions())
                     .isEmpty();
         }
 
@@ -133,9 +128,7 @@ public class UserPermissionsResourceIT {
 
             assertThat(status)
                     .isEqualTo(OK);
-            assertThat(body)
-                    .extracting(GroupPermissions::permissions)
-                    .asInstanceOf(COLLECTION)
+            assertThat(body.permissions())
                     .containsExactly(permission);
         }
     }

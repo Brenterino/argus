@@ -8,21 +8,22 @@ import dev.zygon.argus.user.NamespaceUser;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Pool;
+import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.Tuple;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Configuration;
-import org.jooq.Record1;
-import org.jooq.SelectConditionStep;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static dev.zygon.argus.group.repository.impl.ColumnNames.*;
-import static dev.zygon.argus.group.repository.impl.RowMappers.group;
+import static dev.zygon.argus.group.repository.impl.CommonJooqRenderer.groupSelect;
 import static dev.zygon.argus.group.repository.impl.RowMappers.permission;
+import static org.jooq.generated.Keys.USER_GROUP_UNIQUE;
 import static org.jooq.generated.Tables.*;
 import static org.jooq.impl.DSL.*;
 
@@ -68,7 +69,8 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
                         USER_PERMISSIONS.UUID.as(USER_UUID_NAME),
                         USER_PERMISSIONS.PERMISSION.as(PERMISSION_NAME)
                 ).from(USER_PERMISSIONS)
-                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect()))
+                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect(configuration)))
+                .orderBy(USER_PERMISSIONS.ID.asc())
                 .getSQL();
     }
 
@@ -100,9 +102,10 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
                 .insertInto(USER_PERMISSIONS,
                         USER_PERMISSIONS.GROUP_ID, USER_PERMISSIONS.UUID, USER_PERMISSIONS.PERMISSION, USER_PERMISSIONS.ELECTED
                 )
-                .values(field(groupSelect()), field("$3", UUID.class),
+                .values(field(groupSelect(configuration)), field("$3", UUID.class),
                         field("$4", Integer.class), defaultValue(Integer.class))
-                .onDuplicateKeyUpdate()
+                .onConflictOnConstraint(USER_GROUP_UNIQUE)
+                .doUpdate()
                 .set(USER_PERMISSIONS.PERMISSION, field("$4", Integer.class))
                 .set(USER_PERMISSIONS.ELECTED,
                         when(USER_PERMISSIONS.ELECTED.gt(field("$4", Integer.class)),
@@ -137,7 +140,7 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
     private String renderRemovePermissionSql() {
         return using(configuration)
                 .deleteFrom(USER_PERMISSIONS)
-                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect()))
+                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect(configuration)))
                 .and(USER_PERMISSIONS.UUID.eq(field("$3", UUID.class)))
                 .getSQL();
     }
@@ -169,7 +172,7 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
         return using(configuration)
                 .selectCount()
                 .from(USER_PERMISSIONS)
-                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect()))
+                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect(configuration)))
                 .and(USER_PERMISSIONS.UUID.eq(field("$3", UUID.class)))
                 .and(USER_PERMISSIONS.PERMISSION.ge(field("$4", Integer.class)))
                 .getSQL();
@@ -180,7 +183,8 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
         final var PERMISSIONS_QUERY = "PERMISSIONS";
         var groupsByNamespaceUserSql = queryCache.computeIfAbsent(PERMISSIONS_QUERY,
                 k -> renderPermissionsSql());
-        return retrievePermissions(namespaceUser, groupsByNamespaceUserSql);
+        return retrievePermissions(namespaceUser, groupsByNamespaceUserSql,
+                RowMappers::group);
     }
 
     private String renderPermissionsSql() {
@@ -204,7 +208,8 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
         final var ELECTED_QUERY = "ELECTED";
         var electedByUserSql = queryCache.computeIfAbsent(ELECTED_QUERY,
                 k -> renderElectedSql());
-        return retrievePermissions(namespaceUser, electedByUserSql);
+        return retrievePermissions(namespaceUser, electedByUserSql,
+                RowMappers::groupNoMetadata);
     }
 
     private String renderElectedSql() {
@@ -222,7 +227,8 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
                 .getSQL();
     }
 
-    private Uni<GroupPermissions> retrievePermissions(NamespaceUser namespaceUser, String sql) {
+    private Uni<GroupPermissions> retrievePermissions(NamespaceUser namespaceUser, String sql,
+                                                      Function<Row, Group> groupMapper) {
         var namespace = namespaceUser.namespace();
         var user = namespaceUser.user();
         var uuid = user.uuid();
@@ -234,7 +240,7 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
         return pool.preparedQuery(sql)
                 .execute(Tuple.of(namespace, uuid))
                 .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
-                .map(row -> new GroupPermission(group(row), permission(row)))
+                .map(row -> new GroupPermission(groupMapper.apply(row), permission(row)))
                 .collect().with(Collectors.toUnmodifiableSet())
                 .map(GroupPermissions::new)
                 .onFailure()
@@ -268,23 +274,8 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
         return using(configuration)
                 .update(USER_PERMISSIONS)
                 .set(USER_PERMISSIONS.ELECTED, field("$4", Integer.class))
-                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect()))
+                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect(configuration)))
                 .and(USER_PERMISSIONS.UUID.eq(field("$3", UUID.class)))
                 .getSQL();
-    }
-
-    private SelectConditionStep<Record1<Long>> groupSelect() {
-        return using(configuration)
-                .select(GROUPS.ID)
-                .from(GROUPS)
-                .where(GROUPS.NAMESPACE_ID.eq(namespaceSelect()))
-                .and(lower(GROUPS.NAME).eq(field("$2", String.class)));
-    }
-
-    private SelectConditionStep<Record1<Long>> namespaceSelect() {
-        return using(configuration)
-                .select(NAMESPACES.ID)
-                .from(NAMESPACES)
-                .where(NAMESPACES.NAME.eq(field("$1", String.class)));
     }
 }

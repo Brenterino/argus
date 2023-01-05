@@ -35,12 +35,14 @@ CREATE TABLE groups
 
 CREATE TABLE user_permissions
 (
+    id           BIGSERIAL,
     uuid         UUID NOT NULL,
     group_id     BIGINT NOT NULL,
     permission   INT NOT NULL DEFAULT 0,
     elected      INT NOT NULL DEFAULT 0,
-    PRIMARY KEY  (uuid, group_id),
+    PRIMARY KEY  (id),
     FOREIGN KEY  (group_id) REFERENCES groups(id),
+    CONSTRAINT   user_group_unique UNIQUE (uuid, group_id),
     CONSTRAINT   elected_allowed CHECK (elected <= permission)
 );
 

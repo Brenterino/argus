@@ -3,9 +3,9 @@ package dev.zygon.argus.group;
 import dev.zygon.argus.group.helper.DataSetup;
 import dev.zygon.argus.group.profile.IntegrationProfile;
 import dev.zygon.argus.group.token.TokenGenerator;
-import dev.zygon.argus.user.User;
 import dev.zygon.argus.permission.UserPermission;
 import dev.zygon.argus.permission.UserPermissions;
+import dev.zygon.argus.user.User;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
@@ -20,7 +20,6 @@ import static dev.zygon.argus.permission.Permission.*;
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jboss.resteasy.reactive.RestResponse.StatusCode.*;
 
@@ -133,9 +132,7 @@ public class AdminPermissionResourceIT {
 
             assertThat(code)
                     .isEqualTo(OK);
-            assertThat(body)
-                    .extracting(UserPermissions::permissions)
-                    .asInstanceOf(COLLECTION)
+            assertThat(body.permissions())
                     .containsExactlyInAnyOrder(permission, bobPermission);
         }
 
@@ -156,9 +153,7 @@ public class AdminPermissionResourceIT {
 
             assertThat(code)
                     .isEqualTo(OK);
-            assertThat(body)
-                    .extracting(UserPermissions::permissions)
-                    .asInstanceOf(COLLECTION)
+            assertThat(body.permissions())
                     .containsExactly(permission);
         }
     }

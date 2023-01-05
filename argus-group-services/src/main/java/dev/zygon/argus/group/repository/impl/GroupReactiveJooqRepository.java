@@ -16,8 +16,6 @@ import io.vertx.mutiny.sqlclient.Tuple;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Configuration;
 import org.jooq.JSON;
-import org.jooq.Record1;
-import org.jooq.SelectConditionStep;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
@@ -25,8 +23,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static dev.zygon.argus.permission.Permission.ADMIN;
 import static dev.zygon.argus.group.repository.impl.ColumnNames.*;
+import static dev.zygon.argus.group.repository.impl.CommonJooqRenderer.groupSelect;
+import static dev.zygon.argus.group.repository.impl.CommonJooqRenderer.namespaceSelect;
+import static dev.zygon.argus.permission.Permission.ADMIN;
 import static org.jooq.generated.Tables.*;
 import static org.jooq.impl.DSL.*;
 
@@ -185,7 +185,7 @@ public class GroupReactiveJooqRepository implements GroupRepository {
         return using(configuration)
                 .insertInto(GROUPS,
                         GROUPS.NAMESPACE_ID, GROUPS.NAME, GROUPS.OWNER, GROUPS.METADATA)
-                .values(field(namespaceSelect()), field("$2", String.class),
+                .values(field(namespaceSelect(configuration)), field("$2", String.class),
                         field("$3", UUID.class), field("$4", JSON.class))
                 .returning(GROUPS.ID)
                 .getSQL();
@@ -249,7 +249,7 @@ public class GroupReactiveJooqRepository implements GroupRepository {
         return using(configuration)
                 .update(GROUPS)
                 .set(GROUPS.METADATA, field("$3", JSON.class))
-                .where(GROUPS.NAMESPACE_ID.eq(namespaceSelect()))
+                .where(GROUPS.NAMESPACE_ID.eq(namespaceSelect(configuration)))
                 .and(lower(GROUPS.NAME).eq(field("$2", String.class)))
                 .getSQL();
     }
@@ -283,7 +283,7 @@ public class GroupReactiveJooqRepository implements GroupRepository {
     private String renderDeletePermissionsSql() {
         return using(configuration)
                 .deleteFrom(USER_PERMISSIONS)
-                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect()))
+                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect(configuration)))
                 .getSQL();
     }
 
@@ -310,23 +310,8 @@ public class GroupReactiveJooqRepository implements GroupRepository {
     private String renderDeleteGroupSql() {
         return using(configuration)
                 .deleteFrom(GROUPS)
-                .where(GROUPS.NAMESPACE_ID.eq(namespaceSelect()))
+                .where(GROUPS.NAMESPACE_ID.eq(namespaceSelect(configuration)))
                 .and(lower(GROUPS.NAME).eq(field("$2", String.class)))
                 .getSQL();
-    }
-
-    private SelectConditionStep<Record1<Long>> groupSelect() {
-        return using(configuration)
-                .select(GROUPS.ID)
-                .from(GROUPS)
-                .where(GROUPS.NAMESPACE_ID.eq(namespaceSelect()))
-                .and(lower(GROUPS.NAME).eq(field("$2", String.class)));
-    }
-
-    private SelectConditionStep<Record1<Long>> namespaceSelect() {
-        return using(configuration)
-                .select(NAMESPACES.ID)
-                .from(NAMESPACES)
-                .where(NAMESPACES.NAME.eq(field("$1", String.class)));
     }
 }

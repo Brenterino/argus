@@ -4,5 +4,5 @@ import lombok.NonNull;
 
 import java.util.List;
 
-public record AuditLog(@NonNull List<Audit> log) {
+public record AuditLog(@NonNull List<Audit> log, int pages) {
 }

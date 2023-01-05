@@ -1,9 +1,11 @@
 package dev.zygon.argus.group.helper;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.permission.Permission;
+import dev.zygon.argus.group.audit.Audit;
+import dev.zygon.argus.group.repository.AuditRepository;
 import dev.zygon.argus.group.repository.GroupRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
+import dev.zygon.argus.permission.Permission;
 import dev.zygon.argus.user.NamespaceUser;
 import dev.zygon.argus.user.User;
 import io.vertx.mutiny.sqlclient.Pool;
@@ -21,15 +23,18 @@ import static org.jooq.impl.DSL.*;
 public class DataSetup {
 
     private final Pool pool;
+    private final AuditRepository audits;
     private final GroupRepository groups;
     private final PermissionRepository permissions;
     private final Configuration configuration;
 
     public DataSetup(Pool pool,
+                     AuditRepository audits,
                      GroupRepository groups,
                      PermissionRepository permissions,
                      Configuration configuration) {
         this.pool = pool;
+        this.audits = audits;
         this.groups = groups;
         this.permissions = permissions;
         this.configuration = configuration;
@@ -65,6 +70,13 @@ public class DataSetup {
         var namespaceUser = new NamespaceUser(namespace, user);
 
         permissions.grant(group, namespaceUser, permission)
+                .await().indefinitely();
+    }
+
+    public void createAudit(String namespace, String groupName, Audit audit) {
+        var group = new Group(namespace, groupName);
+
+        audits.create(group, audit)
                 .await().indefinitely();
     }
 
