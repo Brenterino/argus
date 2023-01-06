@@ -5,6 +5,8 @@ import dev.zygon.argus.group.audit.Audit;
 import dev.zygon.argus.group.audit.AuditAction;
 import dev.zygon.argus.group.audit.AuditLog;
 import dev.zygon.argus.permission.Permission;
+import dev.zygon.argus.permission.UserPermission;
+import dev.zygon.argus.permission.UserPermissions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -12,6 +14,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static dev.zygon.argus.group.repository.impl.ColumnNames.*;
 import static org.jooq.generated.Tables.GROUPS;
@@ -42,23 +46,37 @@ public class RowMappers {
                 metadata);
     }
 
+    public static UserPermissions userPermissions(RowSet<Row> rows, int pageSize) {
+        return paginated(rows, pageSize, RowMappers::userPermission, UserPermissions::new);
+    }
+
+    public static UserPermission userPermission(Row row) {
+        return new UserPermission(uuid(row), permission(row));
+    }
+
     public static Permission permission(Row row) {
         var permissions = Permission.values();
         return permissions[row.getInteger(PERMISSION_NAME)];
     }
 
     public static AuditLog auditLog(RowSet<Row> rows, int pageSize) {
+        return paginated(rows, pageSize, RowMappers::audit, AuditLog::new);
+    }
+
+    private static <R, I> R paginated(RowSet<Row> rows, int pageSize,
+                                 Function<Row, I> mapper,
+                                 BiFunction<List<I>, Integer, R> constructor) {
         var pages = 1;
-        var logs = new ArrayList<Audit>(rows.rowCount() - 1);
+        var paged = new ArrayList<I>(rows.rowCount() - 1);
         for (var row : rows) {
             var count = row.getInteger(COUNT_NAME);
             if (count >= 0) {
                 pages = ((count - 1) / pageSize) + 1;
             } else {
-                logs.add(audit(row));
+                paged.add(mapper.apply(row));
             }
         }
-        return new AuditLog(logs, pages);
+        return constructor.apply(paged, pages);
     }
 
     public static Audit audit(Row row) {

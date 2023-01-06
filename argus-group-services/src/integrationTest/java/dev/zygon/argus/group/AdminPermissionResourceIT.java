@@ -30,6 +30,9 @@ public class AdminPermissionResourceIT {
     private static final String URL = "/permissions/{groupName}/admin";
     private static final String GROUP_NAME = "groupName";
 
+    private static final String PAGE_NAME = "page";
+    private static final String SIZE_NAME = "size";
+
     private final DataSetup setup;
     private final TokenGenerator tokens;
 
@@ -69,6 +72,55 @@ public class AdminPermissionResourceIT {
 
     @Nested
     public class Members {
+
+        @Test
+        public void cannotRetrieveAuditsWithInvalidPage() {
+            var bearer = tokens.bearer(alice, civmc);
+
+            var request = given()
+                    .contentType(ContentType.JSON)
+                    .header(AUTHORIZATION, bearer)
+                    .pathParam(GROUP_NAME, pavia)
+                    .queryParam(PAGE_NAME, -1);
+
+            request.get(URL)
+                    .then()
+                    .statusCode(BAD_REQUEST)
+                    .body(is("Invalid paging arguments provided."));
+        }
+
+        @Test
+        public void cannotRetrieveAuditsWithInvalidSize() {
+            var bearer = tokens.bearer(alice, civmc);
+
+            var request = given()
+                    .contentType(ContentType.JSON)
+                    .header(AUTHORIZATION, bearer)
+                    .pathParam(GROUP_NAME, pavia)
+                    .queryParam(SIZE_NAME, -1);
+
+            request.get(URL)
+                    .then()
+                    .statusCode(BAD_REQUEST)
+                    .body(is("Invalid paging arguments provided."));
+        }
+
+        @Test
+        public void cannotRetrieveAuditsWithInvalidPageAndSize() {
+            var bearer = tokens.bearer(alice, civmc);
+
+            var request = given()
+                    .contentType(ContentType.JSON)
+                    .header(AUTHORIZATION, bearer)
+                    .pathParam(GROUP_NAME, pavia)
+                    .queryParam(PAGE_NAME, -1)
+                    .queryParam(SIZE_NAME, -1);
+
+            request.get(URL)
+                    .then()
+                    .statusCode(BAD_REQUEST)
+                    .body(is("Invalid paging arguments provided."));
+        }
 
         @Test
         public void cannotViewMembersToGroupThatDoesNotExist() {
@@ -155,6 +207,79 @@ public class AdminPermissionResourceIT {
                     .isEqualTo(OK);
             assertThat(body.permissions())
                     .containsExactly(permission);
+        }
+
+
+        @Test
+        public void canRetrieveAuditsAcrossMultiplePages() {
+            var harvey = UUID.randomUUID();
+            var dominic = UUID.randomUUID();
+
+            setup.grantRole(civmc, pavia, bob, READWRITE);
+            setup.grantRole(civmc, pavia, james, READWRITE);
+            setup.grantRole(civmc, pavia, harvey, ADMIN);
+            setup.grantRole(civmc, pavia, dominic, READ);
+
+            var alicePermission = new UserPermission(alice, ADMIN);
+            var bobPermission = new UserPermission(bob, READWRITE);
+            var jamesPermission = new UserPermission(james, READWRITE);
+            var harveyPermission = new UserPermission(harvey, ADMIN);
+            var dominicPermission = new UserPermission(dominic, READ);
+
+            var bearer = tokens.bearer(alice, civmc);
+
+            var pageOneRequest = given()
+                    .contentType(ContentType.JSON)
+                    .header(AUTHORIZATION, bearer)
+                    .pathParam(GROUP_NAME, pavia)
+                    .queryParam(SIZE_NAME, 2)
+                    .queryParam(PAGE_NAME, 0);
+
+            var pageTwoRequest = given()
+                    .contentType(ContentType.JSON)
+                    .header(AUTHORIZATION, bearer)
+                    .pathParam(GROUP_NAME, pavia)
+                    .queryParam(SIZE_NAME, 2)
+                    .queryParam(PAGE_NAME, 1);
+
+            var pageThreeRequest = given()
+                    .contentType(ContentType.JSON)
+                    .header(AUTHORIZATION, bearer)
+                    .pathParam(GROUP_NAME, pavia)
+                    .queryParam(SIZE_NAME, 2)
+                    .queryParam(PAGE_NAME, 2);
+
+            var pageOneResponse = pageOneRequest.get(URL);
+            var pageTwoResponse = pageTwoRequest.get(URL);
+            var pageThreeResponse = pageThreeRequest.get(URL);
+
+            var pageOne = pageOneResponse.body()
+                    .as(UserPermissions.class);
+            var pageTwo = pageTwoResponse.body()
+                    .as(UserPermissions.class);
+            var pageThree = pageThreeResponse.body()
+                    .as(UserPermissions.class);
+
+            assertThat(pageOneResponse.getStatusCode())
+                    .isEqualTo(OK);
+            assertThat(pageTwoResponse.getStatusCode())
+                    .isEqualTo(OK);
+            assertThat(pageThreeResponse.getStatusCode())
+                    .isEqualTo(OK);
+
+            assertThat(pageOne.pages())
+                    .isEqualTo(3);
+            assertThat(pageTwo.pages())
+                    .isEqualTo(3);
+            assertThat(pageThree.pages())
+                    .isEqualTo(3);
+
+            assertThat(pageOne.permissions())
+                    .containsExactly(alicePermission, harveyPermission);
+            assertThat(pageTwo.permissions())
+                    .containsExactly(bobPermission, jamesPermission);
+            assertThat(pageThree.permissions())
+                    .containsExactly(dominicPermission);
         }
     }
 

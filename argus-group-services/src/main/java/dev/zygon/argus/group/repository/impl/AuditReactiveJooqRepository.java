@@ -21,6 +21,7 @@ import java.util.UUID;
 import static dev.zygon.argus.group.repository.impl.ColumnNames.COUNT_NAME;
 import static dev.zygon.argus.group.repository.impl.ColumnNames.PERMISSION_NAME;
 import static dev.zygon.argus.group.repository.impl.CommonJooqRenderer.groupSelect;
+import static dev.zygon.argus.group.repository.impl.RowMappers.auditLog;
 import static org.jooq.generated.Tables.GROUP_AUDIT;
 import static org.jooq.impl.DSL.*;
 
@@ -53,7 +54,7 @@ public class AuditReactiveJooqRepository implements AuditRepository {
         }
         return pool.preparedQuery(forGroupSql)
                 .execute(Tuple.of(namespace, name, offset, size))
-                .map(rows -> RowMappers.auditLog(rows, size))
+                .map(rows -> auditLog(rows, size))
                 .onFailure()
                 .transform(e -> new FatalGroupException("Loading audit log unexpectedly failed.", e));
     }

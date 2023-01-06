@@ -9,7 +9,7 @@ import io.smallrye.mutiny.Uni;
 
 public interface PermissionRepository {
 
-    Uni<UserPermissions> forGroup(Group group);
+    Uni<UserPermissions> forGroup(Group group, int page, int size);
 
     Uni<Boolean> grant(Group group, NamespaceUser namespaceUser, Permission permission);
 

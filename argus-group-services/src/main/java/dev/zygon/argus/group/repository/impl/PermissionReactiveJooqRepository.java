@@ -3,7 +3,10 @@ package dev.zygon.argus.group.repository.impl;
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.group.exception.FatalGroupException;
 import dev.zygon.argus.group.repository.PermissionRepository;
-import dev.zygon.argus.permission.*;
+import dev.zygon.argus.permission.GroupPermission;
+import dev.zygon.argus.permission.GroupPermissions;
+import dev.zygon.argus.permission.Permission;
+import dev.zygon.argus.permission.UserPermissions;
 import dev.zygon.argus.user.NamespaceUser;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 import static dev.zygon.argus.group.repository.impl.ColumnNames.*;
 import static dev.zygon.argus.group.repository.impl.CommonJooqRenderer.groupSelect;
 import static dev.zygon.argus.group.repository.impl.RowMappers.permission;
+import static dev.zygon.argus.group.repository.impl.RowMappers.userPermissions;
 import static org.jooq.generated.Keys.USER_GROUP_UNIQUE;
 import static org.jooq.generated.Tables.*;
 import static org.jooq.impl.DSL.*;
@@ -42,35 +46,46 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
     }
 
     @Override
-    public Uni<UserPermissions> forGroup(Group group) {
+    public Uni<UserPermissions> forGroup(Group group, int page, int size) {
         final var FOR_GROUP = "FOR_GROUP";
         var namespace = group.namespace();
         var name = group.name().toLowerCase();
+        var offset = page * size;
         var forGroupSql = queryCache.computeIfAbsent(FOR_GROUP,
                 k -> renderForGroupSql());
         if (log.isDebugEnabled()) {
             log.debug("Operation(Permissions for Group) SQL: {}", forGroupSql);
-            log.debug("Operation(Permissions for Group) Params: namespace({}), group({})",
-                    namespace, name);
+            log.debug("Operation(Permissions for Group) Params: namespace({}), group({}), page({}), size({})",
+                    namespace, name, page, size);
         }
         return pool.preparedQuery(forGroupSql)
-                .execute(Tuple.of(namespace, name))
-                .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
-                .map(row -> new UserPermission(RowMappers.uuid(row), permission(row)))
-                .collect().with(Collectors.toUnmodifiableSet())
-                .map(UserPermissions::new)
+                .execute(Tuple.of(namespace, name, offset, size))
+                .map(rows -> userPermissions(rows, size))
                 .onFailure()
                 .transform(e -> new FatalGroupException("Retrieving permissions for group unexpectedly failed.", e));
     }
 
     private String renderForGroupSql() {
-        return using(configuration)
+        var recordQuery = using(configuration)
                 .select(
                         USER_PERMISSIONS.UUID.as(USER_UUID_NAME),
-                        USER_PERMISSIONS.PERMISSION.as(PERMISSION_NAME)
+                        USER_PERMISSIONS.PERMISSION.as(PERMISSION_NAME),
+                        inline(-1).as(COUNT_NAME)
                 ).from(USER_PERMISSIONS)
-                .where(USER_PERMISSIONS.GROUP_ID.eq(groupSelect(configuration)))
-                .orderBy(USER_PERMISSIONS.ID.asc())
+                .where(USER_PERMISSIONS.GROUP_ID
+                        .eq(groupSelect(configuration)))
+                .orderBy(USER_PERMISSIONS.PERMISSION.desc(), USER_PERMISSIONS.ID.asc())
+                .offset(field("$3", Integer.class))
+                .limit(field("$4", Integer.class));
+        var countQuery = using(configuration)
+                .select(
+                        inline(null, UUID.class).as(USER_UUID_NAME),
+                        inline(null, Integer.class).as(PERMISSION_NAME),
+                        count().as(COUNT_NAME)
+                ).from(USER_PERMISSIONS)
+                .where(USER_PERMISSIONS.GROUP_ID
+                        .eq(groupSelect(configuration)));
+        return recordQuery.unionAll(countQuery)
                 .getSQL();
     }
 

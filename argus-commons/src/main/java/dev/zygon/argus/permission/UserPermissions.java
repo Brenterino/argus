@@ -2,7 +2,7 @@ package dev.zygon.argus.permission;
 
 import lombok.NonNull;
 
-import java.util.Set;
+import java.util.List;
 
-public record UserPermissions(@NonNull Set<UserPermission> permissions) {
+public record UserPermissions(@NonNull List<UserPermission> permissions, int pages) {
 }

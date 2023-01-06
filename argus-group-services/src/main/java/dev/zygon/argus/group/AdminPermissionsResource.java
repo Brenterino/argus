@@ -26,6 +26,7 @@ import static dev.zygon.argus.permission.Permission.ACCESS;
 import static dev.zygon.argus.permission.Permission.ADMIN;
 import static dev.zygon.argus.group.mutiny.UniExtensions.*;
 import static javax.ws.rs.core.Response.Status.*;
+import static org.jboss.resteasy.reactive.RestResponse.Status.BAD_REQUEST;
 import static org.jboss.resteasy.reactive.RestResponse.Status.CREATED;
 import static org.jboss.resteasy.reactive.RestResponse.Status.NOT_FOUND;
 
@@ -52,12 +53,17 @@ public class AdminPermissionsResource {
     }
 
     @GET
-    public Uni<RestResponse<UserPermissions>> members(@PathParam("groupName") String groupName) {
+    public Uni<RestResponse<UserPermissions>> members(@PathParam("groupName") String groupName,
+                                                      @DefaultValue("0") @QueryParam("page") int page,
+                                                      @DefaultValue("25") @QueryParam("size") int size) {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName);
-        return permissions.hasPermission(group, namespaceUser, ADMIN)
+        return Uni.createFrom()
+                .item(page >= 0 && size > 0)
+                .plug(failIfFalse(new GroupException(BAD_REQUEST, "Invalid paging arguments provided.")))
+                .replaceWith(permissions.hasPermission(group, namespaceUser, ADMIN))
                 .plug(failIfFalse(new GroupException(FORBIDDEN, "You do not have permissions to view members of this group.")))
-                .replaceWith(permissions.forGroup(group))
+                .replaceWith(permissions.forGroup(group, page, size))
                 .map(RestResponse::ok);
     }
 
