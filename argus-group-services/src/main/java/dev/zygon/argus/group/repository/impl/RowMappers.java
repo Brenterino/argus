@@ -4,6 +4,7 @@ import dev.zygon.argus.group.Group;
 import dev.zygon.argus.group.audit.Audit;
 import dev.zygon.argus.group.audit.AuditAction;
 import dev.zygon.argus.group.audit.AuditLog;
+import dev.zygon.argus.namespace.Namespace;
 import dev.zygon.argus.permission.Permission;
 import dev.zygon.argus.permission.UserPermission;
 import dev.zygon.argus.permission.UserPermissions;
@@ -18,8 +19,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static dev.zygon.argus.group.repository.impl.ColumnNames.*;
-import static org.jooq.generated.Tables.GROUPS;
-import static org.jooq.generated.Tables.GROUP_AUDIT;
+import static org.jooq.generated.Tables.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RowMappers {
@@ -92,5 +92,9 @@ public class RowMappers {
     public static AuditAction action(Row row) {
         var actions = AuditAction.values();
         return actions[row.getInteger(GROUP_AUDIT.ACT.getName())];
+    }
+
+    public static Namespace namespace(Row row) {
+        return new Namespace(row.getString(NAMESPACES.NAME.getName()));
     }
 }

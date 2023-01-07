@@ -16,6 +16,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static dev.zygon.argus.group.repository.impl.CommonJooqRenderer.namespaceSelect;
 import static org.jooq.generated.Tables.*;
 import static org.jooq.impl.DSL.*;
 
@@ -51,6 +52,21 @@ public class DataSetup {
                 .insertInto(NAMESPACES,
                         NAMESPACES.ID, NAMESPACES.NAME)
                 .values(defaultValue(Long.class), field("$1", String.class))
+                .onDuplicateKeyIgnore()
+                .getSQL();
+    }
+
+    public void createNamespaceMapping(String namespace, String mapping) {
+        pool.preparedQuery(renderCreateMappingSql())
+                .execute(Tuple.of(namespace, mapping))
+                .await().indefinitely();
+    }
+
+    private String renderCreateMappingSql() {
+        return using(configuration)
+                .insertInto(NAMESPACE_MAPPINGS,
+                        NAMESPACE_MAPPINGS.NAMESPACE_ID, NAMESPACE_MAPPINGS.MAPPING)
+                .values(field(namespaceSelect(configuration)), field("$2", String.class))
                 .onDuplicateKeyIgnore()
                 .getSQL();
     }
@@ -102,6 +118,10 @@ public class DataSetup {
         delete(this::renderDeleteNamespacesSql);
     }
 
+    public void deleteAllNamespaceMappings() {
+        delete(this::renderDeleteNamespaceMappingsSql);
+    }
+
     private String renderDeletePermissionsSql() {
         return using(configuration)
                 .deleteFrom(USER_PERMISSIONS)
@@ -123,6 +143,12 @@ public class DataSetup {
     private String renderDeleteNamespacesSql() {
         return using(configuration)
                 .deleteFrom(NAMESPACES)
+                .getSQL();
+    }
+
+    private String renderDeleteNamespaceMappingsSql() {
+        return using(configuration)
+                .deleteFrom(NAMESPACE_MAPPINGS)
                 .getSQL();
     }
 }
