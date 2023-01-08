@@ -4,7 +4,9 @@ include(
     "argus-auth-services",
     "argus-commons",
     "argus-group-services",
-    "argus-location-services"
+    "argus-location-services",
+    "argus-name-services",
+    "argus-user-client"
 )
 
 pluginManagement {
