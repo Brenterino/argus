@@ -10,7 +10,6 @@ java {
 
 val okHttpVersion: String by project
 val retrofitVersion: String by project
-val assertJVersion: String by project
 
 dependencies {
     // OkHttp / Retrofit
@@ -20,9 +19,6 @@ dependencies {
 
     // Argus
     implementation(project(":argus-commons"))
-
-    // Test Dependencies
-    testImplementation("org.assertj:assertj-core:${assertJVersion}")
 }
 
 tasks {

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "argus",
+  "version": "1.0.0",
+  "name": "Argus",
+  "description": "Client module for interactions with the Argus system.",
+  "authors": [
+    "Zygon"
+  ],
+  "contact": {
+    "homepage": "https://argus.zygon.dev/",
+    "sources": "TBD"
+  },
+  "license": "MIT",
+  "icon": "assets/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "dev.zygon.argus.client.ArgusFabricClient"
+    ]
+  },
+  "mixins": [
+    "argus.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "1.18.x",
+    "java": ">=17"
+  }
+}
