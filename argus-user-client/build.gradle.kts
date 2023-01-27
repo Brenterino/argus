@@ -1,6 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     `java-library`
     id("io.freefair.lombok")
+    id("com.github.johnrengelman.shadow")
 }
 
 java {
@@ -10,12 +13,17 @@ java {
 
 val okHttpVersion: String by project
 val retrofitVersion: String by project
+val jacksonVersion: String by project
 
 dependencies {
     // OkHttp / Retrofit
     implementation("com.squareup.okhttp3:okhttp:${okHttpVersion}")
     implementation("com.squareup.retrofit2:retrofit:${retrofitVersion}")
     implementation("com.squareup.retrofit2:converter-jackson:${retrofitVersion}")
+
+    // Jackson
+    implementation(enforcedPlatform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}"))
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Argus
     implementation(project(":argus-commons"))
@@ -29,4 +37,17 @@ tasks {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+}
+
+val shadowJar = tasks.withType<ShadowJar> {
+    archiveClassifier.convention("")
+    archiveClassifier.set("")
+}
+
+tasks.getByName("build") {
+    dependsOn(shadowJar)
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }

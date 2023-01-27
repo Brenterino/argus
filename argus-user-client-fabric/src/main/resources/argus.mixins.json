@@ -6,8 +6,10 @@
   "mixins": [],
   "client": [
     "ChatHudListenerMixin",
+    "ClientConnectionMixin",
     "ClientEntityManagerMixin",
-    "ClientEntityManagerMixin$ListenerMixin"
+    "ClientEntityManagerMixin$ListenerMixin",
+    "ClientLoginNetworkHandlerMixin"
   ],
   "server": [],
   "injectors": {

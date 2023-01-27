@@ -15,6 +15,7 @@ pluginManagement {
     val lombokPluginVersion: String by settings
     val jooqPluginVersion: String by settings
     val fabricLoomPluginVersion: String by settings
+    val shadowPluginVersion: String by settings
 
     repositories {
         mavenCentral()
@@ -29,5 +30,6 @@ pluginManagement {
         id("io.freefair.lombok") version lombokPluginVersion
         id("nu.studer.jooq") version jooqPluginVersion
         id("fabric-loom") version fabricLoomPluginVersion
+        id("com.github.johnrengelman.shadow") version shadowPluginVersion
     }
 }

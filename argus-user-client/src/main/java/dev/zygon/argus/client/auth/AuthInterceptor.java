@@ -1,5 +1,6 @@
 package dev.zygon.argus.client.auth;
 
+import dev.zygon.argus.client.util.HeaderUtil;
 import lombok.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.Response;
@@ -8,15 +9,23 @@ import java.io.IOException;
 
 public class AuthInterceptor implements Interceptor {
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private final TokenGenerator generator;
+
+    public AuthInterceptor(TokenGenerator generator) {
+        this.generator = generator;
+    }
 
     @Override
     public @NonNull Response intercept(@NonNull Chain chain) throws IOException {
-        // TODO request token if expired, attach if present
-        var request = chain.request()
-                .newBuilder()
-                .addHeader(AUTHORIZATION_HEADER, "")
-                .build();
-        return chain.proceed(request);
+        var token = generator.token();
+        if (token != null) {
+            var request = chain.request()
+                    .newBuilder()
+                    .headers(HeaderUtil.createHeaders(token))
+                    .build();
+            return chain.proceed(request);
+        } else {
+            return chain.proceed(chain.request());
+        }
     }
 }

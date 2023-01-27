@@ -12,6 +12,8 @@ val minecraftVersion: String by project
 val yarnMappingsVersion: String by project
 val fabricLoaderVersion: String by project
 val fabricApiVersion: String by project
+val okHttpVersion: String by project
+val retrofitVersion: String by project
 
 dependencies {
     // Fabric
@@ -22,8 +24,14 @@ dependencies {
     // Fabric API
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}")
 
-    // Argus
+    // Implementation Dependencies
+    implementation(project(":argus-commons"))
     implementation(project(":argus-user-client"))
+    implementation("com.squareup.okhttp3:okhttp:${okHttpVersion}")
+    implementation("com.squareup.retrofit2:retrofit:${retrofitVersion}")
+
+    // 'Shade' these Dependencies into our JAR
+    include(project(":argus-user-client"))
 }
 
 tasks {

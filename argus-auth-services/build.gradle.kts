@@ -15,6 +15,14 @@ dependencies {
     // Quarkus BoM
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}"))
 
+    // Quarkus
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+    implementation("io.quarkus:quarkus-rest-client-reactive-jackson")
+    implementation("io.quarkus:quarkus-smallrye-jwt")
+
+    // Argus
+    implementation(project(":argus-commons"))
+
     // Slf4j
     implementation("org.slf4j:slf4j-api")
     implementation("org.jboss.slf4j:slf4j-jboss-logmanager")
