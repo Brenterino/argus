@@ -24,6 +24,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // Image/Deploy Dependencies
+    implementation("io.quarkus:quarkus-container-image-docker-deployment")
 }
 
 tasks {

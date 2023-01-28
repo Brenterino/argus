@@ -5,4 +5,6 @@ public interface RefreshableTokenGenerator extends TokenGenerator {
     boolean isExpired();
 
     void refresh();
+
+    void forceRefresh();
 }

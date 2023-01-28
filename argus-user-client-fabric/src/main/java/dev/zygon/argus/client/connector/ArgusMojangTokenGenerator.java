@@ -47,6 +47,13 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
         }
     }
 
+    @Override
+    public void forceRefresh() {
+        // maintain token in case of immediate need for another API request
+        // after one that requires a force refresh
+        token = new ArgusToken(token.token(), Instant.now());
+    }
+
     private void retrieveToken() {
         if (isExpired()) {
             ClientScheduler.INSTANCE

@@ -18,16 +18,16 @@ public class ArgusClientConfig {
 
     // Client Visibility Related Configuration
     private boolean streamerModeEnabled = false;
-    private boolean hideSnitchesEnabled = false;
-    private List<String> hiddenSnitchGroups = Collections.emptyList();
+    private boolean hideChatLocationsEnabled = false;
+    private List<String> hiddenGroupAlerts = Collections.emptyList();
     private boolean coloredNamesEnabled = true;
 
     // Client Sharing Capabilities
     private boolean broadcastSnitchesEnabled = true;
     private boolean readLocalEntitiesEnabled = false;
 
-    public boolean shouldHideSnitch(String group) {
-        return streamerModeEnabled || hideSnitchesEnabled || hiddenSnitchGroups.contains(group);
+    public boolean shouldHideGroupAlert(String group) {
+        return streamerModeEnabled || hideChatLocationsEnabled || hiddenGroupAlerts.contains(group);
     }
 
     @Getter

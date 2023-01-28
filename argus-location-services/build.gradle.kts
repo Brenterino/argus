@@ -13,6 +13,7 @@ val quarkusVersion: String by project
 val assertJVersion: String by project
 
 dependencies {
+    implementation("io.quarkus:quarkus-container-image-docker")
     // Quarkus BoM
     implementation(enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}"))
 
@@ -35,6 +36,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.assertj:assertj-core:${assertJVersion}")
+
+    // Image/Deploy Dependencies
+    implementation("io.quarkus:quarkus-container-image-docker-deployment")
 }
 
 tasks {

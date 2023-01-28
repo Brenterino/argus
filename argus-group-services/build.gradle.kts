@@ -48,6 +48,9 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.assertj:assertj-core:${assertJVersion}")
     testImplementation("io.rest-assured:rest-assured")
+
+    // Image/Deploy Dependencies
+    implementation("io.quarkus:quarkus-container-image-docker-deployment")
 }
 
 jooq {
