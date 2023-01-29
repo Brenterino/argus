@@ -17,7 +17,7 @@
  */
 package dev.zygon.argus.client.mixin;
 
-import dev.zygon.argus.client.event.ChatEventManager;
+import dev.zygon.argus.client.event.ChatEventHandler;
 import net.minecraft.client.gui.hud.ChatHudListener;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.HoverEvent;
@@ -47,7 +47,7 @@ public abstract class ChatHudListenerMixin {
                 .findFirst()
                 .map(Text::getString)
                 .orElse(null);
-        var shouldCancel = ChatEventManager.INSTANCE.onChatMessage(text, hoverText);
+        var shouldCancel = ChatEventHandler.INSTANCE.onChatMessage(text, hoverText);
         if (shouldCancel) {
             ci.cancel();
         }

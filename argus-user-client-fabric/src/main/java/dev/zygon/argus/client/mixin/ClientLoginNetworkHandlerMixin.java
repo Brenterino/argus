@@ -46,6 +46,9 @@ public abstract class ClientLoginNetworkHandlerMixin {
     public void onSuccess(LoginSuccessS2CPacket packet, CallbackInfo ci) {
         var session = client.getSession();
         var server = connection.getAddress().toString();
+        if (server.contains("/")) {
+            server = server.split("/")[1];
+        }
         log.info("[ARGUS] Connected to server {}. Starting Argus Client.", server);
         try {
             ArgusClientConnector.INSTANCE

@@ -27,6 +27,9 @@ public interface AuthConfiguration {
     String publicKey();
 
     @WithDefault("")
+    String privateKey();
+
+    @WithDefault("")
     String issuer();
 
     @WithDefault("3")

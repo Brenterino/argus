@@ -17,7 +17,17 @@
  */
 package dev.zygon.argus.permission;
 
-import java.util.Set;
+import lombok.NonNull;
 
-public record GroupPermissions(Set<GroupPermission> permissions) {
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public record GroupPermissions(@NonNull Set<GroupPermission> permissions) {
+
+    public Permissions toPermissions() {
+        var permissionMap = permissions()
+                .stream()
+                .collect(Collectors.toMap(GroupPermission::group, GroupPermission::permission));
+        return new Permissions(permissionMap);
+    }
 }

@@ -17,21 +17,25 @@
  */
 package dev.zygon.argus.auth.service;
 
+import dev.zygon.argus.namespace.Namespace;
 import dev.zygon.argus.permission.GroupPermissions;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @ApplicationScoped
-@Path("/groups/permissions")
 @Produces(MediaType.APPLICATION_JSON)
-@RegisterRestClient(configKey = "argus-permissions-api")
-public interface ArgusPermissionsService {
+@RegisterRestClient(configKey = "argus-groups-api")
+public interface ArgusGroupService {
 
+    @GET
+    @Path("/groups/permissions")
     Uni<GroupPermissions> elected(@HeaderParam("Authorization") String token);
+
+    @GET
+    @Path("/groups/namespaces")
+    Uni<Namespace> namespace(@QueryParam("mapping") String mapping);
 }

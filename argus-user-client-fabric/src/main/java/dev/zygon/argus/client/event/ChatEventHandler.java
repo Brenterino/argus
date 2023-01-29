@@ -31,7 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public enum ChatEventManager {
+public enum ChatEventHandler {
 
     INSTANCE;
 

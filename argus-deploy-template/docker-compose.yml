@@ -50,12 +50,13 @@ services:
     volumes:
       - ./argus.crt:/etc/ssl/argus.crt
       - ./argus.key:/etc/ssl/argus.key
+      - ./public.pem:/etc/jwt/public.pem
     environment:
       - QUARKUS_HTTP_SSL_PORT=443
       - QUARKUS_HTTP_INSECURE_REQUESTS=disabled
       - QUARKUS_HTTP_SSL_CERTIFICATE_FILES=/etc/ssl/argus.crt
       - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_FILES=/etc/ssl/argus.key
-      - ARGUS_AUTH_PUBLIC_KEY=https://argus-auth/auth/key
+      - ARGUS_AUTH_PUBLIC_KEY=/etc/jwt/public.pem
       - ARGUS_AUTH_ISSUER=https://localhost/auth
       - ARGUS_GROUP_MAX_OWNED_GROUPS=3
       - ARGUS_GROUP_JOOQ_DIALECT=POSTGRES
@@ -74,10 +75,11 @@ services:
     volumes:
       - ./argus.crt:/etc/ssl/argus.crt
       - ./argus.key:/etc/ssl/argus.key
+      - ./public.pem:/etc/jwt/public.pem
     environment:
       - QUARKUS_HTTP_SSL_PORT=443
       - QUARKUS_HTTP_INSECURE_REQUESTS=disabled
       - QUARKUS_HTTP_SSL_CERTIFICATE_FILES=/etc/ssl/argus.crt
       - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_FILES=/etc/ssl/argus.key
-      - ARGUS_AUTH_PUBLIC_KEY=https://argus-auth/auth/key
+      - ARGUS_AUTH_PUBLIC_KEY=/etc/jwt/public.pem
       - ARGUS_AUTH_ISSUER=https://localhost/auth
