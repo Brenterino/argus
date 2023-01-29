@@ -11,7 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @ApplicationScoped
-@Path("/permissions")
+@Path("/groups/permissions")
 @Produces(MediaType.APPLICATION_JSON)
 @RegisterRestClient(configKey = "argus-permissions-api")
 public interface ArgusPermissionsService {

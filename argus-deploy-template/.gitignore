@@ -1,0 +1,7 @@
+# Ignore Generated Certificate, Public/Private Keys
+*.crt
+*.key
+*.pem
+
+# Ignore Database Volume Mount
+db/

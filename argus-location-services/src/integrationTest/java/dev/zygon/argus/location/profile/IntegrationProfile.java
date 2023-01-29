@@ -13,8 +13,8 @@ public class IntegrationProfile implements QuarkusTestProfile {
                 "quarkus.log.level", "DEBUG",
 
                 // Verify JWT
-                "mp.jwt.verify.publickey.location", "public.pem",
-                "mp.jwt.verify.issuer", "https://argus.zygon.dev/issuer",
+                "argus.auth.public-key", "public.pem",
+                "argus.auth.issuer", "https://argus.zygon.dev/issuer",
 
                 // Sign JWT
                 "smallrye.jwt.sign.key.location", "private.pem"

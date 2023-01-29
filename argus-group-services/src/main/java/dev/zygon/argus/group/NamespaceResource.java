@@ -4,7 +4,6 @@ import dev.zygon.argus.group.exception.GroupException;
 import dev.zygon.argus.group.mutiny.UniExtensions;
 import dev.zygon.argus.group.repository.NamespaceRepository;
 import dev.zygon.argus.namespace.Namespace;
-import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import lombok.experimental.ExtensionMethod;
 import org.jboss.resteasy.reactive.RestResponse;
@@ -16,8 +15,7 @@ import javax.ws.rs.core.MediaType;
 import static org.jboss.resteasy.reactive.RestResponse.Status.NOT_FOUND;
 
 @ApplicationScoped
-@Authenticated
-@Path("/namespaces")
+@Path("/groups/namespaces")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExtensionMethod(UniExtensions.class)

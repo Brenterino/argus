@@ -32,7 +32,7 @@ import static org.jboss.resteasy.reactive.RestResponse.Status.NOT_FOUND;
 
 @ApplicationScoped
 @Authenticated
-@Path("/permissions/{groupName}/admin")
+@Path("/groups/permissions/{groupName}/admin")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AdminPermissionsResource {

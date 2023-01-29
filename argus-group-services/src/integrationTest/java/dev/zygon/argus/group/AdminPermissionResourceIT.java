@@ -27,7 +27,7 @@ import static org.jboss.resteasy.reactive.RestResponse.StatusCode.*;
 @TestProfile(IntegrationProfile.class)
 public class AdminPermissionResourceIT {
 
-    private static final String URL = "/permissions/{groupName}/admin";
+    private static final String URL = "/groups/permissions/{groupName}/admin";
     private static final String GROUP_NAME = "groupName";
 
     private static final String PAGE_NAME = "page";

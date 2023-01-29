@@ -22,7 +22,7 @@ import static org.jboss.resteasy.reactive.RestResponse.Status.FORBIDDEN;
 
 @ApplicationScoped
 @Authenticated
-@Path("/permissions")
+@Path("/groups/permissions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ExtensionMethod(UniExtensions.class)

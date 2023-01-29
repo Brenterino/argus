@@ -9,27 +9,27 @@ import retrofit2.http.*;
 
 public interface ArgusPermissionApi {
 
-    @GET("/permissions")
+    @GET("/groups/permissions")
     Call<GroupPermissions> elected();
 
-    @PUT("/permissions/{groupName}")
+    @PUT("/groups/permissions/{groupName}")
     Call<Void> elect(@Path("groupName") String group,
                      @Body UserPermission permission);
 
-    @GET("/permissions/{groupName}/admin")
+    @GET("/groups/permissions/{groupName}/admin")
     Call<UserPermissions> members(@Path("groupName") String group,
                                   @Query("page") int page,
                                   @Query("size") int size);
 
-    @POST("/permissions/{groupName}/admin")
+    @POST("/groups/permissions/{groupName}/admin")
     Call<Void> invite(@Path("groupName") String group,
                       @Body UserPermission permission);
 
-    @PUT("/permissions/{groupName}/admin")
+    @PUT("/groups/permissions/{groupName}/admin")
     Call<Void> modify(@Path("groupName") String group,
                       @Body UserPermission permission);
 
-    @DELETE("/permissions/{groupName}/admin")
+    @DELETE("/groups/permissions/{groupName}/admin")
     Call<Void> kick(@Path("groupName") String group,
                     @Body User target);
 }

@@ -19,7 +19,7 @@ public class TokenGenerator {
     private final String issuer;
 
     public TokenGenerator(
-            @ConfigProperty(name = "mp.jwt.verify.issuer") String issuer) {
+            @ConfigProperty(name = "argus.auth.issuer") String issuer) {
         this.issuer = issuer;
     }
 

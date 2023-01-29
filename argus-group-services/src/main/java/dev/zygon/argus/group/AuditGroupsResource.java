@@ -20,7 +20,7 @@ import static org.jboss.resteasy.reactive.RestResponse.Status.FORBIDDEN;
 
 @ApplicationScoped
 @Authenticated
-@Path("/audits/{groupName}")
+@Path("/groups/audits/{groupName}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuditGroupsResource {

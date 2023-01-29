@@ -68,7 +68,7 @@ public class UserPermissionsResourceIT {
     @Nested
     public class Elected {
 
-        private static final String URL = "/permissions";
+        private static final String URL = "/groups/permissions";
 
         @Test
         public void whenMemberOfNoGroupsNoElectedRolesAreAvailable() {
@@ -136,7 +136,7 @@ public class UserPermissionsResourceIT {
     @Nested
     public class Elect {
 
-        private static final String URL = "/permissions/{groupName}";
+        private static final String URL = "/groups/permissions/{groupName}";
         private static final String GROUP_NAME = "groupName";
 
         @Test

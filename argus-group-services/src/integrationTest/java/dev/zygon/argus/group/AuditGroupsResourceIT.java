@@ -32,7 +32,7 @@ import static org.jboss.resteasy.reactive.RestResponse.StatusCode.*;
 @TestProfile(IntegrationProfile.class)
 public class AuditGroupsResourceIT {
 
-    private static final String URL = "/audits/{groupName}";
+    private static final String URL = "/groups/audits/{groupName}";
     private static final String GROUP_NAME = "groupName";
 
     private static final String PAGE_NAME = "page";

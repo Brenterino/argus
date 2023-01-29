@@ -8,7 +8,7 @@ import retrofit2.http.Query;
 
 public interface ArgusAuditApi {
 
-    @GET("/audits/{groupName}")
+    @GET("/groups/audits/{groupName}")
     Call<AuditLog> audit(@Path("groupName") String group,
                          @Query("page") int page,
                          @Query("size") int size);
