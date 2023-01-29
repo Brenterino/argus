@@ -26,5 +26,8 @@ public enum AuditAction {
     // User Actions
     INVITE,
     MODIFY,
-    KICK
+    KICK,
+
+    // Member Actions
+    ELECT
 }

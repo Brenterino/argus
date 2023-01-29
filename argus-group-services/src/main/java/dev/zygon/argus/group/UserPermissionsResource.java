@@ -17,12 +17,17 @@
  */
 package dev.zygon.argus.group;
 
+import dev.zygon.argus.group.audit.Audit;
+import dev.zygon.argus.group.audit.AuditAction;
 import dev.zygon.argus.group.auth.Authorizer;
 import dev.zygon.argus.group.exception.GroupException;
 import dev.zygon.argus.group.mutiny.UniExtensions;
+import dev.zygon.argus.group.repository.AuditRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
 import dev.zygon.argus.permission.GroupPermissions;
+import dev.zygon.argus.permission.Permission;
 import dev.zygon.argus.permission.UserPermission;
+import dev.zygon.argus.user.NamespaceUser;
 import io.quarkus.security.Authenticated;
 import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
@@ -32,6 +37,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.time.OffsetDateTime;
 
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
@@ -46,11 +52,14 @@ import static org.jboss.resteasy.reactive.RestResponse.Status.FORBIDDEN;
 public class UserPermissionsResource {
 
     private final Authorizer authorizer;
+    private final AuditRepository audits;
     private final PermissionRepository permissions;
 
     public UserPermissionsResource(Authorizer authorizer,
+                                   AuditRepository audits,
                                    PermissionRepository permissions) {
         this.authorizer = authorizer;
+        this.audits = audits;
         this.permissions = permissions;
     }
 
@@ -68,10 +77,25 @@ public class UserPermissionsResource {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName);
         var permission = userPermission.permission();
+        var audit = createElectAudit(namespaceUser, permission);
         return permissions.hasPermission(group, namespaceUser, permission)
                 .plug(failIfFalse(new GroupException(FORBIDDEN, "You cannot elect a permission that you do not have access to.")))
                 .replaceWith(permissions.elect(group, namespaceUser, permission))
                 .plug(failIfFalse(new GroupException("Could not elect permission.")))
+                .replaceWith(audits.create(group, audit))
+                .plug(failIfFalse(new GroupException("Permission was elected, but no audit trail was left behind.")))
                 .replaceWith(RestResponse.status(NO_CONTENT));
+    }
+
+    private Audit createElectAudit(NamespaceUser changeUser,
+                                   Permission permission) {
+        var changer = changeUser.user();
+        return Audit.builder()
+                .changer(changer.uuid())
+                .target(changer.uuid())
+                .action(AuditAction.ELECT)
+                .permission(permission)
+                .occurred(OffsetDateTime.now())
+                .build();
     }
 }

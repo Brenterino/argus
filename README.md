@@ -23,3 +23,15 @@ Services that are for management of Argus groups. More information can be found
 Services that are used to relay the locations of players between users based on
 their groups. More information can be found
 [here](./argus-location-services/README.md).
+
+## Name Services
+
+Services that are for storage and retrieval of anything that is named. Generally,
+this includes player-derivative names. More information can be found
+[here](./argus-name-services/README.md).
+
+## Status Services
+
+Services that are used to relay the status of players between users based on
+their groups. More information can be found
+[here](./argus-status-services/README.md).
