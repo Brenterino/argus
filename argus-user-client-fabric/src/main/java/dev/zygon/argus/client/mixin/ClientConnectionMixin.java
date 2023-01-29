@@ -32,7 +32,6 @@ public abstract class ClientConnectionMixin {
 
     @Inject(at = @At("TAIL"), method = "channelInactive")
     public void channelInactive(ChannelHandlerContext context, CallbackInfo ci) {
-        log.info("[ARGUS] Connection was closed.");
         try {
             ArgusClientConnector.INSTANCE.close();
         } catch (Throwable t) {

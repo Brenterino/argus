@@ -49,7 +49,6 @@ public abstract class ClientLoginNetworkHandlerMixin {
         if (server.contains("/")) {
             server = server.split("/")[1];
         }
-        log.info("[ARGUS] Connected to server {}. Starting Argus Client.", server);
         try {
             ArgusClientConnector.INSTANCE
                     .open(server, session.getUsername());

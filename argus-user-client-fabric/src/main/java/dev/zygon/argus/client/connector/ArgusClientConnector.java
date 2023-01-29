@@ -19,11 +19,15 @@ package dev.zygon.argus.client.connector;
 
 import dev.zygon.argus.client.ArgusClient;
 import dev.zygon.argus.client.config.ArgusClientConfig;
+import dev.zygon.argus.client.connector.customize.ArgusModClientCustomizer;
+import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
 import dev.zygon.argus.client.scheduler.ClientScheduler;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public enum ArgusClientConnector {
 
     INSTANCE;
@@ -32,10 +36,11 @@ public enum ArgusClientConnector {
     private ScheduledFuture<?> tokenRefresh;
 
     ArgusClientConnector() {
-        client = new ArgusClient(ArgusMojangTokenGenerator.INSTANCE);
+        client = new ArgusClient(ArgusModClientCustomizer.INSTANCE);
     }
 
     public void open(String server, String username) {
+        log.info("[ARGUS] Connected to server {}. Starting Argus Client.", server);
         var clientConfig = ArgusClientConfig.getActiveConfig();
         var tokenGenerator = ArgusMojangTokenGenerator.INSTANCE;
         client.init(clientConfig.getArgusHost());
@@ -49,6 +54,8 @@ public enum ArgusClientConnector {
 
     public void close() {
         if (tokenRefresh != null && !tokenRefresh.isDone()) {
+            log.info("[ARGUS] Disconnected from server, cleaning up...");
+
             tokenRefresh.cancel(false);
         }
     }

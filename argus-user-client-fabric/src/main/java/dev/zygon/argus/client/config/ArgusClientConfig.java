@@ -28,9 +28,9 @@ import java.util.List;
 public class ArgusClientConfig {
 
     // Argus Connection Configuration
-    private String argusHost = "http://localhost:8080";
+    private String argusHost = "https://localhost";
+    private boolean verifyCertificateEnabled = false;
     private int refreshTokenCheckIntervalSeconds = 30;
-
     private int refreshTokenRenewBeforeExpirationSeconds = 60;
 
     // Client Visibility Related Configuration
@@ -47,7 +47,6 @@ public class ArgusClientConfig {
         return streamerModeEnabled || hideChatLocationsEnabled || hiddenGroupAlerts.contains(group);
     }
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private static ArgusClientConfig activeConfig = new ArgusClientConfig();
 }

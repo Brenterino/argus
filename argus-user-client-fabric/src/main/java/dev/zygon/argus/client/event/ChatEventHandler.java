@@ -19,7 +19,7 @@ package dev.zygon.argus.client.event;
 
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.location.LocalLocationStorage;
-import dev.zygon.argus.client.names.NameStorage;
+import dev.zygon.argus.client.name.NameStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Dimension;
 import dev.zygon.argus.location.Location;
@@ -91,7 +91,8 @@ public enum ChatEventHandler {
         var pearlHit = new PearlHit(matcher);
         var group = pearlHit.group();
         var dimension = DimensionMapper.fromSnitch(pearlHit.dimension());
-        var uuid = NameStorage.INSTANCE.extendedIdFromName(pearlHit.pearled());
+        var holder = NameStorage.INSTANCE.idFromName(pearlHit.holder());
+        var pearled = NameStorage.INSTANCE.extendedIdFromName(pearlHit.pearled());
         try {
             var location = Location.builder()
                     .x(Double.parseDouble(pearlHit.x()))
@@ -101,7 +102,8 @@ public enum ChatEventHandler {
                     .local(true)
                     .time(Instant.now())
                     .build();
-            LocalLocationStorage.INSTANCE.track(uuid, location);
+            LocalLocationStorage.INSTANCE.track(holder, location);
+            LocalLocationStorage.INSTANCE.track(pearled, location);
             return shouldHideMessage(group);
         } catch (NumberFormatException e) {
             log.warn("[ARGUS] Pearl hit data could not be translated to location data!", e);

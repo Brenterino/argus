@@ -22,11 +22,10 @@ import dev.zygon.argus.client.api.ArgusAuthApi;
 import dev.zygon.argus.client.api.ArgusGroupApi;
 import dev.zygon.argus.client.api.ArgusPermissionApi;
 import dev.zygon.argus.client.auth.AuthInterceptor;
-import dev.zygon.argus.client.auth.TokenGenerator;
+import dev.zygon.argus.client.util.JacksonUtil;
 import lombok.Getter;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.Closeable;
 
@@ -38,9 +37,12 @@ public class ArgusClient implements Closeable {
     private @Getter ArgusAuditApi audit;
     private @Getter ArgusPermissionApi permissions;
 
-    public ArgusClient(TokenGenerator tokenGenerator) {
+    public ArgusClient(ArgusClientCustomizer customizer) {
         this.client = new OkHttpClient.Builder()
-                .addInterceptor(new AuthInterceptor(tokenGenerator))
+                .addInterceptor(new AuthInterceptor(customizer.tokenGenerator()))
+                .hostnameVerifier(customizer.hostnameVerifier())
+                .sslSocketFactory(customizer.sslSocketFactory(),
+                        customizer.trustManager())
                 .build();
     }
 
@@ -48,7 +50,7 @@ public class ArgusClient implements Closeable {
         var retrofit = new Retrofit.Builder()
                 .client(client)
                 .baseUrl(argusBaseUrl)
-                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(JacksonUtil.converterFactory())
                 .build();
         this.auth = retrofit.create(ArgusAuthApi.class);
         this.groups = retrofit.create(ArgusGroupApi.class);

@@ -80,5 +80,7 @@ Referenced changes should be applied to [nginx.conf](nginx.conf):
 ### API Services Configuration
 
 - Update all references for the `ARGUS_AUTH_ISSUER` to the proper domain.
+- Remove any instances of the `QUARKUS_TLS_TRUST_ALL` environment variable from
+  [docker-compose.yml](docker-compose.yml)
 
 **WIP**

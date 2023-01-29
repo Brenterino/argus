@@ -15,13 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.client.connector;
+package dev.zygon.argus.client.connector.customize;
 
 import dev.zygon.argus.auth.ArgusToken;
 import dev.zygon.argus.auth.MojangAuthData;
 import dev.zygon.argus.client.api.ArgusAuthApi;
 import dev.zygon.argus.client.auth.RefreshableTokenGenerator;
 import dev.zygon.argus.client.config.ArgusClientConfig;
+import dev.zygon.argus.client.connector.MojangAuthConnector;
 import dev.zygon.argus.client.scheduler.ClientScheduler;
 import lombok.Setter;
 import lombok.SneakyThrows;

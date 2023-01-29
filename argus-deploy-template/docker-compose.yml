@@ -34,6 +34,7 @@ services:
       - ./public.pem:/etc/jwt/public.pem
       - ./private.pem:/etc/jwt/private.pem
     environment:
+      - QUARKUS_TLS_TRUST_ALL=true
       - QUARKUS_HTTP_SSL_PORT=443
       - QUARKUS_HTTP_INSECURE_REQUESTS=disabled
       - QUARKUS_HTTP_SSL_CERTIFICATE_FILES=/etc/ssl/argus.crt
