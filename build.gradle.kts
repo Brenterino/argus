@@ -1,6 +1,11 @@
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
+        maven {
+            name = "TerraformersMC"
+            url = uri("https://maven.terraformersmc.com/releases/")
+        }
     }
 }
 

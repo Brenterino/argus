@@ -35,9 +35,9 @@ public enum ChatEventHandler {
 
     INSTANCE;
 
-    private static final String SNITCH_PATTERN_TEXT = ".{2}(Login|Logout|Enter)\\s{2}.{2}(\\w+)\\s{2}.{2}(\\w+)\\s{2}.{2}\\[(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)]\\s{2}.{2}\\[(\\d.+)m\\s.{2}(\\w+\\s\\w+).{2}]";
-    private static final String SNITCH_HOVER_PATTERN_TEXT = ".{2}(Location:)\\s.{2}\\((\\w+)\\)\\s\\[(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)]\\s.{2}(Name:)\\s.{2}(\\w+)\\s.{2}(Group:)\\s.{2}(\\w+)";
-    private static final String PEARL_PATTERN_TEXT = "(.{2}\\[(\\w+)]\\s)?.{2}(Your pearl is held by|The pearl of .{2}(\\w+) is held by)\\s.{2}(\\w+)\\s.{2}\\[(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)\\s(\\w+)]";
+    private static final String SNITCH_PATTERN_TEXT = ".{2}(Login|Logout|Enter)\\s{2}.{2}(.+)\\s{2}.{2}(.+)\\s{2}.{2}\\[((.+)\\s)?(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)]\\s{2}(.{2}\\[(\\d+)m\\s.{2}(.+).{2}])?";
+    private static final String SNITCH_HOVER_PATTERN_TEXT = ".{2}(Location:)\\s.{2}\\((.+)\\)\\s\\[(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)]\\s.{2}(Name:)\\s.{2}(.+)\\s.{2}(Group:)\\s.{2}(.+)";
+    private static final String PEARL_PATTERN_TEXT = "(.{2}\\[(.+)]\\s)?.{2}(Your pearl is held by|The pearl of .{2}(.+) is held by)\\s.{2}(.+)\\s.{2}\\[(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)\\s(.+)?]";
 
     private static final Pattern SNITCH_PATTERN = Pattern.compile(SNITCH_PATTERN_TEXT);
     private static final Pattern SNITCH_HOVER_PATTERN = Pattern.compile(SNITCH_HOVER_PATTERN_TEXT);
@@ -118,13 +118,13 @@ public enum ChatEventHandler {
 
     private record SnitchHit(
             String action, String player, String snitch,
-            String x, String y, String z,
+            String dimension, String x, String y, String z,
             String distance, String cardinality) {
 
         private SnitchHit(Matcher matcher) {
             this(matcher.group(1), matcher.group(2), matcher.group(3),
-                    matcher.group(4), matcher.group(5), matcher.group(6),
-                    matcher.group(7), matcher.group(8));
+                    matcher.group(4), matcher.group(6), matcher.group(7), matcher.group(8),
+                    matcher.group(10), matcher.group(11));
         }
     }
 
@@ -133,8 +133,8 @@ public enum ChatEventHandler {
             String snitch, String group) {
 
         private SnitchHitHover(Matcher matcher) {
-            this(matcher.group(2), matcher.group(3), matcher.group(4),
-                    matcher.group(5), matcher.group(7), matcher.group(9));
+            this(matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5),
+                    matcher.group(7), matcher.group(9));
         }
     }
 

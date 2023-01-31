@@ -15,18 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.client;
+package dev.zygon.argus.client.menu;
 
-import lombok.extern.slf4j.Slf4j;
-import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 
-@Slf4j
-public class ArgusFabricClient implements ClientModInitializer {
+public class ArgusGroupList extends AlwaysSelectedEntryListWidget<ArgusGroupEntry> {
 
-    public static final String MOD_ID = "argus";
-
-    @Override
-    public void onInitializeClient() {
-        log.info("[ARGUS] Argus is loading.");
+    public ArgusGroupList(MinecraftClient client, int width, int height,
+                          int y1, int y2, int entryHeight) {
+        super(client, width, height, y1, y2, entryHeight);
     }
 }

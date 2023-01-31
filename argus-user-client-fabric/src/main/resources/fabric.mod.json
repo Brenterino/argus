@@ -9,14 +9,17 @@
   ],
   "contact": {
     "homepage": "https://argus.zygon.dev/",
-    "sources": "TBD"
+    "sources": "https://github.com/Brenterino/argus"
   },
-  "license": "MIT",
-  "icon": "assets/icon.png",
+  "license": "AGPL-3.0",
+  "icon": "assets/argus/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
       "dev.zygon.argus.client.ArgusFabricClient"
+    ],
+    "modmenu": [
+      "dev.zygon.argus.client.menu.ArgusModMenu"
     ]
   },
   "mixins": [
@@ -27,5 +30,8 @@
     "fabric": "*",
     "minecraft": "1.18.x",
     "java": ">=17"
+  },
+  "recommends": {
+    "modmenu": ">=3.0.0"
   }
 }

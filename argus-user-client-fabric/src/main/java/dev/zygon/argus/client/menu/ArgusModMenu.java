@@ -15,18 +15,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.client;
+package dev.zygon.argus.client.menu;
 
-import lombok.extern.slf4j.Slf4j;
-import net.fabricmc.api.ClientModInitializer;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
 
-@Slf4j
-public class ArgusFabricClient implements ClientModInitializer {
-
-    public static final String MOD_ID = "argus";
+public class ArgusModMenu implements ModMenuApi {
 
     @Override
-    public void onInitializeClient() {
-        log.info("[ARGUS] Argus is loading.");
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return ArgusMenu::new;
     }
 }

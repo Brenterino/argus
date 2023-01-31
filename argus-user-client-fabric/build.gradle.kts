@@ -12,6 +12,7 @@ val minecraftVersion: String by project
 val yarnMappingsVersion: String by project
 val fabricLoaderVersion: String by project
 val fabricApiVersion: String by project
+val modMenuVersion: String by project
 val okHttpVersion: String by project
 val retrofitVersion: String by project
 
@@ -23,6 +24,9 @@ dependencies {
 
     // Fabric API
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}")
+
+    // ModMenu
+    modImplementation("com.terraformersmc:modmenu:${modMenuVersion}")
 
     // Implementation Dependencies
     implementation(project(":argus-commons"))
