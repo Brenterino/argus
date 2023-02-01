@@ -8,12 +8,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx-dev.conf:/etc/nginx/nginx.conf
+      - ./nginx-prod.conf:/etc/nginx/nginx.conf
+      - ./argus.crt:/etc/ssl/argus.crt
+      - ./argus.key:/etc/ssl/argus.key
   postgres:
     image: postgres:15.1
     container_name: postgres
-    ports:
-      - "5432:5432"
     volumes:
       - ./db:/var/lib/postgresql/data
     environment:
@@ -27,25 +27,35 @@ services:
     image: zygon/argus-auth-services
     container_name: argus-auth
     volumes:
+      - ./argus.crt:/etc/ssl/argus.crt
+      - ./argus.key:/etc/ssl/argus.key
       - ./public.pem:/etc/jwt/public.pem
       - ./private.pem:/etc/jwt/private.pem
-      - ./trust.jks:/etc/jks/trust.jks
     environment:
-      - QUARKUS_HTTP_PORT=80
-      - QUARKUS_REST_CLIENT_ARGUS_GROUPS_API_URL=http://argus-groups
+      - QUARKUS_HTTP_SSL_PORT=443
+      - QUARKUS_HTTP_INSECURE_REQUESTS=disabled
+      - QUARKUS_HTTP_SSL_CERTIFICATE_FILES=/etc/ssl/argus.crt
+      - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_FILES=/etc/ssl/argus.key
+      - QUARKUS_REST_CLIENT_ARGUS_GROUPS_API_URL=https://localhost
       - ARGUS_AUTH_PUBLIC_KEY=/etc/jwt/public.pem
       - ARGUS_AUTH_PRIVATE_KEY=/etc/jwt/private.pem
-      - ARGUS_AUTH_ISSUER=http://localhost/auth
+      - ARGUS_AUTH_ISSUER=https://localhost/auth
   argus-groups:
     build:
       context: ../argus-group-services
       dockerfile: ../argus-group-services/src/main/docker/Dockerfile.jvm
     image: zygon/argus-group-services
     container_name: argus-groups
+    volumes:
+      - ./argus.crt:/etc/ssl/argus.crt
+      - ./argus.key:/etc/ssl/argus.key
     environment:
-      - QUARKUS_HTTP_PORT=80
-      - ARGUS_AUTH_PUBLIC_KEY=http://argus-auth/auth/key
-      - ARGUS_AUTH_ISSUER=http://localhost/auth
+      - QUARKUS_HTTP_SSL_PORT=443
+      - QUARKUS_HTTP_INSECURE_REQUESTS=disabled
+      - QUARKUS_HTTP_SSL_CERTIFICATE_FILES=/etc/ssl/argus.crt
+      - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_FILES=/etc/ssl/argus.key
+      - ARGUS_AUTH_PUBLIC_KEY=https://argus-auth/auth/key
+      - ARGUS_AUTH_ISSUER=https://localhost/auth
       - ARGUS_GROUP_MAX_OWNED_GROUPS=3
       - ARGUS_GROUP_JOOQ_DIALECT=POSTGRES
       - QUARKUS_DATASOURCE_DB_KIND=postgresql
@@ -60,7 +70,13 @@ services:
       dockerfile: ../argus-location-services/src/main/docker/Dockerfile.jvm
     image: zygon/argus-location-services
     container_name: argus-locations
+    volumes:
+      - ./argus.crt:/etc/ssl/argus.crt
+      - ./argus.key:/etc/ssl/argus.key
     environment:
-      - QUARKUS_HTTP_PORT=80
-      - ARGUS_AUTH_PUBLIC_KEY=http://argus-auth/auth/key
-      - ARGUS_AUTH_ISSUER=http://localhost/auth
+      - QUARKUS_HTTP_SSL_PORT=443
+      - QUARKUS_HTTP_INSECURE_REQUESTS=disabled
+      - QUARKUS_HTTP_SSL_CERTIFICATE_FILES=/etc/ssl/argus.crt
+      - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_FILES=/etc/ssl/argus.key
+      - ARGUS_AUTH_PUBLIC_KEY=https://argus-auth/auth/key
+      - ARGUS_AUTH_ISSUER=https://localhost/auth

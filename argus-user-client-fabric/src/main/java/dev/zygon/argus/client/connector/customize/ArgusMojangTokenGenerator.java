@@ -102,7 +102,7 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
 
         @Override
         public void onFailure(Call<ArgusToken> call, Throwable cause) {
-            log.warn("[ARGUS] Retrieval of token failed. Either auth service is down or client could not be verified.", cause);
+            log.warn("[ARGUS] Retrieval of token failed. Either auth service is down or client could not be verified.");
         }
     }
 

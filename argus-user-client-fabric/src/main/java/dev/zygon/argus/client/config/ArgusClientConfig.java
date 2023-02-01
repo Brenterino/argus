@@ -28,7 +28,7 @@ import java.util.List;
 public class ArgusClientConfig {
 
     // Argus Connection Configuration
-    private String argusHost = "https://localhost";
+    private String argusHost = "http://localhost";
     private boolean verifyCertificateEnabled = false;
     private int refreshTokenCheckIntervalSeconds = 30;
     private int refreshTokenRenewBeforeExpirationSeconds = 60;

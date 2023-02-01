@@ -5,19 +5,6 @@ This template can be used to spin up an Argus instance using
 It is **not** recommended to use this exact configuration in a production
 environment.
 
-## HTTPS Certificate/Key
-
-Connections via HTTPS require a certificate/key pair. A self-signed certificate
-and key can be generated in the following way:
-
-```bash
-openssl req -x509 -sha256 -nodes -newkey rsa:2048 -keyout argus.key -out argus.crt
-```
-
-**Note:** No information is required to be provided to populate the
-Distinguish Name (DN) of the certificate to have it work, but can be provided
-if desired.
-
 ## JWT Signing/Verifying Key Pair
 
 A private key is required to sign and the public key can then be used to verify
@@ -33,8 +20,8 @@ openssl pkcs8 -topk8 -nocrypt -inform pem -in rsaPrivateKey.pem -outform pem -ou
 
 ## Booting Up
 
-After the HTTPS certificate/key pair and JWT Signing/Verifying Key Pair have
-been created, the application can be booted up via:
+After the JWT Signing/Verifying Key Pair have been created, the application can
+be booted up via:
 
 ```bash
 docker-compose up -d
@@ -44,6 +31,10 @@ docker-compose up -d
 ahead of any other service so the DB can come up in time to be connected to.
 
 ## Changes for Production
+
+[docker-compose-prod.yml](docker-compose-prod.yml) is set up to represent a
+configuration similar to what would be used in production. This file will
+be referred to as `docker-compose.yml` for the rest of this section.
 
 This is not an exhaustive list of all changes that will make the configuration
 **production-ready**, but they are the minimum required/recommended changes.
@@ -80,7 +71,5 @@ Referenced changes should be applied to [nginx.conf](nginx.conf):
 ### API Services Configuration
 
 - Update all references for the `ARGUS_AUTH_ISSUER` to the proper domain.
-- Remove any instances of the `QUARKUS_TLS_TRUST_ALL` environment variable from
-  [docker-compose.yml](docker-compose.yml)
 
 **WIP**
