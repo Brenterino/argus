@@ -110,4 +110,10 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
     public String token() {
         return token != null ? token.token() : null;
     }
+
+    public void clean() {
+        this.username = null;
+        this.server = null;
+        this.token = null;
+    }
 }

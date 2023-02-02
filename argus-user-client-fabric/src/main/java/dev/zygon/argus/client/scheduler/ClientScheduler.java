@@ -38,8 +38,13 @@ public enum ClientScheduler {
     }
 
     public ScheduledFuture<?> register(Runnable task, long frequency, TimeUnit unit) {
+        return registerWithDelay(task, 0, frequency, unit);
+    }
+
+    public ScheduledFuture<?> registerWithDelay(Runnable task, long delay,
+                                                long frequency, TimeUnit unit) {
         return eventGroup()
-                .scheduleAtFixedRate(new SafeRunnable(task), 0, frequency, unit);
+                .scheduleAtFixedRate(new SafeRunnable(task), delay, frequency, unit);
     }
 
     // Utilize ClientConnection I/O pool for scheduling tasks

@@ -32,6 +32,9 @@ public class ArgusClientConfig {
     private boolean verifyCertificateEnabled = false;
     private int refreshTokenCheckIntervalSeconds = 30;
     private int refreshTokenRenewBeforeExpirationSeconds = 60;
+    private int refreshInitialWaitForTokenSeconds = 5;
+    private int refreshMembershipIntervalSeconds = 60;
+    private int refreshElectionsIntervalSeconds = 60;
 
     // Client Visibility Related Configuration
     private boolean streamerModeEnabled = false;

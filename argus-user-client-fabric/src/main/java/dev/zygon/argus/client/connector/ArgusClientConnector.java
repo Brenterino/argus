@@ -21,6 +21,7 @@ import dev.zygon.argus.client.ArgusClient;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.connector.customize.ArgusModClientCustomizer;
 import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
+import dev.zygon.argus.client.groups.GroupStorage;
 import dev.zygon.argus.client.scheduler.ClientScheduler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +35,8 @@ public enum ArgusClientConnector {
 
     private final ArgusClient client;
     private ScheduledFuture<?> tokenRefresh;
+    private ScheduledFuture<?> membershipRefresh;
+    private ScheduledFuture<?> electionsRefresh;
 
     ArgusClientConnector() {
         client = new ArgusClient(ArgusModClientCustomizer.INSTANCE);
@@ -41,9 +44,19 @@ public enum ArgusClientConnector {
 
     public void open(String server, String username) {
         log.info("[ARGUS] Connected to server {}. Starting Argus Client.", server);
+
+        // Initialize client with host
+        var clientConfig = ArgusClientConfig.getActiveConfig();
+        client.init(clientConfig.getArgusHost());
+
+        // Initialize Subcomponents
+        initTokenGenerator(server, username);
+        initGroupRefresh();
+    }
+
+    private void initTokenGenerator(String server, String username) {
         var clientConfig = ArgusClientConfig.getActiveConfig();
         var tokenGenerator = ArgusMojangTokenGenerator.INSTANCE;
-        client.init(clientConfig.getArgusHost());
         tokenGenerator.setAuth(client.getAuth());
         tokenGenerator.setServer(server);
         tokenGenerator.setUsername(username);
@@ -52,11 +65,34 @@ public enum ArgusClientConnector {
                         clientConfig.getRefreshTokenCheckIntervalSeconds(), TimeUnit.SECONDS);
     }
 
-    public void close() {
-        if (tokenRefresh != null && !tokenRefresh.isDone()) {
-            log.info("[ARGUS] Disconnected from server, cleaning up...");
+    private void initGroupRefresh() {
+        var clientConfig = ArgusClientConfig.getActiveConfig();
+        var groupStorage = GroupStorage.INSTANCE;
+        groupStorage.setGroups(client.getGroups());
+        groupStorage.setPermissions(client.getPermissions());
+        membershipRefresh = ClientScheduler.INSTANCE
+                .registerWithDelay(groupStorage::refreshMemberships,
+                        clientConfig.getRefreshInitialWaitForTokenSeconds(),
+                        clientConfig.getRefreshMembershipIntervalSeconds(), TimeUnit.SECONDS);
+        electionsRefresh = ClientScheduler.INSTANCE
+                .registerWithDelay(groupStorage::refreshElections,
+                        clientConfig.getRefreshInitialWaitForTokenSeconds(),
+                        clientConfig.getRefreshElectionsIntervalSeconds(), TimeUnit.SECONDS);
+    }
 
-            tokenRefresh.cancel(false);
+    public void close() {
+        log.info("[ARGUS] Disconnected from server, cleaning up...");
+        safeCancel(tokenRefresh);
+        safeCancel(membershipRefresh);
+        safeCancel(electionsRefresh);
+
+        ArgusMojangTokenGenerator.INSTANCE.clean();
+        GroupStorage.INSTANCE.clean();
+    }
+
+    private void safeCancel(ScheduledFuture<?> future) {
+        if (future != null && !future.isDone()) {
+            future.cancel(false);
         }
     }
 }
