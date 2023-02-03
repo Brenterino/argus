@@ -23,6 +23,7 @@ import dev.zygon.argus.permission.Permissions;
 import io.smallrye.jwt.build.Jwt;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -41,7 +42,7 @@ public class ArgusJwtTokenGenerator implements ArgusTokenGenerator {
 
     @Override
     public ArgusToken generate(UUID uuid, String namespace, Permissions permissions) {
-        var expiration = Instant.now()
+        var expiration = Instant.now(Clock.systemUTC())
                 .plus(Duration.of(configuration.tokenExpirationMinutes(), ChronoUnit.MINUTES));
         var token = Jwt.issuer(configuration.issuer())
                 .upn(uuid.toString() + UPN_SPLIT + namespace)

@@ -35,6 +35,7 @@ import retrofit2.internal.EverythingIsNonNull;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.concurrent.Future;
 
 @Slf4j
@@ -51,9 +52,11 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
     public boolean isExpired() {
         var config = ArgusClientConfig.getActiveConfig();
         var now = Instant.now(Clock.systemUTC());
-        return token == null || token.expiration()
-                .minus(config.getRefreshTokenRenewBeforeExpirationSeconds(), ChronoUnit.SECONDS)
-                .isAfter(now);
+        return Optional.ofNullable(token)
+                .map(ArgusToken::expiration)
+                .map(expiration -> expiration.minus(config.getRefreshTokenRenewBeforeExpirationSeconds(), ChronoUnit.SECONDS))
+                .map(now::isAfter)
+                .orElse(true);
     }
 
     @Override
