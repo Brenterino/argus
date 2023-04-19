@@ -13,6 +13,7 @@ val yarnMappingsVersion: String by project
 val fabricLoaderVersion: String by project
 val fabricApiVersion: String by project
 val modMenuVersion: String by project
+val clothConfigVersion: String by project
 val okHttpVersion: String by project
 val retrofitVersion: String by project
 
@@ -27,6 +28,11 @@ dependencies {
 
     // ModMenu
     modImplementation("com.terraformersmc:modmenu:${modMenuVersion}")
+
+    // Cloth Config
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${clothConfigVersion}") {
+        exclude("net.fabricmc.fabric-api")
+    }
 
     // Implementation Dependencies
     implementation(project(":argus-commons"))

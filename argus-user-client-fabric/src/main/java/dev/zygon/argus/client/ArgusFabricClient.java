@@ -17,7 +17,10 @@
  */
 package dev.zygon.argus.client;
 
+import dev.zygon.argus.client.config.ArgusClientConfig;
 import lombok.extern.slf4j.Slf4j;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 
 @Slf4j
@@ -28,5 +31,8 @@ public class ArgusFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         log.info("[ARGUS] Argus is loading.");
+        var holder = AutoConfig.register(ArgusClientConfig.class,
+                JanksonConfigSerializer::new);
+        ArgusClientConfig.setActiveConfig(holder.getConfig());
     }
 }

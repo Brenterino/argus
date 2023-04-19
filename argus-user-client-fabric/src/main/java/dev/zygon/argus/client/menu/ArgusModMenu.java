@@ -19,11 +19,13 @@ package dev.zygon.argus.client.menu;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import dev.zygon.argus.client.config.ArgusClientConfig;
+import me.shedaniel.autoconfig.AutoConfig;
 
 public class ArgusModMenu implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return ArgusMenu::new;
+        return parent -> AutoConfig.getConfigScreen(ArgusClientConfig.class, parent).get();
     }
 }

@@ -6,6 +6,10 @@ allprojects {
             name = "TerraformersMC"
             url = uri("https://maven.terraformersmc.com/releases/")
         }
+        maven {
+            name = "Shedaniel"
+            url = uri("https://maven.shedaniel.me/")
+        }
     }
 }
 

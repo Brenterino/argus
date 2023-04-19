@@ -20,30 +20,62 @@ package dev.zygon.argus.client.config;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
 import java.util.Collections;
 import java.util.List;
 
 @Data
-public class ArgusClientConfig {
+@Config(name = "argus")
+public class ArgusClientConfig implements ConfigData {
 
     // Argus Connection Configuration
+    @ConfigEntry.Gui.Tooltip
     private String argusHost = "http://localhost";
+
+    @ConfigEntry.Gui.Tooltip
     private boolean verifyCertificateEnabled = false;
+
+    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
+    @ConfigEntry.Gui.Tooltip
     private int refreshTokenCheckIntervalSeconds = 30;
+
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 240)
+    @ConfigEntry.Gui.Tooltip
     private int refreshTokenRenewBeforeExpirationSeconds = 60;
+
+    @ConfigEntry.BoundedDiscrete(min = 5, max = 30)
+    @ConfigEntry.Gui.Tooltip
     private int refreshInitialWaitForTokenSeconds = 5;
+
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
+    @ConfigEntry.Gui.Tooltip
     private int refreshMembershipIntervalSeconds = 60;
+
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
+    @ConfigEntry.Gui.Tooltip
     private int refreshElectionsIntervalSeconds = 60;
 
     // Client Visibility Related Configuration
+    @ConfigEntry.Gui.Tooltip
     private boolean streamerModeEnabled = false;
+
+    @ConfigEntry.Gui.Tooltip
     private boolean hideChatLocationsEnabled = false;
+
+    @ConfigEntry.Gui.Tooltip
     private List<String> hiddenGroupAlerts = Collections.emptyList();
+
+    @ConfigEntry.Gui.Tooltip
     private boolean coloredNamesEnabled = true;
 
     // Client Sharing Capabilities
+    @ConfigEntry.Gui.Tooltip
     private boolean broadcastSnitchesEnabled = true;
+
+    @ConfigEntry.Gui.Tooltip
     private boolean readLocalEntitiesEnabled = false;
 
     public boolean shouldHideGroupAlert(String group) {
@@ -51,5 +83,5 @@ public class ArgusClientConfig {
     }
 
     @Getter @Setter
-    private static ArgusClientConfig activeConfig = new ArgusClientConfig();
+    private static ArgusClientConfig activeConfig;
 }
