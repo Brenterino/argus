@@ -17,7 +17,7 @@
  */
 package dev.zygon.argus.client.location;
 
-import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.Coordinate;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public enum LocalLocationStorage {
 
     INSTANCE;
 
-    public void track(UUID target, Location location) {
+    public void track(UUID target, Coordinate location) {
         // enqueue location data
     }
 }

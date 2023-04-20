@@ -73,12 +73,12 @@ public class LocationsSocketJwtExpirationIT {
         var userAlice = new User(aliceUUID, "Alice");
         var userBob = new User(bobUUID, "Bob");
 
-        var locationAlice = new Location(101, 50, 2100, 0, true, Instant.now());
-        var userLocationAlice = new UserLocation(userAlice, locationAlice);
+        var locationAlice = new Coordinate(101, 50, 2100, 0, true, Instant.now());
+        var userLocationAlice = new Location(userAlice, LocationType.USER, locationAlice);
         var aliceLocations = new Locations(Set.of(userLocationAlice));
 
-        var locationBob = new Location(-100, 0, -100, 0, true, Instant.now());
-        var userLocationBob = new UserLocation(userBob, locationBob);
+        var locationBob = new Coordinate(-100, 0, -100, 0, true, Instant.now());
+        var userLocationBob = new Location(userBob, LocationType.USER, locationBob);
         var bobLocations = new Locations(Set.of(userLocationBob));
 
         alice.getAsyncRemote()
@@ -88,12 +88,12 @@ public class LocationsSocketJwtExpirationIT {
 
         Thread.sleep(10000); // sleep 10 seconds to ensure JWT is expired
 
-        var newLocationAlice = new Location(95, 65, 1000, 0, true, Instant.now());
-        var newUserLocationAlice = new UserLocation(userAlice, newLocationAlice);
+        var newLocationAlice = new Coordinate(95, 65, 1000, 0, true, Instant.now());
+        var newUserLocationAlice = new Location(userAlice, LocationType.USER, newLocationAlice);
         var newAliceLocations = new Locations(Set.of(newUserLocationAlice));
 
-        var newLocationBob = new Location(-500, 15, 300, 1, true, Instant.now());
-        var newUserLocationBob = new UserLocation(userBob, newLocationBob);
+        var newLocationBob = new Coordinate(-500, 15, 300, 1, true, Instant.now());
+        var newUserLocationBob = new Location(userBob, LocationType.USER, newLocationBob);
         var newBobLocations = new Locations(Set.of(newUserLocationBob));
 
         alice.getAsyncRemote()
@@ -110,21 +110,21 @@ public class LocationsSocketJwtExpirationIT {
                 .isNotNull();
         assertThat(allAliceLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::user)
+                .extracting(Location::user)
                 .containsExactlyInAnyOrder(userBob, userAlice);
         assertThat(allAliceLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::location)
+                .extracting(Location::coordinates)
                 .containsExactlyInAnyOrder(newLocationBob, newLocationAlice);
         assertThat(allBobLocations)
                 .isNotNull();
         assertThat(allBobLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::user)
+                .extracting(Location::user)
                 .containsExactly(userBob);
         assertThat(allBobLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::location)
+                .extracting(Location::coordinates)
                 .containsExactly(newLocationBob);
     }
 

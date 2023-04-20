@@ -22,7 +22,7 @@ import dev.zygon.argus.client.location.LocalLocationStorage;
 import dev.zygon.argus.client.name.NameStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Dimension;
-import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.Coordinate;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
@@ -64,7 +64,7 @@ public enum ChatEventHandler {
                 .orElse(null);
         var uuid = NameStorage.INSTANCE.idFromName(snitchHit.player());
         try {
-            var location = Location.builder()
+            var location = Coordinate.builder()
                     .x(Double.parseDouble(snitchHit.x()))
                     .y(Double.parseDouble(snitchHit.y()))
                     .z(Double.parseDouble(snitchHit.z()))
@@ -94,7 +94,7 @@ public enum ChatEventHandler {
         var holder = NameStorage.INSTANCE.idFromName(pearlHit.holder());
         var pearled = NameStorage.INSTANCE.extendedIdFromName(pearlHit.pearled());
         try {
-            var location = Location.builder()
+            var location = Coordinate.builder()
                     .x(Double.parseDouble(pearlHit.x()))
                     .y(Double.parseDouble(pearlHit.y()))
                     .z(Double.parseDouble(pearlHit.z()))

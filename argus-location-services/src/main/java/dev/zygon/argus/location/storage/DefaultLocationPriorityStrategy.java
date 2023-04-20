@@ -1,6 +1,6 @@
 package dev.zygon.argus.location.storage;
 
-import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.Coordinate;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -14,7 +14,7 @@ import javax.enterprise.context.ApplicationScoped;
 public class DefaultLocationPriorityStrategy implements LocationPriorityStrategy {
 
     @Override
-    public boolean shouldReplace(Location previous, Location possibleNext) {
+    public boolean shouldReplace(Coordinate previous, Coordinate possibleNext) {
         var previousTime = previous.time();
         var possibleNextTime = possibleNext.time();
 

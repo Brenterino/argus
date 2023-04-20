@@ -18,10 +18,7 @@
 package dev.zygon.argus.location.storage;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.GroupLocations;
-import dev.zygon.argus.location.Location;
-import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.location.UserLocation;
+import dev.zygon.argus.location.*;
 import dev.zygon.argus.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,22 +55,22 @@ class LocalGroupLocationsStorageTest {
         var zygon = new User(UUID.randomUUID(), "JZygon");
         var soccer = new User(UUID.randomUUID(), "Soccer37222");
         var ladez = new User(UUID.randomUUID(), "Ladezkik");
-        var originalLocationThoths = new Location(99, 9, 999, 0, true, Instant.now());
-        var originalLocationZygon = new Location(2000, 25, 1000, 0, true, Instant.now());
-        var originalLocationSoccer = new Location(0, -50, 0, 0, true, Instant.now());
-        var originalLocationLadez = new Location(2000, 30, 2000, 0, true, Instant.now());
-        var locationThoths = new Location(9999, 9999, 9999, 0, true, Instant.now());
-        var locationZygon = new Location(-1000, 25, 200, 1, true, Instant.now());
-        var locationSoccer = new Location(0, -50, 0, 1, true, Instant.now());
-        var locationLadez = new Location(5000, 30, 1000, 0, true, Instant.now());
-        var userLocationThoths = new UserLocation(thoths, locationThoths);
-        var userLocationZygon = new UserLocation(zygon, locationZygon);
-        var userLocationSoccer = new UserLocation(soccer, locationSoccer);
-        var userLocationLadez = new UserLocation(ladez, locationLadez);
-        var originalUserLocationThoths = new UserLocation(thoths, originalLocationThoths);
-        var originalUserLocationZygon = new UserLocation(zygon, originalLocationZygon);
-        var originalUserLocationSoccer = new UserLocation(soccer, originalLocationSoccer);
-        var originalUserLocationLadez = new UserLocation(ladez, originalLocationLadez);
+        var originalLocationThoths = new Coordinate(99, 9, 999, 0, true, Instant.now());
+        var originalLocationZygon = new Coordinate(2000, 25, 1000, 0, true, Instant.now());
+        var originalLocationSoccer = new Coordinate(0, -50, 0, 0, true, Instant.now());
+        var originalLocationLadez = new Coordinate(2000, 30, 2000, 0, true, Instant.now());
+        var locationThoths = new Coordinate(9999, 9999, 9999, 0, true, Instant.now());
+        var locationZygon = new Coordinate(-1000, 25, 200, 1, true, Instant.now());
+        var locationSoccer = new Coordinate(0, -50, 0, 1, true, Instant.now());
+        var locationLadez = new Coordinate(5000, 30, 1000, 0, true, Instant.now());
+        var userLocationThoths = new Location(thoths, LocationType.USER, locationThoths);
+        var userLocationZygon = new Location(zygon, LocationType.USER, locationZygon);
+        var userLocationSoccer = new Location(soccer, LocationType.USER, locationSoccer);
+        var userLocationLadez = new Location(ladez, LocationType.USER, locationLadez);
+        var originalUserLocationThoths = new Location(thoths, LocationType.USER, originalLocationThoths);
+        var originalUserLocationZygon = new Location(zygon, LocationType.USER, originalLocationZygon);
+        var originalUserLocationSoccer = new Location(soccer, LocationType.USER, originalLocationSoccer);
+        var originalUserLocationLadez = new Location(ladez, LocationType.USER, originalLocationLadez);
 
         memeTeam = new Group("MemeTeam");
         locations = new Locations(Set.of(userLocationThoths, userLocationZygon,

@@ -1,6 +1,6 @@
 package dev.zygon.argus.location.storage;
 
-import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.Coordinate;
 
 /**
  * Abstraction for an algorithm to determine if the currently held location
@@ -21,5 +21,5 @@ public interface LocationPriorityStrategy {
      * @return if the current location data should be replaced by the next
      * location.
      */
-    boolean shouldReplace(Location previous, Location possibleNext);
+    boolean shouldReplace(Coordinate previous, Coordinate possibleNext);
 }

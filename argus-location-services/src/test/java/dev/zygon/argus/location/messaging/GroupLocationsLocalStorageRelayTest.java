@@ -18,10 +18,7 @@
 package dev.zygon.argus.location.messaging;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.GroupLocations;
-import dev.zygon.argus.location.Location;
-import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.location.UserLocation;
+import dev.zygon.argus.location.*;
 import dev.zygon.argus.location.session.SessionRegistry;
 import dev.zygon.argus.location.storage.GroupLocationsStorage;
 import dev.zygon.argus.user.User;
@@ -60,12 +57,12 @@ class GroupLocationsLocalStorageRelayTest {
         var mickale = new User(UUID.randomUUID(), "Mickale");
         var hoover = new User(UUID.randomUUID(), "ItzHoover");
         var s4nta = new User(UUID.randomUUID(), "S4NTA");
-        var locationMickale = new Location(-1066, 0, -1200, 0, true, Instant.now());
-        var locationHoover = new Location(-1000, 25, 200, 0, true, Instant.now());
-        var locationS4nta = new Location(0, -50, 0, 1, true, Instant.now());
-        var userLocationMickale = new UserLocation(mickale, locationMickale);
-        var userLocationHoover = new UserLocation(hoover, locationHoover);
-        var userLocationS4nta = new UserLocation(s4nta, locationS4nta);
+        var locationMickale = new Coordinate(-1066, 0, -1200, 0, true, Instant.now());
+        var locationHoover = new Coordinate(-1000, 25, 200, 0, true, Instant.now());
+        var locationS4nta = new Coordinate(0, -50, 0, 1, true, Instant.now());
+        var userLocationMickale = new Location(mickale, LocationType.USER, locationMickale);
+        var userLocationHoover = new Location(hoover, LocationType.USER, locationHoover);
+        var userLocationS4nta = new Location(s4nta, LocationType.USER, locationS4nta);
 
         volterra = new Group("volterra");
         locations = new Locations(Set.of(userLocationMickale, userLocationHoover, userLocationS4nta));

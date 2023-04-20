@@ -44,10 +44,10 @@ public class LocationsSocketIT {
         var bobUUID = UUID.fromString("b3c53ad9-cbd9-4644-8371-c2468d8a0e57");
         var userAlice = new User(aliceUUID, "Alice");
         var userBob = new User(bobUUID, "Bob");
-        var locationAlice = new Location(101, 50, 2100, 0, true, Instant.now());
-        var locationBob = new Location(-100, 0, -100, 0, true, Instant.now());
-        var userLocationAlice = new UserLocation(userAlice, locationAlice);
-        var userLocationBob = new UserLocation(userBob, locationBob);
+        var locationAlice = new Coordinate(101, 50, 2100, 0, true, Instant.now());
+        var locationBob = new Coordinate(-100, 0, -100, 0, true, Instant.now());
+        var userLocationAlice = new Location(userAlice, LocationType.USER, locationAlice);
+        var userLocationBob = new Location(userBob, LocationType.USER, locationBob);
         var aliceLocations = new Locations(Set.of(userLocationAlice));
         var bobLocations = new Locations(Set.of(userLocationBob));
 
@@ -63,21 +63,21 @@ public class LocationsSocketIT {
                 .isNotNull();
         assertThat(allAliceLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::user)
+                .extracting(Location::user)
                 .containsExactlyInAnyOrder(userBob, userAlice);
         assertThat(allAliceLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::location)
+                .extracting(Location::coordinates)
                 .containsExactlyInAnyOrder(locationBob, locationAlice);
         assertThat(allBobLocations)
                 .isNotNull();
         assertThat(allBobLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::user)
+                .extracting(Location::user)
                 .containsExactly(userBob);
         assertThat(allBobLocations.data())
                 .isNotNull()
-                .extracting(UserLocation::location)
+                .extracting(Location::coordinates)
                 .containsExactly(locationBob);
     }
 

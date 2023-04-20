@@ -17,31 +17,30 @@
  */
 package dev.zygon.argus.location;
 
-import lombok.NonNull;
-
-import java.util.Collections;
-import java.util.Set;
-
 /**
- * Wrapper record which contains a set of user location data that can be
- * received from or sent to a user.
- * <p>
- * The contents are contained within a set to avoid duplication of user data.
- * This is possible because the implementation of hashCode and equals only take
- * the specified user into account.
- * </p>
- *
- * @param data set of user location data contained in this record.
+ * Types of locations that are available to be used to distinguish certain
+ * location data from one another. This allows one user to send multiple
+ * different types of location types.
  */
-public record Locations(@NonNull Set<Location> data) {
+public enum LocationType {
 
     /**
-     * Constructor for Locations which the data of user locations.
-     *
-     * @param data the user location data.
+     * This location is the where the user is currently/last know to be at.
      */
-    public Locations(Set<Location> data) {
-        this.data = data != null ? Collections.unmodifiableSet(data) :
-                Collections.emptySet();
-    }
+    USER,
+    /**
+     * This location is related to the user/trace of the user but is not the
+     * user. Example: Prison Pearl
+     */
+    MISC_USER,
+    /**
+     * This location is issued by a user to indicate to other users that it
+     * may be of interest. Tends to be fairly temporary in nature.
+     */
+    BASIC_PING,
+    /**
+     * This location is issued by a user to indicate a target for focus. The
+     * user associated with the location is the focus target.
+     */
+    FOCUS_PING
 }

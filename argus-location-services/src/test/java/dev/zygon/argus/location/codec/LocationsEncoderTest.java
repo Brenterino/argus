@@ -17,9 +17,10 @@
  */
 package dev.zygon.argus.location.codec;
 
-import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.Coordinate;
+import dev.zygon.argus.location.LocationType;
 import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.location.UserLocation;
+import dev.zygon.argus.location.Location;
 import dev.zygon.argus.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ class LocationsEncoderTest {
     void canEncodeSingleLocation() throws EncodeException {
         var uuid = UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c");
         var user = new User(uuid, "Zygon");
-        var location = Location.builder()
+        var location = Coordinate.builder()
                 .x(100.2)
                 .y(200.1)
                 .z(300.0)
@@ -72,12 +73,12 @@ class LocationsEncoderTest {
                 .local(false)
                 .time(Instant.parse("2022-11-23T18:17:44.323877200Z"))
                 .build();
-        var userLocation = new UserLocation(user, location);
+        var userLocation = new Location(user, LocationType.USER, location);
         var locations = new Locations(Set.of(userLocation));
 
         var json = encoder.encode(locations);
 
-        assertEquals("{\"data\":[{\"user\":{\"uuid\":\"5fc03087-d265-11e7-b8c6-83e29cd24f4c\",\"name\":\"Zygon\"},\"location\":{\"x\":100.2,\"y\":200.1,\"z\":300.0,\"w\":1,\"local\":false,\"time\":\"2022-11-23T18:17:44.323877200Z\"}}]}",
+        assertEquals("{\"data\":[{\"user\":{\"uuid\":\"5fc03087-d265-11e7-b8c6-83e29cd24f4c\",\"name\":\"Zygon\"},\"type\":\"USER\",\"coordinates\":{\"x\":100.2,\"y\":200.1,\"z\":300.0,\"w\":1,\"local\":false,\"time\":\"2022-11-23T18:17:44.323877200Z\"}}]}",
                 json);
     }
 

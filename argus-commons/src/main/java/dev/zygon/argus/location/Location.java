@@ -17,25 +17,61 @@
  */
 package dev.zygon.argus.location;
 
-import lombok.Builder;
+import dev.zygon.argus.user.User;
 import lombok.NonNull;
 
-import java.time.Instant;
+import java.util.Objects;
 
 /**
- * Record which contains location data. This location could be related to an
- * entity, waypoint (permanent/temporary), or for other purposes.
+ * Wrapper record which relates a user, coordinates and a location type together.
+ * <p>
+ * The implementation of hashCode and equals only take the user and type
+ * into account.
+ * </p>
  *
- * @param x     the x-coordinate position.
- * @param y     the y-coordinate position.
- * @param z     the z-coordinate position.
- * @param w     which dimension the position is in.
- * @param local if the position was determined from a local observer.
- *              <b>May only be relevant for some purposes.</b>
- * @param time  the time the location was captured.
- *              May only be relevant for some purposes.
+ * @param user        the user which is located at a specific location or which
+ *                    issued the location data.
+ * @param type        the type of location this is.
+ * @param coordinates the location record which contains position data for the
+ *                    user.
  */
-@Builder
-public record Location(double x, double y, double z, int w,
-                       boolean local, @NonNull Instant time) {
+public record Location(@NonNull User user, @NonNull LocationType type, @NonNull Coordinate coordinates) {
+
+    /**
+     * Custom implementation of the equals function. It is recommended to
+     * review the documentation of {@link Object#equals(Object)} for more
+     * information on the criteria which this implementation must satisfy.
+     * <p>
+     * As it pertains to this implementation, equality can be determined by the
+     * equality of the user alone.
+     * </p>
+     *
+     * @param o the reference object with which to compare against this
+     *          object.
+     * @return if this object equals the provided object per the standard
+     * contract for {@link Object#equals(Object)}.
+     */
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Location location &&
+                Objects.equals(user, location.user) &&
+                Objects.equals(type, location.type);
+    }
+
+    /**
+     * Custom implementation of the hashCode function. It is recommended to
+     * review the documentation of {@link Object#hashCode()} for more
+     * information on the criteria which this implementation must satisfy.
+     * <p>
+     * As it pertains to this implementation, hashCode can be computed by the
+     * user and the type.
+     * </p>
+     *
+     * @return the hashCode of this record based on the standard contract for
+     * {@link Object#hashCode()}.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, type);
+    }
 }

@@ -115,7 +115,7 @@ public class LocationsSocketLoadIT {
     private static class SessionRunnable implements Runnable {
 
         // Mutable(s)
-        private Location location;
+        private Coordinate location;
 
         // Immutable(s)
         private final User user;
@@ -124,7 +124,7 @@ public class LocationsSocketLoadIT {
         public SessionRunnable(Session session) {
             this.user = new User(UUID.randomUUID(), "User");
             this.session = session;
-            this.location = Location.builder()
+            this.location = Coordinate.builder()
                     .x(0.0)
                     .y(0.0)
                     .z(0.0)
@@ -138,7 +138,7 @@ public class LocationsSocketLoadIT {
         @Override
         public void run() {
             location = adjustLocationRandomly(location);
-            var userLocation = new UserLocation(user, location);
+            var userLocation = new Location(user, LocationType.USER, location);
             var locations = new Locations(Set.of(userLocation));
 
             session.getBasicRemote()
@@ -148,9 +148,9 @@ public class LocationsSocketLoadIT {
         private static final double RANDOM_LOWER_BOUND = -2;
         private static final double RANDOM_UPPER_BOUND = 2;
 
-        private Location adjustLocationRandomly(Location location) {
+        private Coordinate adjustLocationRandomly(Coordinate location) {
             var random = ThreadLocalRandom.current();
-            return Location.builder()
+            return Coordinate.builder()
                     .x(location.x() + random.nextDouble(RANDOM_LOWER_BOUND, RANDOM_UPPER_BOUND))
                     .y(location.y() + random.nextDouble(RANDOM_LOWER_BOUND, RANDOM_UPPER_BOUND))
                     .z(location.z() + random.nextDouble(RANDOM_LOWER_BOUND, RANDOM_UPPER_BOUND))

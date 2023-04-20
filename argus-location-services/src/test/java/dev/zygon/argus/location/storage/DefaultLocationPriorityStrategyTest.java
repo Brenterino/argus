@@ -17,7 +17,7 @@
  */
 package dev.zygon.argus.location.storage;
 
-import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.Coordinate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultLocationPriorityStrategyTest {
 
-    private Location after;
-    private Location before;
+    private Coordinate after;
+    private Coordinate before;
     private DefaultLocationPriorityStrategy strategy;
 
     @BeforeEach
@@ -36,10 +36,10 @@ class DefaultLocationPriorityStrategyTest {
         strategy = new DefaultLocationPriorityStrategy();
 
         var time = Instant.now();
-        after = Location.builder()
+        after = Coordinate.builder()
                 .time(time.plusMillis(1000))
                 .build();
-        before = Location.builder()
+        before = Coordinate.builder()
                 .time(time)
                 .build();
     }

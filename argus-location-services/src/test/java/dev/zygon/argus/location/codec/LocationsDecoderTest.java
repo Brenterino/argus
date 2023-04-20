@@ -17,16 +17,15 @@
  */
 package dev.zygon.argus.location.codec;
 
+import dev.zygon.argus.location.Coordinate;
 import dev.zygon.argus.location.Location;
-import dev.zygon.argus.location.UserLocation;
-import dev.zygon.argus.user.User;
+import dev.zygon.argus.location.LocationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.websocket.DecodeException;
 import javax.websocket.EndpointConfig;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
@@ -115,7 +114,8 @@ class LocationsDecoderTest {
                                         "uuid": "5fc03087-d265-11e7-b8c6-83e29cd24f4c",
                                         "name": "Walkers"
                                     },
-                                    "location": {
+                                    "type": "USER",
+                                    "coordinates": {
                                         "x": 100.25,
                                         "y": -200.50,
                                         "z": 1080.75,
@@ -135,31 +135,36 @@ class LocationsDecoderTest {
         assertThat(locations)
                 .isNotNull();
         assertThat(locations.data())
-                .extracting(UserLocation::user)
+                .extracting(Location::user)
                 .singleElement()
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("uuid", UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c"))
                 .hasFieldOrPropertyWithValue("name", "Walkers");
         assertThat(locations.data())
-                .extracting(UserLocation::location)
+                .extracting(Location::type)
                 .singleElement()
                 .isNotNull()
-                .extracting(Location::x, as(DOUBLE))
+                .isEqualTo(LocationType.USER);
+        assertThat(locations.data())
+                .extracting(Location::coordinates)
+                .singleElement()
+                .isNotNull()
+                .extracting(Coordinate::x, as(DOUBLE))
                 .isCloseTo(100.25, offset(0.01));
         assertThat(locations.data())
-                .extracting(UserLocation::location)
+                .extracting(Location::coordinates)
                 .singleElement()
                 .isNotNull()
-                .extracting(Location::y, as(DOUBLE))
+                .extracting(Coordinate::y, as(DOUBLE))
                 .isCloseTo(-200.50, offset(0.01));
         assertThat(locations.data())
-                .extracting(UserLocation::location)
+                .extracting(Location::coordinates)
                 .singleElement()
                 .isNotNull()
-                .extracting(Location::z, as(DOUBLE))
+                .extracting(Coordinate::z, as(DOUBLE))
                 .isCloseTo(1080.75, offset(0.01));
         assertThat(locations.data())
-                .extracting(UserLocation::location)
+                .extracting(Location::coordinates)
                 .singleElement()
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("w", 0)

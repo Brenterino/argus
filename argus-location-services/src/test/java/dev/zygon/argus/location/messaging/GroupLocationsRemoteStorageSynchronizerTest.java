@@ -18,10 +18,7 @@
 package dev.zygon.argus.location.messaging;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.GroupLocations;
-import dev.zygon.argus.location.Location;
-import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.location.UserLocation;
+import dev.zygon.argus.location.*;
 import dev.zygon.argus.location.storage.GroupLocationsStorage;
 import dev.zygon.argus.user.User;
 import io.vertx.core.json.JsonObject;
@@ -61,12 +58,12 @@ class GroupLocationsRemoteStorageSynchronizerTest {
         var brit = new User(UUID.randomUUID(), "BritishWanderer");
         var creepi0n = new User(UUID.randomUUID(), "Creepi0n");
         var gobblin = new User(UUID.randomUUID(), "Gobblin");
-        var locationBrit = new Location(500, 65, -3000, 0, true, Instant.now());
-        var locationCreepi0n = new Location(-2000, -32, 2000, 0, true, Instant.now());
-        var locationGobblin = new Location(0, 0, 0, 1, false, Instant.now());
-        var userLocationBrit = new UserLocation(brit, locationBrit);
-        var userLocationCreepi0n = new UserLocation(creepi0n, locationCreepi0n);
-        var userLocationGobblin = new UserLocation(gobblin, locationGobblin);
+        var locationBrit = new Coordinate(500, 65, -3000, 0, true, Instant.now());
+        var locationCreepi0n = new Coordinate(-2000, -32, 2000, 0, true, Instant.now());
+        var locationGobblin = new Coordinate(0, 0, 0, 1, false, Instant.now());
+        var userLocationBrit = new Location(brit, LocationType.USER, locationBrit);
+        var userLocationCreepi0n = new Location(creepi0n, LocationType.USER, locationCreepi0n);
+        var userLocationGobblin = new Location(gobblin, LocationType.USER, locationGobblin);
 
         pavia = new Group("Pavia");
         locations = new Locations(Set.of(userLocationBrit,

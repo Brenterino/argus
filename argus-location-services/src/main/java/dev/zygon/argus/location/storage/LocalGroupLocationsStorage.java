@@ -1,11 +1,7 @@
 package dev.zygon.argus.location.storage;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.GroupLocations;
-import dev.zygon.argus.location.Location;
-import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.location.UserLocation;
-import dev.zygon.argus.user.User;
+import dev.zygon.argus.location.*;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,7 +25,7 @@ import java.util.stream.Collectors;
 public class LocalGroupLocationsStorage implements GroupLocationsStorage {
 
     private final LocationPriorityStrategy strategy;
-    private final Map<Group, Map<User, Location>> locationsByGroup;
+    private final Map<Group, Map<LocationKey, Coordinate>> locationsByGroup;
 
     public LocalGroupLocationsStorage(LocationPriorityStrategy strategy) {
         this.strategy = strategy;
@@ -42,18 +38,20 @@ public class LocalGroupLocationsStorage implements GroupLocationsStorage {
                 .forEach(location -> updateLocation(group, location));
     }
 
-    private void updateLocation(Group group, UserLocation location) {
+    private void updateLocation(Group group, Location location) {
         var locations = findLocations(group);
         var user = location.user();
-        var data = location.location();
-        var previous = locations.putIfAbsent(user, data);
+        var type = location.type();
+        var key = new LocationKey(user, type);
+        var data = location.coordinates();
+        var previous = locations.putIfAbsent(key, data);
         while (previous != null && strategy.shouldReplace(previous, data)) { // threading conditions, may choose to do this differently, though
-            locations.remove(user);
-            previous = locations.putIfAbsent(user, data);
+            locations.remove(key);
+            previous = locations.putIfAbsent(key, data);
         }
     }
 
-    private Map<User, Location> findLocations(Group group) {
+    private Map<LocationKey, Coordinate> findLocations(Group group) {
         locationsByGroup.putIfAbsent(group, new ConcurrentHashMap<>());
 
         return locationsByGroup.get(group);
@@ -67,7 +65,7 @@ public class LocalGroupLocationsStorage implements GroupLocationsStorage {
             var locations = groupLocation.getValue();
             var userLocations = locations.entrySet()
                     .stream()
-                    .map(e -> new UserLocation(e.getKey(), e.getValue()))
+                    .map(e -> new Location(e.getKey().user(), e.getKey().type(), e.getValue()))
                     .collect(Collectors.toUnmodifiableSet());
             var locationsData = new Locations(userLocations);
             collected.add(new GroupLocations(group, locationsData));

@@ -17,31 +17,25 @@
  */
 package dev.zygon.argus.location;
 
+import lombok.Builder;
 import lombok.NonNull;
 
-import java.util.Collections;
-import java.util.Set;
+import java.time.Instant;
 
 /**
- * Wrapper record which contains a set of user location data that can be
- * received from or sent to a user.
- * <p>
- * The contents are contained within a set to avoid duplication of user data.
- * This is possible because the implementation of hashCode and equals only take
- * the specified user into account.
- * </p>
+ * Record which contains coordinate data. These coordinates could be related to an
+ * entity, waypoint (permanent/temporary), or for other purposes.
  *
- * @param data set of user location data contained in this record.
+ * @param x     the x-coordinate position.
+ * @param y     the y-coordinate position.
+ * @param z     the z-coordinate position.
+ * @param w     which dimension the position is in.
+ * @param local if the position was determined from a local observer.
+ *              <b>May only be relevant for some purposes.</b>
+ * @param time  the time the location was captured.
+ *              May only be relevant for some purposes.
  */
-public record Locations(@NonNull Set<Location> data) {
-
-    /**
-     * Constructor for Locations which the data of user locations.
-     *
-     * @param data the user location data.
-     */
-    public Locations(Set<Location> data) {
-        this.data = data != null ? Collections.unmodifiableSet(data) :
-                Collections.emptySet();
-    }
+@Builder
+public record Coordinate(double x, double y, double z, int w,
+                         boolean local, @NonNull Instant time) {
 }

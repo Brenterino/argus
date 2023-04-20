@@ -21,7 +21,7 @@ import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.location.LocalLocationStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Dimension;
-import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.Coordinate;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
@@ -54,7 +54,7 @@ public enum PlayerMoveEventHandler {
                         .orElse(Dimension.OVERWORLD);
                 var uuid = entity.getUuid();
                 var position = entity.getBlockPos();
-                var location = new Location(position.getX(), position.getY(), position.getZ(),
+                var location = new Coordinate(position.getX(), position.getY(), position.getZ(),
                         dimension.ordinal(), true, Instant.now());
                 LocalLocationStorage.INSTANCE.track(uuid, location);
             }
