@@ -18,7 +18,7 @@
 package dev.zygon.argus.client.event;
 
 import dev.zygon.argus.client.config.ArgusClientConfig;
-import dev.zygon.argus.client.location.LocalLocationStorage;
+import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.name.NameStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Dimension;
@@ -72,7 +72,7 @@ public enum ChatEventHandler {
                     .local(true)
                     .time(Instant.now())
                     .build();
-            LocalLocationStorage.INSTANCE.track(uuid, location);
+            LocationStorage.INSTANCE.trackPlayer(uuid, location);
             return shouldHideMessage(group);
         } catch (NumberFormatException e) {
             log.warn("[ARGUS] Snitch hit data could not be translated to location data!", e);
@@ -92,7 +92,7 @@ public enum ChatEventHandler {
         var group = pearlHit.group();
         var dimension = DimensionMapper.fromSnitch(pearlHit.dimension());
         var holder = NameStorage.INSTANCE.idFromName(pearlHit.holder());
-        var pearled = NameStorage.INSTANCE.extendedIdFromName(pearlHit.pearled());
+        var pearled = NameStorage.INSTANCE.idFromName(pearlHit.pearled());
         try {
             var location = Coordinate.builder()
                     .x(Double.parseDouble(pearlHit.x()))
@@ -102,8 +102,8 @@ public enum ChatEventHandler {
                     .local(true)
                     .time(Instant.now())
                     .build();
-            LocalLocationStorage.INSTANCE.track(holder, location);
-            LocalLocationStorage.INSTANCE.track(pearled, location);
+            LocationStorage.INSTANCE.trackPlayer(holder, location);
+            LocationStorage.INSTANCE.trackPlayerMisc(pearled, location);
             return shouldHideMessage(group);
         } catch (NumberFormatException e) {
             log.warn("[ARGUS] Pearl hit data could not be translated to location data!", e);

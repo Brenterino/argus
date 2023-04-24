@@ -47,9 +47,4 @@ public enum NameStorage {
                 .map(GameProfile::getId)
                 .orElse(null);
     }
-
-    public UUID extendedIdFromName(String name) {
-        // TODO need to retrieve extended ID cache from names service
-        return UUID.randomUUID();
-    }
 }

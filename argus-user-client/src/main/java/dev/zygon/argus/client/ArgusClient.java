@@ -36,6 +36,7 @@ public class ArgusClient implements Closeable {
     private @Getter ArgusGroupApi groups;
     private @Getter ArgusAuditApi audit;
     private @Getter ArgusPermissionApi permissions;
+    private final @Getter ArgusLocationsClient locations;
 
     public ArgusClient(ArgusClientCustomizer customizer) {
         this.client = new OkHttpClient.Builder()
@@ -44,6 +45,7 @@ public class ArgusClient implements Closeable {
                 .sslSocketFactory(customizer.sslSocketFactory(),
                         customizer.trustManager())
                 .build();
+        this.locations = new ArgusLocationsClient(client, customizer);
     }
 
     public void init(String argusBaseUrl) {
@@ -60,6 +62,7 @@ public class ArgusClient implements Closeable {
 
     @Override
     public void close() {
+        locations.close();
         client.dispatcher().executorService().shutdown();
         client.connectionPool().evictAll();
     }

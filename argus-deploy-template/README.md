@@ -41,7 +41,7 @@ This is not an exhaustive list of all changes that will make the configuration
 
 ### Certificate from a Certificate Authority
 It is **strongly** recommended to get a certificate from a valid CA to avoid
-having to have users enable allowance of self-signed certificates in their
+requiring users to enable allowance of self-signed certificates in their
 client configuration.
 
 [Let's Encrypt](https://letsencrypt.org/)

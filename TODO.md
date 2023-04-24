@@ -1,6 +1,7 @@
 # To-do List
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
+- Implement transmission/reception of location data by client
 - Implement name services for read/write of UUID-to-name mappings, may need to be privileged, but not entirely sure how
   this would be handled. Perhaps it could be a part of the claims set on a namespace basis? Possibly a free-for-all, but
   unsure of this.

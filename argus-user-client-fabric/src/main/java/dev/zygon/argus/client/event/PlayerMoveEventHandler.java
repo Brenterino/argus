@@ -18,7 +18,7 @@
 package dev.zygon.argus.client.event;
 
 import dev.zygon.argus.client.config.ArgusClientConfig;
-import dev.zygon.argus.client.location.LocalLocationStorage;
+import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Dimension;
 import dev.zygon.argus.location.Coordinate;
@@ -56,7 +56,7 @@ public enum PlayerMoveEventHandler {
                 var position = entity.getBlockPos();
                 var location = new Coordinate(position.getX(), position.getY(), position.getZ(),
                         dimension.ordinal(), true, Instant.now());
-                LocalLocationStorage.INSTANCE.track(uuid, location);
+                LocationStorage.INSTANCE.trackPlayer(uuid, location);
             }
         }
     }

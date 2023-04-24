@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.util.ActionResult;
 
 @Slf4j
 public class ArgusFabricClient implements ClientModInitializer {
@@ -33,6 +34,10 @@ public class ArgusFabricClient implements ClientModInitializer {
         log.info("[ARGUS] Argus is loading.");
         var holder = AutoConfig.register(ArgusClientConfig.class,
                 JanksonConfigSerializer::new);
+        holder.registerSaveListener((save, x) -> {
+            ArgusClientConfig.setActiveConfig(save.getConfig());
+            return ActionResult.SUCCESS;
+        });
         ArgusClientConfig.setActiveConfig(holder.getConfig());
     }
 }

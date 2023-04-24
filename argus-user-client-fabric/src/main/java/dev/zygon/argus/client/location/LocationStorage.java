@@ -17,15 +17,35 @@
  */
 package dev.zygon.argus.client.location;
 
+import dev.zygon.argus.client.ArgusClient;
 import dev.zygon.argus.location.Coordinate;
+import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.LocationType;
+import dev.zygon.argus.location.Locations;
+import dev.zygon.argus.user.User;
 
+import java.util.Collections;
 import java.util.UUID;
 
-public enum LocalLocationStorage {
+public enum LocationStorage {
 
     INSTANCE;
 
-    public void track(UUID target, Coordinate location) {
+    public void trackPlayer(UUID target, Coordinate coordinate) {
+        var user = new User(target, "");
+        var location = new Location(user, LocationType.USER, coordinate);
         // enqueue location data
+    }
+
+    public void trackPlayerMisc(UUID target, Coordinate coordinate) {
+        var user = new User(target, "");
+        var location = new Location(user, LocationType.MISC_USER, coordinate);
+        // enqueue location data
+    }
+
+    public void syncRemote(ArgusClient client) {
+        // TODO actually transmit real location data
+        var locations = new Locations(Collections.emptySet());
+        client.getLocations().sendLocations(locations);
     }
 }

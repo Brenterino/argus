@@ -17,37 +17,124 @@
  */
 package dev.zygon.argus.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.zygon.argus.client.auth.TokenGenerator;
 import dev.zygon.argus.client.util.HeaderUtil;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.WebSocket;
+import dev.zygon.argus.location.Locations;
+import lombok.Getter;
+import lombok.NonNull;
+import okhttp3.*;
 
 import java.io.Closeable;
-import java.io.IOException;
+import java.util.function.Consumer;
 
 public class ArgusLocationsClient implements Closeable {
 
-    private final WebSocket socket;
+    // Mutable
+    private WebSocket socket;
+    private Consumer<Locations> listeners;
+    private Consumer<Throwable> errorHandler;
+    @Getter private boolean closed = true;
 
-    ArgusLocationsClient(OkHttpClient client, TokenGenerator tokenGenerator) {
-        this.socket = openSocket(client, tokenGenerator);
+    // Immutable
+    private final OkHttpClient client;
+    private final ArgusClientCustomizer customizer;
+    private final ObjectMapper mapper;
+    private final WebSocketListener socketListener;
+
+    ArgusLocationsClient(OkHttpClient client, ArgusClientCustomizer customizer) {
+        this.client = client;
+        this.customizer = customizer;
+        this.mapper = new ObjectMapper();
+        this.socketListener = new WebSocketListenerImpl();
+        this.errorHandler = e -> {};
     }
 
-    private WebSocket openSocket(OkHttpClient client, TokenGenerator tokenGenerator) {
+    public void init(String argusBaseUrl) {
+        if (!closed) {
+            close();
+        }
+        // use ws instead of http, will make https -> wss as well
+        this.socket = openSocket(argusBaseUrl, client, customizer.tokenGenerator());
+    }
+
+    private WebSocket openSocket(String baseUrl, OkHttpClient client, TokenGenerator tokenGenerator) {
         var token = tokenGenerator.token();
         if (token == null) {
             throw new IllegalStateException("Must have a token available to open a web socket.");
         }
         var request = new Request.Builder()
-                .headers(HeaderUtil.createHeaders(token))
+                .url(baseUrl + "/locations")
+                .headers(HeaderUtil.createHeaders(token)) // TODO we might not even need to attach the token at this point, verify this assumption
                 .build();
-        // TODO create websocket listener
-        return client.newWebSocket(request, null);
+        return client.newWebSocket(request, socketListener);
+    }
+
+    public void addListener(Consumer<Locations> listener) {
+        if (listeners != null) {
+            listeners = listeners.andThen(listener);
+        } else {
+            listeners = listener;
+        }
+    }
+
+    public void addErrorHandler(Consumer<Throwable> handler) {
+        errorHandler = errorHandler.andThen(handler);
+    }
+
+    public void sendLocations(Locations data) {
+        if (closed) {
+            throw new IllegalStateException("Cannot send location data because socket is closed.");
+        }
+        try {
+            var json = mapper.writeValueAsString(data);
+            socket.send(json);
+        } catch (Exception e) {
+            errorHandler.accept(e);
+        }
     }
 
     @Override
-    public void close() throws IOException {
-        socket.close(1000, "Client initiated close.");
+    public void close() {
+        if (!closed) {
+            socket.close(1000, "Client initiated close.");
+            closed = true;
+        }
+    }
+
+    private class WebSocketListenerImpl extends WebSocketListener {
+
+        @Override
+        public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
+            closed = false;
+        }
+
+        @Override
+        public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
+            if (listeners != null) {
+                try {
+                    var locations = mapper.readValue(text, Locations.class);
+                    listeners.accept(locations);
+                } catch (Exception e) {
+                    errorHandler.accept(e);
+                }
+            }
+        }
+
+        @Override
+        public void onClosing(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
+            closed = true;
+        }
+
+        @Override
+        public void onFailure(@NonNull WebSocket socket, @NonNull Throwable t, Response response) {
+            errorHandler.accept(t);
+            closed = true;
+        }
+
+        @Override
+        public void onClosed(@NonNull WebSocket socket, int code, @NonNull String reason) {
+            closed = true;
+        }
     }
 }

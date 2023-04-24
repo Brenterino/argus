@@ -21,7 +21,9 @@ import dev.zygon.argus.client.ArgusClient;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.connector.customize.ArgusModClientCustomizer;
 import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
+import dev.zygon.argus.client.event.RemoteLocationHandler;
 import dev.zygon.argus.client.groups.GroupStorage;
+import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.scheduler.ClientScheduler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +39,8 @@ public enum ArgusClientConnector {
     private ScheduledFuture<?> tokenRefresh;
     private ScheduledFuture<?> membershipRefresh;
     private ScheduledFuture<?> electionsRefresh;
+    private ScheduledFuture<?> locationKeepAlive;
+    private ScheduledFuture<?> locationRemoteSync;
 
     ArgusClientConnector() {
         client = new ArgusClient(ArgusModClientCustomizer.INSTANCE);
@@ -52,32 +56,50 @@ public enum ArgusClientConnector {
         // Initialize Subcomponents
         initTokenGenerator(server, username);
         initGroupRefresh();
+        initLocationTracking();
     }
 
     private void initTokenGenerator(String server, String username) {
-        var clientConfig = ArgusClientConfig.getActiveConfig();
+        var config = ArgusClientConfig.getActiveConfig();
         var tokenGenerator = ArgusMojangTokenGenerator.INSTANCE;
         tokenGenerator.setAuth(client.getAuth());
         tokenGenerator.setServer(server);
         tokenGenerator.setUsername(username);
         tokenRefresh = ClientScheduler.INSTANCE
                 .register(tokenGenerator::refresh,
-                        clientConfig.getRefreshTokenCheckIntervalSeconds(), TimeUnit.SECONDS);
+                        config.getRefreshTokenCheckIntervalSeconds(), TimeUnit.SECONDS);
     }
 
     private void initGroupRefresh() {
-        var clientConfig = ArgusClientConfig.getActiveConfig();
+        var config = ArgusClientConfig.getActiveConfig();
         var groupStorage = GroupStorage.INSTANCE;
         groupStorage.setGroups(client.getGroups());
         groupStorage.setPermissions(client.getPermissions());
         membershipRefresh = ClientScheduler.INSTANCE
                 .registerWithDelay(groupStorage::refreshMemberships,
-                        clientConfig.getRefreshInitialWaitForTokenSeconds(),
-                        clientConfig.getRefreshMembershipIntervalSeconds(), TimeUnit.SECONDS);
+                        config.getRefreshInitialWaitForTokenSeconds(),
+                        config.getRefreshMembershipIntervalSeconds(), TimeUnit.SECONDS);
         electionsRefresh = ClientScheduler.INSTANCE
                 .registerWithDelay(groupStorage::refreshElections,
-                        clientConfig.getRefreshInitialWaitForTokenSeconds(),
-                        clientConfig.getRefreshElectionsIntervalSeconds(), TimeUnit.SECONDS);
+                        config.getRefreshInitialWaitForTokenSeconds(),
+                        config.getRefreshElectionsIntervalSeconds(), TimeUnit.SECONDS);
+    }
+
+    private void initLocationTracking() {
+        var config = ArgusClientConfig.getActiveConfig();
+        var locations = client.getLocations();
+        var remoteHandler = RemoteLocationHandler.INSTANCE;
+        remoteHandler.setLocations(client.getLocations());
+        locations.addListener(remoteHandler::onLocationsReceived);
+        locations.addErrorHandler(remoteHandler::onRemoteSyncFailure);
+        locationKeepAlive = ClientScheduler.INSTANCE
+                .registerWithDelay(remoteHandler::keepClientAlive,
+                        config.getRefreshInitialWaitForTokenSeconds(),
+                        config.getRefreshLocationClientIntervalSeconds(), TimeUnit.SECONDS);
+        locationRemoteSync = ClientScheduler.INSTANCE
+                .registerWithDelay(() -> LocationStorage.INSTANCE.syncRemote(client),
+                        config.getTransmitInitialWaitForConnectionSeconds(),
+                        config.getTransmitLocationsIntervalSeconds(), TimeUnit.SECONDS);
     }
 
     public void close() {
@@ -85,7 +107,10 @@ public enum ArgusClientConnector {
         safeCancel(tokenRefresh);
         safeCancel(membershipRefresh);
         safeCancel(electionsRefresh);
+        safeCancel(locationKeepAlive);
+        safeCancel(locationRemoteSync);
 
+        client.getLocations().close();
         ArgusMojangTokenGenerator.INSTANCE.clean();
         GroupStorage.INSTANCE.clean();
     }

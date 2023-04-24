@@ -36,9 +36,10 @@ public class AuthInterceptor implements Interceptor {
     public @NonNull Response intercept(@NonNull Chain chain) throws IOException {
         var token = generator.token();
         if (token != null) {
+            var originalRequest = chain.request();
             var request = chain.request()
                     .newBuilder()
-                    .headers(HeaderUtil.createHeaders(token))
+                    .headers(HeaderUtil.updateHeaders(originalRequest.headers(), token))
                     .build();
             return chain.proceed(request);
         } else {

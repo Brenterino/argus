@@ -58,6 +58,18 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     private int refreshElectionsIntervalSeconds = 60;
 
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
+    @ConfigEntry.Gui.Tooltip
+    private int refreshLocationClientIntervalSeconds = 60;
+
+    @ConfigEntry.BoundedDiscrete(min = 10, max = 20)
+    @ConfigEntry.Gui.Tooltip
+    private int transmitInitialWaitForConnectionSeconds = 10;
+
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 5)
+    @ConfigEntry.Gui.Tooltip
+    private int transmitLocationsIntervalSeconds = 1;
+
     // Client Visibility Related Configuration
     @ConfigEntry.Gui.Tooltip
     private boolean streamerModeEnabled = false;

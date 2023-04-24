@@ -19,7 +19,9 @@ package dev.zygon.argus.client.auth;
 
 public interface RefreshableTokenGenerator extends TokenGenerator {
 
-    boolean isExpired();
+    boolean isRefreshTokenExpired();
+
+    boolean isAccessTokenExpired();
 
     void refresh();
 

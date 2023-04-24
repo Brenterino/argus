@@ -29,4 +29,10 @@ public class HeaderUtil {
     public static Headers createHeaders(String token) {
         return Headers.of(AUTHORIZATION_HEADER, "Bearer " + token);
     }
+
+    public static Headers updateHeaders(Headers headers, String token) {
+        return headers.newBuilder()
+                .set(AUTHORIZATION_HEADER, "Bearer " + token)
+                .build();
+    }
 }

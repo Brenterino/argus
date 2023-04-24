@@ -49,7 +49,7 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
     @Setter private ArgusAuthApi auth;
 
     @Override
-    public boolean isExpired() {
+    public boolean isRefreshTokenExpired() {
         var config = ArgusClientConfig.getActiveConfig();
         var now = Instant.now(Clock.systemUTC());
         return Optional.ofNullable(token)
@@ -57,6 +57,11 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
                 .map(expiration -> expiration.minus(config.getRefreshTokenRenewBeforeExpirationSeconds(), ChronoUnit.SECONDS))
                 .map(now::isAfter)
                 .orElse(true);
+    }
+
+    @Override
+    public boolean isAccessTokenExpired() {
+        return false; // TODO implement with dual tokens
     }
 
     @Override
@@ -76,7 +81,7 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
     }
 
     private void retrieveToken() {
-        if (isExpired()) {
+        if (isRefreshTokenExpired()) {
             ClientScheduler.INSTANCE
                     .invoke(MojangAuthConnector.INSTANCE::connectMojang)
                     .addListener(this::performArgusAuth);
