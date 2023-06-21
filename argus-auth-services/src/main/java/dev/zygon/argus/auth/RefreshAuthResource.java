@@ -18,8 +18,8 @@
 package dev.zygon.argus.auth;
 
 import dev.zygon.argus.auth.repository.ArgusTokenIssueRepository;
-import dev.zygon.argus.auth.repository.MojangAuthRepository;
-import io.quarkus.vertx.web.Body;
+import dev.zygon.argus.auth.service.ArgusTokenReader;
+import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;
 
@@ -29,26 +29,33 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.time.Instant;
 
 @ApplicationScoped
-@Path("/auth/mojang")
+@Authenticated
+@Path("/auth/refresh")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class MojangAuthResource {
+public class RefreshAuthResource {
 
     private final ArgusTokenIssueRepository tokens;
-    private final MojangAuthRepository mojang;
+    private final ArgusTokenReader reader;
 
-    public MojangAuthResource(ArgusTokenIssueRepository tokens,
-                              MojangAuthRepository mojang) {
+    public RefreshAuthResource(ArgusTokenIssueRepository tokens,
+                               ArgusTokenReader reader) {
         this.tokens = tokens;
-        this.mojang = mojang;
+        this.reader = reader;
     }
 
     @POST
-    public Uni<RestResponse<DualToken>> auth(@Body MojangAuthData authData) {
-        return mojang.status(authData)
-                .flatMap(authStatus -> tokens.fromMojang(authData, authStatus))
+    public Uni<RestResponse<ArgusToken>> auth() {
+        // avoid allowing passing of access token
+        if (reader.isAccessToken()) {
+            throw new IllegalArgumentException("Access token cannot be used as a refresh token.");
+        }
+        // note: expiration time here is not important, but have to pass as is marked non-null
+        var refreshToken = new ArgusToken(reader.rawToken(), Instant.now());
+        return tokens.fromRefresh(refreshToken, reader.namespaceUser())
                 .map(RestResponse::ok);
     }
 }

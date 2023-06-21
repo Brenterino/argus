@@ -21,7 +21,6 @@ import dev.zygon.argus.group.audit.Audit;
 import dev.zygon.argus.group.audit.AuditAction;
 import dev.zygon.argus.group.auth.Authorizer;
 import dev.zygon.argus.group.exception.GroupException;
-import dev.zygon.argus.group.mutiny.UniExtensions;
 import dev.zygon.argus.group.repository.AuditRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
 import dev.zygon.argus.permission.GroupPermissions;
@@ -31,7 +30,6 @@ import dev.zygon.argus.user.NamespaceUser;
 import io.quarkus.security.Authenticated;
 import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
-import lombok.experimental.ExtensionMethod;
 import org.jboss.resteasy.reactive.RestResponse;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -48,7 +46,6 @@ import static org.jboss.resteasy.reactive.RestResponse.Status.FORBIDDEN;
 @Path("/groups/permissions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@ExtensionMethod(UniExtensions.class)
 public class UserPermissionsResource {
 
     private final Authorizer authorizer;

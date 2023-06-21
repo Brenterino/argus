@@ -32,6 +32,9 @@ public interface AuthConfiguration {
     @WithDefault("")
     String issuer();
 
+    @WithDefault("30")
+    int refreshTokenExpirationMinutes();
+
     @WithDefault("3")
-    int tokenExpirationMinutes();
+    int accessTokenExpirationMinutes();
 }

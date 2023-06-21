@@ -15,18 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.auth.repository;
+package dev.zygon.argus.auth;
 
-import dev.zygon.argus.auth.ArgusToken;
-import dev.zygon.argus.auth.DualToken;
-import dev.zygon.argus.auth.MojangAuthData;
-import dev.zygon.argus.auth.MojangAuthStatus;
-import dev.zygon.argus.user.NamespaceUser;
-import io.smallrye.mutiny.Uni;
+import lombok.NonNull;
 
-public interface ArgusTokenIssueRepository {
-
-    Uni<DualToken> fromMojang(MojangAuthData data, MojangAuthStatus status);
-
-    Uni<ArgusToken> fromRefresh(ArgusToken refreshToken, NamespaceUser namespaceUser);
+public record DualToken(@NonNull ArgusToken refreshToken,
+                        @NonNull ArgusToken accessToken) {
 }

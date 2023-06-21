@@ -18,6 +18,7 @@
 package dev.zygon.argus.client.connector.customize;
 
 import dev.zygon.argus.auth.ArgusToken;
+import dev.zygon.argus.auth.DualToken;
 import dev.zygon.argus.auth.MojangAuthData;
 import dev.zygon.argus.client.api.ArgusAuthApi;
 import dev.zygon.argus.client.auth.RefreshableTokenGenerator;
@@ -37,31 +38,37 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 @Slf4j
 public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
 
     INSTANCE;
 
-    @Setter private ArgusToken token;
+    private DualToken token;
     @Setter private String server;
     @Setter private String username;
     @Setter private ArgusAuthApi auth;
 
     @Override
     public boolean isRefreshTokenExpired() {
-        var config = ArgusClientConfig.getActiveConfig();
-        var now = Instant.now(Clock.systemUTC());
-        return Optional.ofNullable(token)
-                .map(ArgusToken::expiration)
-                .map(expiration -> expiration.minus(config.getRefreshTokenRenewBeforeExpirationSeconds(), ChronoUnit.SECONDS))
-                .map(now::isAfter)
-                .orElse(true);
+        return checkToken(DualToken::refreshToken);
     }
 
     @Override
     public boolean isAccessTokenExpired() {
-        return false; // TODO implement with dual tokens
+        return checkToken(DualToken::accessToken);
+    }
+
+    private boolean checkToken(Function<DualToken, ArgusToken> tokenFromDual) {
+        var config = ArgusClientConfig.getActiveConfig();
+        var now = Instant.now(Clock.systemUTC());
+        return Optional.ofNullable(token)
+                .map(tokenFromDual)
+                .map(ArgusToken::expiration)
+                .map(expiration -> expiration.minus(config.getRefreshTokenRenewBeforeExpirationSeconds(), ChronoUnit.SECONDS))
+                .map(now::isAfter)
+                .orElse(true);
     }
 
     @Override
@@ -75,32 +82,44 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
 
     @Override
     public void forceRefresh() {
-        // maintain token in case of immediate need for another API request
+        // maintain tokens in case of immediate need for another API request
         // after one that requires a force refresh
-        token = new ArgusToken(token.token(), Instant.now());
+        var now = Instant.now();
+        var refreshToken = new ArgusToken(token.refreshToken()
+                .token(), now);
+        var accessToken = new ArgusToken(token.accessToken()
+                .token(), now);
+        token = new DualToken(refreshToken, accessToken);
     }
 
     private void retrieveToken() {
-        if (isRefreshTokenExpired()) {
+        if (isRefreshTokenExpired()) { // access token will also be refreshed
             ClientScheduler.INSTANCE
                     .invoke(MojangAuthConnector.INSTANCE::connectMojang)
-                    .addListener(this::performArgusAuth);
+                    .addListener(this::performMojangAuth);
+        } else if (isAccessTokenExpired()) {
+            performRefresh();
         }
     }
 
     @SneakyThrows
-    private void performArgusAuth(Future<?> hashFuture) {
+    private void performMojangAuth(Future<?> hashFuture) {
         var hash = (String) hashFuture.get();
         var authData = new MojangAuthData(server, username, hash);
         var authCall = auth.authMojang(authData);
-        authCall.enqueue(new TokenCallback());
+        authCall.enqueue(new TokenCallback<>());
+    }
+
+    private void performRefresh() {
+        var refreshCall = auth.refresh(token.refreshToken());
+        refreshCall.enqueue(new TokenCallback<>());
     }
 
     @EverythingIsNonNull
-    private class TokenCallback implements Callback<ArgusToken> {
+    private class TokenCallback<E> implements Callback<E> {
 
         @Override
-        public void onResponse(Call<ArgusToken> call, Response<ArgusToken> response) {
+        public void onResponse(Call<E> call, Response<E> response) {
             if (response.isSuccessful()) {
                 setToken(response.body());
             } else {
@@ -108,15 +127,28 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
             }
         }
 
+        private void setToken(E response) {
+            if (response instanceof DualToken mojangToken) {
+                token = mojangToken;
+            } else if (response instanceof ArgusToken accessToken) {
+                token = new DualToken(token.refreshToken(), accessToken);
+            } else {
+                log.warn("[ARGUS] Received response via callback that was not of any expected type.");
+            }
+        }
+
         @Override
-        public void onFailure(Call<ArgusToken> call, Throwable cause) {
+        public void onFailure(Call<E> call, Throwable cause) {
             log.warn("[ARGUS] Retrieval of token failed. Either auth service is down or client could not be verified.");
         }
     }
 
     @Override
     public String token() {
-        return token != null ? token.token() : null;
+        return Optional.ofNullable(token)
+                .map(DualToken::accessToken)
+                .map(ArgusToken::token)
+                .orElse(null);
     }
 
     public void clean() {

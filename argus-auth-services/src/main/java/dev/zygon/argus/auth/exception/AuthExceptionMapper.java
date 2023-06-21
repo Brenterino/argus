@@ -22,9 +22,16 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
 import javax.ws.rs.WebApplicationException;
 
+import static org.jboss.resteasy.reactive.RestResponse.Status.BAD_REQUEST;
 import static org.jboss.resteasy.reactive.RestResponse.Status.INTERNAL_SERVER_ERROR;
 
 public class AuthExceptionMapper {
+
+    @ServerExceptionMapper
+    public RestResponse<String> mapException(IllegalArgumentException e) {
+        return RestResponse
+                .status(BAD_REQUEST, e.getMessage());
+    }
 
     @ServerExceptionMapper
     public RestResponse<String> mapException(WebApplicationException e) {

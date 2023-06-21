@@ -23,8 +23,9 @@ flowchart LR
    Authentication System.
 3) If the remote system verifies the identity of the user, then the provided
    identity is used to reference elected permissions from the Group Services.
-4) A token is provided to the user which can be used by other Argus services
-   for resource authorization.
+4) Both an access token and a refresh token are provided to the user which can
+   be used by other Argus services for resource authorization and for generating
+   additional access tokens to avoid having to hit external APIs to re-authenticate.
 
 ### Mojang Authentication Path
 
@@ -53,17 +54,30 @@ flowchart LR
    from the Namespace API of the Argus Groups Service using a user-supplied
    target server address.
 5) If the Namespace API resolves to a valid Namespace, then this is used to
-   construct a token with a valid UPN for retrieving permissions.
+   construct a token with a valid UPN for retrieving permissions. This token
+   will also be given to the client to be used as a refresh token.
 6) Using the newly generated token, permissions are retrieved from the
    Elected Permissions API of the Argus Groups Service.
 7) With the permissions, a new token is generated which contains the currently
-   elected resources for the user. This token is sent to the client for usage
-   in further service calls.
+   elected resources for the user. This access token and the refresh token are
+   sent to the client for usage in further service calls.
 
-**Note**: From a technical perspective this flow works as expected, but it may
-be a good idea to only require this authentication once and provide the user
-with a refresh token which can be used for the purposes of issuing derivative
-tokens. This token would be provided in conjunction with the standard
-authorization token which is used by downstream services. If there is an issue
-with rate limiting on the Has Joined API, then this would be the ideal fix.
-The token which contains only the UPN may be used for this purpose.
+### Refresh Authentication Path
+
+```mermaid
+flowchart LR
+    C[Client]
+        <-->A[Authentication Services]
+    A<-->GE[Group Elected Permissions API]
+    
+```
+
+### Refresh Authentication Steps
+1) Client submits its refresh token to Authentication Services
+2) Authentication Services verifies the token is, in fact, a refresh token by
+   verifying there are no group claims attached.
+3) Using the refresh token, permissions are retrieved from the Elected Permissions
+   API of the Argus Groups Service.
+4) With the permissions, a new token is generated which contains the currently
+   elected resources for the user. The newly generated access token is sent to the
+   client for usage in further service calls.

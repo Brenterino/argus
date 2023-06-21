@@ -18,11 +18,13 @@
 package dev.zygon.argus.client.api;
 
 import dev.zygon.argus.auth.ArgusToken;
+import dev.zygon.argus.auth.DualToken;
 import dev.zygon.argus.auth.MojangAuthData;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Tag;
 
 public interface ArgusAuthApi {
 
@@ -30,5 +32,8 @@ public interface ArgusAuthApi {
     Call<String> publicKey();
 
     @POST("/auth/mojang")
-    Call<ArgusToken> authMojang(@Body MojangAuthData authData);
+    Call<DualToken> authMojang(@Body MojangAuthData authData);
+
+    @POST("/auth/refresh")
+    Call<ArgusToken> refresh(@Tag ArgusToken refreshToken);
 }

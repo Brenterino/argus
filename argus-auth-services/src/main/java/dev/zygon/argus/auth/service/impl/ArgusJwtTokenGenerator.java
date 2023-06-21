@@ -15,10 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.auth.service;
+package dev.zygon.argus.auth.service.impl;
 
 import dev.zygon.argus.auth.ArgusToken;
 import dev.zygon.argus.auth.configuration.AuthConfiguration;
+import dev.zygon.argus.auth.service.ArgusTokenGenerator;
 import dev.zygon.argus.permission.Permissions;
 import io.smallrye.jwt.build.Jwt;
 
@@ -27,6 +28,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -41,9 +43,21 @@ public class ArgusJwtTokenGenerator implements ArgusTokenGenerator {
     }
 
     @Override
-    public ArgusToken generate(UUID uuid, String namespace, Permissions permissions) {
+    public ArgusToken generateRefreshToken(UUID uuid, String namespace) {
+        var permissions = new Permissions(Collections.emptyMap());
         var expiration = Instant.now(Clock.systemUTC())
-                .plus(Duration.of(configuration.tokenExpirationMinutes(), ChronoUnit.MINUTES));
+                .plus(Duration.of(configuration.refreshTokenExpirationMinutes(), ChronoUnit.MINUTES));
+        return generateToken(uuid, namespace, permissions, expiration);
+    }
+
+    @Override
+    public ArgusToken generateAccessToken(UUID uuid, String namespace, Permissions permissions) {
+        var expiration = Instant.now(Clock.systemUTC())
+                .plus(Duration.of(configuration.accessTokenExpirationMinutes(), ChronoUnit.MINUTES));
+        return generateToken(uuid, namespace, permissions, expiration);
+    }
+
+    private ArgusToken generateToken(UUID uuid, String namespace, Permissions permissions, Instant expiration) {
         var token = Jwt.issuer(configuration.issuer())
                 .upn(uuid.toString() + UPN_SPLIT + namespace)
                 .groups(permissions.toRaw())

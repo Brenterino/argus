@@ -24,5 +24,7 @@ import java.util.UUID;
 
 public interface ArgusTokenGenerator {
 
-    ArgusToken generate(UUID uuid, String namespace, Permissions permissions);
+    ArgusToken generateRefreshToken(UUID uuid, String namespace);
+
+    ArgusToken generateAccessToken(UUID uuid, String namespace, Permissions permissions);
 }

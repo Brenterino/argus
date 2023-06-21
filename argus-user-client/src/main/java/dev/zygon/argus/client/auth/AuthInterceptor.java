@@ -17,6 +17,7 @@
  */
 package dev.zygon.argus.client.auth;
 
+import dev.zygon.argus.auth.ArgusToken;
 import dev.zygon.argus.client.util.HeaderUtil;
 import lombok.NonNull;
 import okhttp3.Interceptor;
@@ -34,7 +35,9 @@ public class AuthInterceptor implements Interceptor {
 
     @Override
     public @NonNull Response intercept(@NonNull Chain chain) throws IOException {
-        var token = generator.token();
+        var overrideToken = chain.request()
+                .tag(ArgusToken.class);
+        var token = overrideToken != null ? overrideToken.token() : generator.token();
         if (token != null) {
             var originalRequest = chain.request();
             var request = chain.request()
