@@ -9,7 +9,8 @@
     "ClientConnectionMixin",
     "ClientEntityManagerMixin",
     "ClientEntityManagerMixin$ListenerMixin",
-    "ClientLoginNetworkHandlerMixin"
+    "ClientLoginNetworkHandlerMixin",
+    "WorldRendererMixin"
   ],
   "server": [],
   "injectors": {

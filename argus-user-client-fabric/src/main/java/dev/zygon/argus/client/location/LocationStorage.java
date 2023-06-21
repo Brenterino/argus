@@ -18,34 +18,74 @@
 package dev.zygon.argus.client.location;
 
 import dev.zygon.argus.client.ArgusClient;
-import dev.zygon.argus.location.Coordinate;
-import dev.zygon.argus.location.Location;
-import dev.zygon.argus.location.LocationType;
-import dev.zygon.argus.location.Locations;
+import dev.zygon.argus.location.*;
 import dev.zygon.argus.user.User;
 
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum LocationStorage {
 
     INSTANCE;
 
-    public void trackPlayer(UUID target, Coordinate coordinate) {
-        var user = new User(target, "");
-        var location = new Location(user, LocationType.USER, coordinate);
-        // enqueue location data
+    // TODO clean up local storage and storage entries after X amount of time
+    private final Map<LocationKey, Location> localStorage;
+    private final Map<LocationKey, Location> storage;
+
+    LocationStorage() {
+        localStorage = new ConcurrentHashMap<>();
+        storage = new ConcurrentHashMap<>();
     }
 
-    public void trackPlayerMisc(UUID target, Coordinate coordinate) {
+    public void trackPing(UUID source, Coordinate coordinate) {
+        trackInternal(source, LocationType.BASIC_PING, coordinate);
+    }
+
+    public void trackTarget(UUID target, Coordinate coordinate) {
+        trackInternal(target, LocationType.FOCUS_PING, coordinate);
+    }
+
+    public void trackPlayer(UUID source, Coordinate coordinate) {
+        trackInternal(source, LocationType.USER, coordinate);
+    }
+
+    public void trackPlayerMisc(UUID source, Coordinate coordinate) {
+        trackInternal(source, LocationType.MISC_USER, coordinate);
+    }
+
+    private void trackInternal(UUID target, LocationType type, Coordinate coordinate) {
         var user = new User(target, "");
-        var location = new Location(user, LocationType.MISC_USER, coordinate);
-        // enqueue location data
+        var location = new Location(user, type, coordinate);
+        var key = location.key();
+        localStorage.put(key, location);
+        storage.put(key, location);
+    }
+
+    public void fromRemote(Locations locations) {
+        for (var location : locations.data()) {
+            var key = location.key();
+            if (storage.containsKey(key)) {
+                var current = storage.get(key);
+                var oldTime = current.coordinates().time();
+                var newTime = location.coordinates().time();
+                if (oldTime.isBefore(newTime)) {
+                    storage.put(key, location);
+                }
+            } else {
+                storage.put(key, location);
+            }
+        }
     }
 
     public void syncRemote(ArgusClient client) {
-        // TODO actually transmit real location data
-        var locations = new Locations(Collections.emptySet());
-        client.getLocations().sendLocations(locations);
+        var locations = new HashSet<>(localStorage.values());
+        client.getLocations().sendLocations(new Locations(locations));
+    }
+
+    public void clean() {
+        localStorage.clear();
+        storage.clear();
     }
 }

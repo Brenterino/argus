@@ -21,6 +21,8 @@
   "text.autoconfig.argus.option.transmitInitialWaitForConnectionSeconds.@Tooltip": "How long to wait for a connection to be established for location sharing",
   "text.autoconfig.argus.option.transmitLocationsIntervalSeconds": "Locations Transmit Interval (s)",
   "text.autoconfig.argus.option.transmitLocationsIntervalSeconds.@Tooltip": "How frequently location data should be shared to the main server.",
+  "text.autoconfig.argus.option.maxViewDistance": "Max View Distance (m)",
+  "text.autoconfig.argus.option.maxViewDistance.@Tooltip": "How many blocks (or meters) away locations can be seen from.",
   "text.autoconfig.argus.option.streamerModeEnabled": "Streamer Mode",
   "text.autoconfig.argus.option.streamerModeEnabled.@Tooltip": "Disables rendering of most things to allow for safe public share screening.",
   "text.autoconfig.argus.option.hideChatLocationsEnabled": "Hide Chat Relay",

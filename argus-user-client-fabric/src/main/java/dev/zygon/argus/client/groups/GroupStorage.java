@@ -43,10 +43,12 @@ public enum GroupStorage {
     @Setter @Getter private Set<GroupPermission> elections;
 
     public void refreshMemberships() {
+        // TODO force close of locations sockets if membership changes?
         doCall(groups.groups(), this::setMembership);
     }
 
     public void refreshElections() {
+        // TODO force close of locations sockets if elections change?
         doCall(permissions.elected(), this::setElections);
     }
 

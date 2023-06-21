@@ -71,6 +71,10 @@ public class ArgusClientConfig implements ConfigData {
     private int transmitLocationsIntervalSeconds = 1;
 
     // Client Visibility Related Configuration
+    @ConfigEntry.BoundedDiscrete(min = 1000, max = 100000)
+    @ConfigEntry.Gui.Tooltip
+    private int maxViewDistance = 10000;
+
     @ConfigEntry.Gui.Tooltip
     private boolean streamerModeEnabled = false;
 

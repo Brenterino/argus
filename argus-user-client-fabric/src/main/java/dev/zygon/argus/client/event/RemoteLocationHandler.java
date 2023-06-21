@@ -2,6 +2,7 @@ package dev.zygon.argus.client.event;
 
 import dev.zygon.argus.client.ArgusLocationsClient;
 import dev.zygon.argus.client.config.ArgusClientConfig;
+import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.location.Locations;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,9 @@ public enum RemoteLocationHandler {
     @Setter private ArgusLocationsClient locations;
 
     public void onLocationsReceived(Locations data) {
-        // TODO handle synchronization of locations
-        log.info("[ARGUS] Received location data: {}", data);
+        // TODO for debugging purposes only...
+//        log.info("[ARGUS] Received location data: {}", data);
+        LocationStorage.INSTANCE.fromRemote(data);
     }
 
     public void onRemoteSyncFailure(Throwable cause) {

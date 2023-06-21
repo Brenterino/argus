@@ -38,6 +38,16 @@ import java.util.Objects;
 public record Location(@NonNull User user, @NonNull LocationType type, @NonNull Coordinate coordinates) {
 
     /**
+     * Utility method to simplify creation of {@link LocationKey} record.
+     *
+     * @return location key which can be used to simplify logic for creation
+     *         of the record.
+     */
+    public LocationKey key() {
+        return new LocationKey(user, type);
+    }
+
+    /**
      * Custom implementation of the equals function. It is recommended to
      * review the documentation of {@link Object#equals(Object)} for more
      * information on the criteria which this implementation must satisfy.

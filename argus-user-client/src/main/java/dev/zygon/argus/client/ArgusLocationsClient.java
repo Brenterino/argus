@@ -18,6 +18,8 @@
 package dev.zygon.argus.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.zygon.argus.client.auth.TokenGenerator;
 import dev.zygon.argus.client.util.HeaderUtil;
 import dev.zygon.argus.location.Locations;
@@ -45,7 +47,9 @@ public class ArgusLocationsClient implements Closeable {
     ArgusLocationsClient(OkHttpClient client, ArgusClientCustomizer customizer) {
         this.client = client;
         this.customizer = customizer;
-        this.mapper = new ObjectMapper();
+        this.mapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         this.socketListener = new WebSocketListenerImpl();
         this.errorHandler = e -> {};
     }
@@ -83,14 +87,13 @@ public class ArgusLocationsClient implements Closeable {
     }
 
     public void sendLocations(Locations data) {
-        if (closed) {
-            throw new IllegalStateException("Cannot send location data because socket is closed.");
-        }
-        try {
-            var json = mapper.writeValueAsString(data);
-            socket.send(json);
-        } catch (Exception e) {
-            errorHandler.accept(e);
+        if (!closed) {
+            try {
+                var json = mapper.writeValueAsString(data);
+                socket.send(json);
+            } catch (Exception e) {
+                errorHandler.accept(e);
+            }
         }
     }
 

@@ -113,6 +113,7 @@ public enum ArgusClientConnector {
         client.getLocations().close();
         ArgusMojangTokenGenerator.INSTANCE.clean();
         GroupStorage.INSTANCE.clean();
+        LocationStorage.INSTANCE.clean();
     }
 
     private void safeCancel(ScheduledFuture<?> future) {

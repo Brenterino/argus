@@ -40,9 +40,7 @@ public class LocalGroupLocationsStorage implements GroupLocationsStorage {
 
     private void updateLocation(Group group, Location location) {
         var locations = findLocations(group);
-        var user = location.user();
-        var type = location.type();
-        var key = new LocationKey(user, type);
+        var key = location.key();
         var data = location.coordinates();
         var previous = locations.putIfAbsent(key, data);
         while (previous != null && strategy.shouldReplace(previous, data)) { // threading conditions, may choose to do this differently, though
