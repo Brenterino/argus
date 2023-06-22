@@ -1,3 +1,0 @@
-# Argus Name Services
-
-**WIP**

@@ -18,6 +18,7 @@
 package dev.zygon.argus.client.location;
 
 import dev.zygon.argus.client.ArgusClient;
+import dev.zygon.argus.client.name.NameStorage;
 import dev.zygon.argus.location.*;
 import dev.zygon.argus.user.User;
 
@@ -56,11 +57,20 @@ public enum LocationStorage {
     }
 
     private void trackInternal(UUID target, LocationType type, Coordinate coordinate) {
-        var user = new User(target, "");
+        var user = new User(target, resolveNameFromUUIDAndType(target, type));
         var location = new Location(user, type, coordinate);
         var key = location.key();
         localStorage.put(key, location);
         storage.put(key, location);
+    }
+
+    private String resolveNameFromUUIDAndType(UUID target, LocationType type) {
+        var name = NameStorage.INSTANCE.nameFromId(target);
+        return switch (type) {
+            case USER, MISC_USER -> name;
+            case BASIC_PING -> name + "'s Ping";
+            case FOCUS_PING -> "Focus " + name;
+        };
     }
 
     public void fromRemote(Locations locations) {

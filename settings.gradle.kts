@@ -5,7 +5,6 @@ include(
     "argus-commons",
     "argus-group-services",
     "argus-location-services",
-    "argus-name-services",
     "argus-user-client",
     "argus-user-client-fabric",
     "argus-web-ui"

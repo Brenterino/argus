@@ -35,7 +35,7 @@ public enum NameStorage {
                 .map(handler -> handler.getPlayerListEntry(id))
                 .map(PlayerListEntry::getProfile)
                 .map(GameProfile::getName)
-                .orElse(null);
+                .orElse("");
     }
 
     public UUID idFromName(String name) {
