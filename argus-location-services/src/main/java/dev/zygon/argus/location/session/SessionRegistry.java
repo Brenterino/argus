@@ -2,7 +2,7 @@ package dev.zygon.argus.location.session;
 
 import dev.zygon.argus.location.Locations;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 
 /**
  * Represents a registry of sessions which can have {@link Session}s be added

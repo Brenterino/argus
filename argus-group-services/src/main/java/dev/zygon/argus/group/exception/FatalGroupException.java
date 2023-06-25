@@ -17,7 +17,7 @@
  */
 package dev.zygon.argus.group.exception;
 
-import javax.ws.rs.core.Response.StatusType;
+import jakarta.ws.rs.core.Response.StatusType;
 
 public class FatalGroupException extends GroupException {
 

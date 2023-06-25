@@ -21,7 +21,7 @@ import io.smallrye.jwt.build.Jwt;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

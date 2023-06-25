@@ -26,9 +26,9 @@ import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
 import static dev.zygon.argus.permission.Permission.ADMIN;

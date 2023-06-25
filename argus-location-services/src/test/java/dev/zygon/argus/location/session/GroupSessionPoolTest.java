@@ -27,10 +27,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.websocket.RemoteEndpoint.Async;
-import javax.websocket.SendHandler;
-import javax.websocket.SendResult;
-import javax.websocket.Session;
+import jakarta.websocket.RemoteEndpoint.Async;
+import jakarta.websocket.SendHandler;
+import jakarta.websocket.SendResult;
+import jakarta.websocket.Session;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;

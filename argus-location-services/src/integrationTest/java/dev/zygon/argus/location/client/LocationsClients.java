@@ -5,7 +5,7 @@ import dev.zygon.argus.location.codec.LocationsDecoder;
 import dev.zygon.argus.location.codec.LocationsEncoder;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.websocket.*;
+import jakarta.websocket.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
 @Slf4j

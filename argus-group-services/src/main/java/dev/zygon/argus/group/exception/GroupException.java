@@ -19,9 +19,9 @@ package dev.zygon.argus.group.exception;
 
 import lombok.Getter;
 
-import javax.ws.rs.core.Response.StatusType;
+import jakarta.ws.rs.core.Response.StatusType;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 public class GroupException extends RuntimeException {
 

@@ -23,7 +23,7 @@ import dev.zygon.argus.auth.service.ArgusTokenGenerator;
 import dev.zygon.argus.permission.Permissions;
 import io.smallrye.jwt.build.Jwt;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;

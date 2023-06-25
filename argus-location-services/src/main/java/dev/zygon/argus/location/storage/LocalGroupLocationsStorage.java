@@ -4,7 +4,7 @@ import dev.zygon.argus.group.Group;
 import dev.zygon.argus.location.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

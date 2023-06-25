@@ -23,9 +23,9 @@ import dev.zygon.argus.namespace.Namespace;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 import static org.jboss.resteasy.reactive.RestResponse.Status.NOT_FOUND;
 

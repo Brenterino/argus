@@ -24,7 +24,7 @@ import dev.zygon.argus.auth.service.MojangAuthService;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class MojangAuthApiRepository implements MojangAuthRepository {

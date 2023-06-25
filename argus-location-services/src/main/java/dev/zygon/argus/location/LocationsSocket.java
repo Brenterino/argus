@@ -9,9 +9,9 @@ import dev.zygon.argus.location.session.SessionRegistry;
 import io.quarkus.security.Authenticated;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.websocket.*;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.websocket.*;
+import jakarta.websocket.server.ServerEndpoint;
 
 /**
  * Provides the endpoint for location service.

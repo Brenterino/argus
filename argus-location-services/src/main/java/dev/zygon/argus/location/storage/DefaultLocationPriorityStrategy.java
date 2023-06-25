@@ -2,7 +2,7 @@ package dev.zygon.argus.location.storage;
 
 import dev.zygon.argus.location.Coordinate;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Implementation of {@link LocationPriorityStrategy} which is the default

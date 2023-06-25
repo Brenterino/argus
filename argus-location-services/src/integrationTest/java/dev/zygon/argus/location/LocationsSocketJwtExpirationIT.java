@@ -15,8 +15,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.websocket.ContainerProvider;
-import javax.websocket.Session;
+import jakarta.websocket.ContainerProvider;
+import jakarta.websocket.Session;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Set;

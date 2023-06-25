@@ -2,7 +2,7 @@ package dev.zygon.argus.location.auth;
 
 import dev.zygon.argus.group.Group;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 import java.util.stream.Stream;
 
 /**

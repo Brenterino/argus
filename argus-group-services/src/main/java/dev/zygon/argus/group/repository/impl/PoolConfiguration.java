@@ -20,8 +20,8 @@ package dev.zygon.argus.group.repository.impl;
 import io.vertx.mutiny.pgclient.PgPool;
 import io.vertx.mutiny.sqlclient.Pool;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.Produces;
 
 public class PoolConfiguration {
 

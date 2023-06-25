@@ -6,7 +6,7 @@ import dev.zygon.argus.permission.Permissions;
 import io.smallrye.jwt.build.Jwt;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.websocket.ClientEndpointConfig;
+import jakarta.websocket.ClientEndpointConfig;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

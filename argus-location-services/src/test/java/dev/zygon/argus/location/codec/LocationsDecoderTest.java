@@ -23,8 +23,8 @@ import dev.zygon.argus.location.LocationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.websocket.DecodeException;
-import javax.websocket.EndpointConfig;
+import jakarta.websocket.DecodeException;
+import jakarta.websocket.EndpointConfig;
 import java.time.Instant;
 import java.util.UUID;
 

@@ -25,8 +25,8 @@ import dev.zygon.argus.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.websocket.EncodeException;
-import javax.websocket.EndpointConfig;
+import jakarta.websocket.EncodeException;
+import jakarta.websocket.EndpointConfig;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Set;

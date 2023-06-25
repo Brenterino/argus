@@ -31,9 +31,9 @@ import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +43,7 @@ import static dev.zygon.argus.group.audit.AuditAction.UPDATE;
 import static dev.zygon.argus.permission.Permission.ADMIN;
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfTrue;
-import static javax.ws.rs.core.Response.Status.*;
+import static jakarta.ws.rs.core.Response.Status.*;
 
 @ApplicationScoped
 @Authenticated

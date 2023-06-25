@@ -4,8 +4,8 @@ import dev.zygon.argus.group.Group;
 import dev.zygon.argus.location.Locations;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.websocket.SendResult;
-import javax.websocket.Session;
+import jakarta.websocket.SendResult;
+import jakarta.websocket.Session;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

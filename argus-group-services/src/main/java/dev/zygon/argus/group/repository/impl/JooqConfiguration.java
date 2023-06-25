@@ -21,8 +21,8 @@ import dev.zygon.argus.group.configuration.GroupConfiguration;
 import org.jooq.Configuration;
 import org.jooq.impl.DefaultConfiguration;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.Produces;
 
 public class JooqConfiguration {
 

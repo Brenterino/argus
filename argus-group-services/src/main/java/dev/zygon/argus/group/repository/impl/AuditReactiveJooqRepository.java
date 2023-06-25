@@ -29,7 +29,7 @@ import io.vertx.mutiny.sqlclient.Tuple;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Configuration;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;

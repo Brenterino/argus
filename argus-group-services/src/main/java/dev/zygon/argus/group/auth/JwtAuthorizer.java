@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;

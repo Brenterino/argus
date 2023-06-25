@@ -32,13 +32,13 @@ import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import java.time.OffsetDateTime;
 
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
-import static javax.ws.rs.core.Response.Status.NO_CONTENT;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static org.jboss.resteasy.reactive.RestResponse.Status.FORBIDDEN;
 
 @ApplicationScoped

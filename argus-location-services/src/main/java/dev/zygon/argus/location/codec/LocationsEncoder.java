@@ -4,9 +4,9 @@ import dev.zygon.argus.location.Locations;
 import io.vertx.core.json.JsonObject;
 import lombok.NonNull;
 
-import javax.websocket.EncodeException;
-import javax.websocket.Encoder;
-import javax.websocket.EndpointConfig;
+import jakarta.websocket.EncodeException;
+import jakarta.websocket.Encoder;
+import jakarta.websocket.EndpointConfig;
 
 /**
  * Implementation of {@link Encoder.Text} which allows for conversion of
