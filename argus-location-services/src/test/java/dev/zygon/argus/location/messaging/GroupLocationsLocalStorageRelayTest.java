@@ -18,10 +18,15 @@
 package dev.zygon.argus.location.messaging;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.*;
+import dev.zygon.argus.location.Coordinate;
+import dev.zygon.argus.location.Location;
+import dev.zygon.argus.location.LocationType;
+import dev.zygon.argus.location.Locations;
 import dev.zygon.argus.location.session.SessionRegistry;
 import dev.zygon.argus.location.storage.GroupLocationsStorage;
 import dev.zygon.argus.user.User;
+import jakarta.websocket.RemoteEndpoint.Async;
+import jakarta.websocket.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,12 +34,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,8 +69,6 @@ class GroupLocationsLocalStorageRelayTest {
 
         volterra = new Group("volterra");
         locations = new Locations(Set.of(userLocationMickale, userLocationHoover, userLocationS4nta));
-
-        relay.setLocalRelayPublishDelayMillis(1);
     }
 
     @Test
@@ -76,42 +77,39 @@ class GroupLocationsLocalStorageRelayTest {
 
         verify(storage, times(1))
                 .track(volterra, locations);
-        verifyNoMoreInteractions(storage);
-        verifyNoInteractions(registry);
-    }
-
-    @Test
-    void whenMultiRelayIsInvokedMessagesAreRelayed() {
-        when(storage.collect())
-                .thenReturn(Set.of(new GroupLocations(volterra, locations)));
-
-        var data = relay.relay()
-                .toUni()
-                .await()
-                .atMost(Duration.ofMillis(50));
-
-        verify(storage, times(1))
-                .collect();
-        verifyNoMoreInteractions(storage);
-        verifyNoInteractions(registry);
-
-        assertThat(data)
-                .extracting(GroupLocations::group)
-                .isEqualTo(volterra);
-        assertThat(data)
-                .extracting(GroupLocations::locations)
-                .isEqualTo(locations);
+        verify(registry, times(1))
+                .broadcast(volterra, locations);
+        verifyNoMoreInteractions(storage, registry);
     }
 
     @Test
     void whenRelayIsInvokedMessagesAreBroadcastToRegistry() {
-        var groupLocations = new GroupLocations(volterra, locations);
-
-        relay.relay(groupLocations);
+        relay.relay(volterra, locations);
 
         verify(registry, times(1))
                 .broadcast(volterra, locations);
         verifyNoMoreInteractions(registry);
         verifyNoInteractions(storage);
+    }
+
+    @Test
+    void whenReplayIsInvokedMessagesAreSentToSession() {
+        var session = mock(Session.class);
+        var async = mock(Async.class);
+
+        when(session.getAsyncRemote())
+                .thenReturn(async);
+        when(storage.locations(volterra))
+                .thenReturn(locations);
+
+        relay.replay(volterra, session);
+
+        verify(storage, times(1))
+                .locations(volterra);
+        verify(session, times(1))
+                .getAsyncRemote();
+        verify(async, times(1))
+                .sendObject(locations);
+        verifyNoMoreInteractions(storage, session, async);
     }
 }

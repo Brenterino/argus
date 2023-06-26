@@ -1,10 +1,16 @@
 package dev.zygon.argus.location.storage;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.location.*;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.AccessLevel;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +21,8 @@ import java.util.stream.Collectors;
  * Implementation of {@link GroupLocationsStorage} which stores the location
  * data within the instance. Location data is updated by utilizing
  * {@link LocationPriorityStrategy} to determine if the currently held location
- * data needs to be evicted and replace with newly received data.
+ * data needs to be evicted and replace with newly received data. Data may be
+ * tracked for a particular {@link LocationKey}, but will eventually be evicted.
  *
  * @see GroupLocationsStorage
  * @see LocationPriorityStrategy
@@ -24,8 +31,12 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class LocalGroupLocationsStorage implements GroupLocationsStorage {
 
+    @Setter(AccessLevel.PACKAGE)
+    @ConfigProperty(name = "group.locations.local.storage.expiration.minutes", defaultValue = "10")
+    private int localStorageExpirationMinutes;
+
     private final LocationPriorityStrategy strategy;
-    private final Map<Group, Map<LocationKey, Coordinate>> locationsByGroup;
+    private final Map<Group, Cache<LocationKey, Coordinate>> locationsByGroup;
 
     public LocalGroupLocationsStorage(LocationPriorityStrategy strategy) {
         this.strategy = strategy;
@@ -42,16 +53,22 @@ public class LocalGroupLocationsStorage implements GroupLocationsStorage {
         var locations = findLocations(group);
         var key = location.key();
         var data = location.coordinates();
-        var previous = locations.putIfAbsent(key, data);
-        while (previous != null && strategy.shouldReplace(previous, data)) { // threading conditions, may choose to do this differently, though
-            locations.remove(key);
-            previous = locations.putIfAbsent(key, data);
+        var previous = locations.getIfPresent(key);
+        if (strategy.shouldReplace(previous, data)) {
+            locations.put(key, data);
         }
     }
 
-    private Map<LocationKey, Coordinate> findLocations(Group group) {
-        locationsByGroup.putIfAbsent(group, new ConcurrentHashMap<>());
+    @Override
+    public Locations locations(Group group) {
+        var locations = findLocations(group);
+        return convertToLocations(locations);
+    }
 
+    private Cache<LocationKey, Coordinate> findLocations(Group group) {
+        locationsByGroup.putIfAbsent(group, CacheBuilder.newBuilder()
+                        .expireAfterWrite(Duration.ofMinutes(localStorageExpirationMinutes))
+                .build());
         return locationsByGroup.get(group);
     }
 
@@ -61,13 +78,18 @@ public class LocalGroupLocationsStorage implements GroupLocationsStorage {
         for (var groupLocation : locationsByGroup.entrySet()) {
             var group = groupLocation.getKey();
             var locations = groupLocation.getValue();
-            var userLocations = locations.entrySet()
-                    .stream()
-                    .map(e -> new Location(e.getKey().user(), e.getKey().type(), e.getValue()))
-                    .collect(Collectors.toUnmodifiableSet());
-            var locationsData = new Locations(userLocations);
+            var locationsData = convertToLocations(locations);
             collected.add(new GroupLocations(group, locationsData));
         }
         return collected;
+    }
+
+    private Locations convertToLocations(Cache<LocationKey, Coordinate> data) {
+        var userLocations = data.asMap()
+                .entrySet()
+                .stream()
+                .map(e -> new Location(e.getKey().user(), e.getKey().type(), e.getValue()))
+                .collect(Collectors.toUnmodifiableSet());
+        return new Locations(userLocations);
     }
 }

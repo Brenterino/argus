@@ -20,6 +20,16 @@ public interface GroupLocationsStorage {
     void track(Group group, Locations locations);
 
     /**
+     * Retrieve the locations for a certain group.
+     *
+     * @param group the group to retrieve location data for.
+     *
+     * @return the locations that are available for this
+     *         group.
+     */
+    Locations locations(Group group);
+
+    /**
      * Retrieve the location data in the form of a set of {@link GroupLocations}
      * records which relate a group to a set of locations.
      *

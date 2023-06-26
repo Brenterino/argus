@@ -2,7 +2,9 @@ package dev.zygon.argus.location.storage;
 
 import dev.zygon.argus.location.Coordinate;
 
+import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.NonNull;
 
 /**
  * Implementation of {@link LocationPriorityStrategy} which is the default
@@ -14,10 +16,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class DefaultLocationPriorityStrategy implements LocationPriorityStrategy {
 
     @Override
-    public boolean shouldReplace(Coordinate previous, Coordinate possibleNext) {
+    public boolean shouldReplace(Coordinate previous, @NonNull Coordinate possibleNext) {
+        if (previous == null)
+            return true;
+
         var previousTime = previous.time();
         var possibleNextTime = possibleNext.time();
-
         return possibleNextTime.isAfter(previousTime);
     }
 }

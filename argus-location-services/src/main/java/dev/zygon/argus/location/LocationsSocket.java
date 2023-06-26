@@ -53,6 +53,8 @@ public class LocationsSocket {
         if (authorizer.authorize(session)) {
             authorizer.readGroups(session)
                     .forEach(group -> registry.add(group, session));
+            authorizer.readGroups(session)
+                    .forEach(group -> relay.replay(group, session));
         } else {
             session.close();
         }

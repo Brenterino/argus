@@ -90,8 +90,16 @@ public enum LocationStorage {
     }
 
     public void syncRemote(ArgusClient client) {
-        var locations = new HashSet<>(localStorage.values());
-        client.getLocations().sendLocations(new Locations(locations));
+        var locations = new HashSet<Location>();
+        localStorage.keySet().forEach(k -> {
+            localStorage.compute(k, (ki, vi) -> {
+                locations.add(vi);
+                return null;
+            });
+        });
+        if (!locations.isEmpty()) {
+            client.getLocations().sendLocations(new Locations(locations));
+        }
     }
 
     public void clean() {

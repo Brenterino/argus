@@ -10,6 +10,7 @@ java {
 }
 
 val quarkusVersion: String by project
+val guavaVersion: String by project
 val assertJVersion: String by project
 
 dependencies {
@@ -21,6 +22,9 @@ dependencies {
     implementation("io.quarkus:quarkus-smallrye-jwt")
     implementation("io.quarkus:quarkus-smallrye-reactive-messaging-rabbitmq")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+
+    // Guava
+    implementation("com.google.guava:guava:${guavaVersion}")
 
     // Argus
     implementation(project(":argus-commons"))

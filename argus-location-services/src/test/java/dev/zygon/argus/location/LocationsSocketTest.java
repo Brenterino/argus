@@ -82,13 +82,14 @@ class LocationsSocketTest {
         when(authorizer.authorize(session))
                 .thenReturn(true);
         when(authorizer.readGroups(session))
+                .thenReturn(Stream.empty())
                 .thenReturn(Stream.empty());
 
         socket.onOpen(session);
 
         verify(authorizer, times(1))
                 .authorize(session);
-        verify(authorizer, times(1))
+        verify(authorizer, times(2))
                 .readGroups(session);
         verify(session, times(1))
                 .getId();
@@ -101,20 +102,22 @@ class LocationsSocketTest {
         when(authorizer.authorize(session))
                 .thenReturn(true);
         when(authorizer.readGroups(session))
+                .thenReturn(Stream.of(butternut))
                 .thenReturn(Stream.of(butternut));
 
         socket.onOpen(session);
 
         verify(authorizer, times(1))
                 .authorize(session);
-        verify(authorizer, times(1))
+        verify(authorizer, times(2))
                 .readGroups(session);
         verify(registry, times(1))
                 .add(butternut, session);
         verify(session, times(1))
                 .getId();
-        verifyNoMoreInteractions(authorizer, registry, session);
-        verifyNoInteractions(relay);
+        verify(relay, times(1))
+                .replay(butternut, session);
+        verifyNoMoreInteractions(authorizer, registry, session, relay);
     }
 
     @Test

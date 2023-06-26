@@ -9,14 +9,14 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakeException;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
+import jakarta.websocket.ContainerProvider;
+import jakarta.websocket.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.websocket.ContainerProvider;
-import jakarta.websocket.Session;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Set;
@@ -101,31 +101,37 @@ public class LocationsSocketJwtExpirationIT {
         bob.getAsyncRemote()
                 .sendObject(newBobLocations);
 
-        Thread.sleep(2000); // wait for relay to be situated
+        Thread.sleep(1000);
 
-        var allAliceLocations = ALICE_RECEIVED.pollLast();
-        var allBobLocations = BOB_RECEIVED.pollLast();
+        var allAliceLocations = ALICE_RECEIVED.stream()
+                .toList();
+        var allBobLocations = BOB_RECEIVED.stream()
+                .toList();
 
         assertThat(allAliceLocations)
                 .isNotNull();
-        assertThat(allAliceLocations.data())
+        assertThat(allAliceLocations)
+                .flatExtracting(Locations::data)
                 .isNotNull()
                 .extracting(Location::user)
-                .containsExactlyInAnyOrder(userBob, userAlice);
-        assertThat(allAliceLocations.data())
+                .contains(userBob, userAlice);
+        assertThat(allAliceLocations)
+                .flatExtracting(Locations::data)
                 .isNotNull()
                 .extracting(Location::coordinates)
-                .containsExactlyInAnyOrder(newLocationBob, newLocationAlice);
+                .contains(locationBob, locationAlice, newLocationBob, newLocationAlice);
         assertThat(allBobLocations)
                 .isNotNull();
-        assertThat(allBobLocations.data())
+        assertThat(allBobLocations)
+                .flatExtracting(Locations::data)
                 .isNotNull()
                 .extracting(Location::user)
-                .containsExactly(userBob);
-        assertThat(allBobLocations.data())
+                .contains(userBob);
+        assertThat(allBobLocations)
+                .flatExtracting(Locations::data)
                 .isNotNull()
                 .extracting(Location::coordinates)
-                .containsExactly(newLocationBob);
+                .contains(locationBob, newLocationBob);
     }
 
     @AfterEach

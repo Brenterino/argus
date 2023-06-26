@@ -69,7 +69,7 @@ public enum ChatEventHandler {
                     .y(Double.parseDouble(snitchHit.y()))
                     .z(Double.parseDouble(snitchHit.z()))
                     .w(dimension.ordinal())
-                    .local(true)
+                    .local(false)
                     .time(Instant.now())
                     .build();
             LocationStorage.INSTANCE.trackPlayer(uuid, location);
@@ -99,7 +99,7 @@ public enum ChatEventHandler {
                     .y(Double.parseDouble(pearlHit.y()))
                     .z(Double.parseDouble(pearlHit.z()))
                     .w(dimension.ordinal())
-                    .local(true)
+                    .local(false)
                     .time(Instant.now())
                     .build();
             LocationStorage.INSTANCE.trackPlayer(holder, location);

@@ -1,9 +1,8 @@
 package dev.zygon.argus.location.messaging;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.GroupLocations;
 import dev.zygon.argus.location.Locations;
-import io.smallrye.mutiny.Multi;
+import jakarta.websocket.Session;
 
 /**
  * Abstraction for a local relay which can send and receive messages to/from
@@ -21,18 +20,19 @@ public interface GroupLocationsLocalRelay {
     void receive(Group group, Locations locations);
 
     /**
-     * Create a {@link Multi} which is used to relay group locations to the
-     * appropriate groups.
-     *
-     * @return a {@link Multi} which can be used to relay messages to the
-     * appropriate groups.
-     */
-    Multi<GroupLocations> relay();
-
-    /**
      * Relay all available locations for a group to that group.
      *
+     * @param group     the group which the location data is to be relayed to.
      * @param locations the group locations which will be relayed.
      */
-    void relay(GroupLocations locations);
+    void relay(Group group, Locations locations);
+
+    /**
+     * Replays location data that is stored for a group to a newly joining
+     * session.
+     *
+     * @param group   the group for which data must be replayed.
+     * @param session the session for which data will be replayed to.
+     */
+    void replay(Group group, Session session);
 }

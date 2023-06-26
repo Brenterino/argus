@@ -1,20 +1,13 @@
 package dev.zygon.argus.location.messaging;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.GroupLocations;
 import dev.zygon.argus.location.Locations;
 import dev.zygon.argus.location.session.SessionRegistry;
 import dev.zygon.argus.location.storage.GroupLocationsStorage;
 import io.smallrye.mutiny.Multi;
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eclipse.microprofile.reactive.messaging.Outgoing;
-
 import jakarta.enterprise.context.ApplicationScoped;
-import java.time.Duration;
+import jakarta.websocket.Session;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of {@link GroupLocationsLocalRelay} which is backed by local
@@ -27,10 +20,6 @@ import java.time.Duration;
 @Slf4j
 @ApplicationScoped
 public class GroupLocationsLocalStorageRelay implements GroupLocationsLocalRelay {
-
-    @Setter(AccessLevel.PACKAGE)
-    @ConfigProperty(name = "group.locations.relay.local.publish.delay.millis", defaultValue = "100")
-    private long localRelayPublishDelayMillis;
 
     private final GroupLocationsStorage storage;
     private final SessionRegistry<Group> registry;
@@ -48,29 +37,27 @@ public class GroupLocationsLocalStorageRelay implements GroupLocationsLocalRelay
                     group, locations);
         }
         storage.track(group, locations);
+        relay(group, locations);
     }
 
     @Override
-    @Outgoing("local-locations")
-    public Multi<GroupLocations> relay() {
-        return Multi.createFrom()
-                .ticks()
-                .every(Duration.ofMillis(localRelayPublishDelayMillis))
-                .map(t -> storage.collect())
-                .flatMap(s -> Multi.createFrom().iterable(s))
-                .onOverflow()
-                .drop();
-    }
-
-    @Override
-    @Incoming("local-locations")
-    public void relay(GroupLocations locations) {
-        var group = locations.group();
-        var data = locations.locations();
+    public void relay(Group group, Locations locations) {
         if (log.isDebugEnabled()) {
             log.debug("Relaying message for group ({}): {}",
                     group, locations);
         }
-        registry.broadcast(group, data);
+        registry.broadcast(group, locations);
+    }
+
+    @Override
+    public void replay(Group group, Session session) {
+        if (log.isDebugEnabled()) {
+            log.debug("Replaying messages for group ({}) to {}",
+                    group, session.getId());
+        }
+        var locations = storage.locations(group);
+
+        session.getAsyncRemote()
+                .sendObject(locations);
     }
 }

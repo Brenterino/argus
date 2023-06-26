@@ -77,6 +77,10 @@ class LocalGroupLocationsStorageTest {
                 userLocationSoccer, userLocationLadez));
         originalLocations = new Locations(Set.of(originalUserLocationThoths, originalUserLocationZygon,
                 originalUserLocationSoccer, originalUserLocationLadez));
+
+        when(strategy.shouldReplace(any(), any()))
+                .thenReturn(true);
+        storage.setLocalStorageExpirationMinutes(10);
         storage.track(memeTeam, originalLocations);
     }
 
@@ -112,5 +116,17 @@ class LocalGroupLocationsStorageTest {
                 .extracting(Locations::data)
                 .asInstanceOf(COLLECTION)
                 .containsExactlyInAnyOrderElementsOf(locations.data());
+    }
+
+    @Test
+    void canRetrieveStoredLocationsByGroup() {
+        var fakeGroup = new Group("A", "B");
+
+        assertThat(storage.locations(memeTeam))
+                .isEqualTo(originalLocations);
+        assertThat(storage.locations(fakeGroup))
+                .extracting(Locations::data)
+                .asInstanceOf(COLLECTION)
+                .isEmpty();
     }
 }

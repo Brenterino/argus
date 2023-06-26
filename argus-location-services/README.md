@@ -65,9 +65,9 @@ configuration.
 may be used as the Quarkus profile in order to enable syncing across multiple
 instances via the `Remote Synchronizer`
 
-`group.locations.relay.local.publish.delay.millis`
-may be used to set the delay for which all location messages may be published
-to all sessions.
+`group.locations.local.storage.expiration.minutes`
+may be used to set the time from write expiration for which location data
+will be saved and be available to replay for 'late joining' users.
 
 `group.locations.relay.remote.publish.delay.millis`
 may be used to set the delay for which all location messages are published
