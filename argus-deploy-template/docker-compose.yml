@@ -2,7 +2,7 @@ version: '3.8'
 services:
   # Infrastructure Services
   nginx:
-    image: nginx:1.23.3
+    image: nginx:1.25.1
     container_name: nginx
     ports:
       - "80:80"
@@ -29,7 +29,6 @@ services:
     volumes:
       - ./public.pem:/etc/jwt/public.pem
       - ./private.pem:/etc/jwt/private.pem
-      - ./trust.jks:/etc/jks/trust.jks
     environment:
       - QUARKUS_HTTP_PORT=80
       - QUARKUS_REST_CLIENT_ARGUS_GROUPS_API_URL=http://argus-groups

@@ -2,7 +2,7 @@ version: '3.8'
 services:
   # Infrastructure Services
   nginx:
-    image: nginx:1.23.3
+    image: nginx:1.25.1
     container_name: nginx
     ports:
       - "80:80"
