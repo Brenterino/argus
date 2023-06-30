@@ -16,10 +16,14 @@
 				<input type="checkbox" v-model="group.writeActive" :disabled="!group.writeAvailable" />
 			</td>
 			<td class="group-table-row">
-				<button :disabled="!group.admin" class="group-button"
-					:class="{ 'group-button-disabled': !group.admin }">
-					<img src="../assets/edit.svg" class="group-button-svg" />
-				</button>
+				<router-link :to="{ name: 'group-view', params: { group: group.name } }"
+					custom v-slot="{ navigate }">
+					<button :disabled="!group.admin" class="group-button"
+						:class="{ 'group-button-disabled': !group.admin }"
+						@click="navigate" @keypress.enter="navigate" role="link">
+						<img src="../assets/edit.svg" class="group-button-svg" />
+					</button>
+				</router-link>
 			</td>
 			<td class="group-table-row">
 				<button class="group-button">

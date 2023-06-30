@@ -139,8 +139,6 @@ public class UserGroupsResourceIT {
             var body = response.body()
                     .as(GroupPermissions.class);
 
-            System.out.println("Payload = " + response.body().prettyPrint());
-
             assertThat(status)
                     .isEqualTo(OK);
             assertThat(body.permissions())

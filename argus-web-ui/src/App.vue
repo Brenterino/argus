@@ -1,14 +1,14 @@
 <template>
-  <Groups />
+  <RouterView />
 </template>
 
 <script>
-import Groups from './components/Groups.vue'
+import RouterView from 'vue-router';
 
 export default {
   name: 'argus-ui',
   components: {
-    Groups
+    RouterView
   }
 }
 </script>
