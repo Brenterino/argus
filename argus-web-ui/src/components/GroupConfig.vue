@@ -1,16 +1,16 @@
 <template>
-    <div>Hello, {{ group }}</div>
+	<div>Hello, {{ group }}</div>
 </template>
 
 <script>
 export default {
 	name: "group-config",
 	data: () => ({
-        group: null,
+		group: null,
 		metadata: []
 	}),
 	mounted() {
-        this.group = this.$route.params.group;
+		this.group = this.$route.params.group;
 	}
 }
 </script>

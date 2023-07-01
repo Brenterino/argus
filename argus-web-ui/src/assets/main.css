@@ -5,12 +5,13 @@
 	min-width: 600px;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 
-	.custom-table-header, .custom-table-footer {
+	.custom-table-header,
+	.custom-table-footer {
 		box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 	}
 
 	.custom-table-row {
-		padding-top: 10px;
+		padding-top: 5px;
 	}
 
 	.custom-table-button {
@@ -26,6 +27,10 @@
 	.custom-table-button-svg {
 		width: 30px;
 	}
+
+	.custom-table-text-input {
+		width: 85%;
+	}
 }
 
 .navigation-table {
@@ -33,29 +38,29 @@
 	font-size: 1rem;
 	font-family: sans-serif;
 	min-width: 600px;
-    margin-top: 5px;
+	margin-top: 5px;
 
-    .navigation-table-column-far-left {
-        padding-left: 157px;
-    }
+	.navigation-table-column-far-left {
+		padding-left: 157px;
+	}
 
-    .navigation-table-column-left {
-        padding-left: 5px;
-    }
+	.navigation-table-column-left {
+		padding-left: 5px;
+	}
 
-    .navigation-table-column-mid {
-        min-width: 150px;
-    }
+	.navigation-table-column-mid {
+		min-width: 150px;
+	}
 
-    .navigation-table-column-right {
-        padding-right: 5px;
-    }
+	.navigation-table-column-right {
+		padding-right: 5px;
+	}
 
-    .navigation-table-column-far-right {
-        padding-right: 157px;
-    }
+	.navigation-table-column-far-right {
+		padding-right: 157px;
+	}
 
-    .navigation-table-button {
-        min-width: 30px;
-    }
+	.navigation-table-button {
+		min-width: 30px;
+	}
 }

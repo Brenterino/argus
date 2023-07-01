@@ -1,6 +1,6 @@
 <template>
-	<GroupMembers />
-	<GroupConfig />
+  <GroupMembers />
+  <GroupConfig />
 </template>
 
 <script>
