@@ -1,6 +1,6 @@
 <template>
-	<table class="group-table">
-		<tr class="group-table-header">
+	<table class="custom-table">
+		<tr class="custom-table-header">
 			<th>Group</th>
 			<th>Read</th>
 			<th>Write</th>
@@ -8,26 +8,29 @@
 			<th>Leave</th>
 		</tr>
 		<tr v-for="group in groups" :key="group.name">
-			<td class="group-table-row">{{ group.name }}</td>
-			<td class="group-table-row">
-				<input type="checkbox" v-model="group.readActive" :disabled="!group.readAvailable" />
+			<td class="custom-table-row">{{ group.name }}</td>
+			<td class="custom-table-row">
+				<input type="checkbox" v-model="group.readActive" :disabled="!group.readAvailable"
+					@click="toggleRead(group.name)"/>
 			</td>
-			<td class="group-table-row">
-				<input type="checkbox" v-model="group.writeActive" :disabled="!group.writeAvailable" />
+			<td class="custom-table-row">
+				<input type="checkbox" v-model="group.writeActive" :disabled="!group.writeAvailable"
+					@click="toggleWrite(group.name)"/>
 			</td>
-			<td class="group-table-row">
+			<td class="custom-table-row">
 				<router-link :to="{ name: 'group-view', params: { group: group.name } }"
 					custom v-slot="{ navigate }">
-					<button :disabled="!group.admin" class="group-button"
-						:class="{ 'group-button-disabled': !group.admin }"
+					<button :disabled="!group.admin" class="custom-table-button"
+						:class="{ 'custom-table-button-disabled': !group.admin }"
 						@click="navigate" @keypress.enter="navigate" role="link">
-						<img src="../assets/edit.svg" class="group-button-svg" />
+						<img src="../assets/edit.svg" class="custom-table-button-svg" />
 					</button>
 				</router-link>
 			</td>
-			<td class="group-table-row">
-				<button class="group-button">
-					<img src="../assets/leave.svg" class="group-button-svg" />
+			<td class="custom-table-table-row">
+				<button class="custom-table-button"
+					@click="leaveGroup(group.name)">
+					<img src="../assets/leave.svg" class="custom-table-button-svg" />
 				</button>
 			</td>
 		</tr>
@@ -38,7 +41,7 @@
 export default {
 	name: "group-list",
 	data: () => ({
-		groups: []
+		groups: null
 	}),
 	mounted() {
 		this.groups = [{
@@ -73,37 +76,17 @@ export default {
 			writeAvailable: true,
 			admin: false
 		}];
+	},
+	methods: {
+		toggleRead(group) {
+			console.log("toggling read for group " + group)
+		},
+		toggleWrite(group) {
+			console.log("toggling write for group " + group)
+		},
+		leaveGroup(group) {
+			console.log("leaving group " + group)
+		}
 	}
 }
 </script>
-
-<style>
-.group-table {
-	border-collapse: collapse;
-	font-size: 1rem;
-	font-family: sans-serif;
-	min-width: 400px;
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-
-	.group-table-header {
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-	}
-
-	.group-table-row {
-		padding-top: 10px;
-	}
-
-	.group-button {
-		cursor: pointer;
-		background-color: transparent;
-		border: none;
-	}
-
-	.group-button-disabled {
-		cursor: not-allowed;
-	}
-
-	.group-button-svg {
-		width: 30px;
-	}
-}</style>
