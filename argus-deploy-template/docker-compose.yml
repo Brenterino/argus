@@ -31,6 +31,8 @@ services:
       - ./private.pem:/etc/jwt/private.pem
     environment:
       - QUARKUS_HTTP_PORT=80
+      - QUARKUS_HTTP_CORS=true
+      - QUARKUS_HTTP_CORS_ORIGINS=/.*/
       - QUARKUS_REST_CLIENT_ARGUS_GROUPS_API_URL=http://argus-groups
       - ARGUS_AUTH_PUBLIC_KEY=/etc/jwt/public.pem
       - ARGUS_AUTH_PRIVATE_KEY=/etc/jwt/private.pem
@@ -43,6 +45,8 @@ services:
     container_name: argus-groups
     environment:
       - QUARKUS_HTTP_PORT=80
+      - QUARKUS_HTTP_CORS=true
+      - QUARKUS_HTTP_CORS_ORIGINS=/.*/
       - ARGUS_AUTH_PUBLIC_KEY=http://argus-auth/auth/key
       - ARGUS_AUTH_ISSUER=http://localhost/auth
       - ARGUS_GROUP_MAX_OWNED_GROUPS=3
@@ -61,5 +65,7 @@ services:
     container_name: argus-locations
     environment:
       - QUARKUS_HTTP_PORT=80
+      - QUARKUS_HTTP_CORS=true
+      - QUARKUS_HTTP_CORS_ORIGINS=/.*/
       - ARGUS_AUTH_PUBLIC_KEY=http://argus-auth/auth/key
       - ARGUS_AUTH_ISSUER=http://localhost/auth

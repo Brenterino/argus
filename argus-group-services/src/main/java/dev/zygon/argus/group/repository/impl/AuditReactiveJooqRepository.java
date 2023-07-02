@@ -26,14 +26,14 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Pool;
 import io.vertx.mutiny.sqlclient.Tuple;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Configuration;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static dev.zygon.argus.group.repository.impl.ColumnNames.COUNT_NAME;
 import static dev.zygon.argus.group.repository.impl.ColumnNames.PERMISSION_NAME;
@@ -53,7 +53,7 @@ public class AuditReactiveJooqRepository implements AuditRepository {
     public AuditReactiveJooqRepository(Pool pool, Configuration configuration) {
         this.pool = pool;
         this.configuration = configuration;
-        this.queryCache = new HashMap<>();
+        this.queryCache = new ConcurrentHashMap<>();
     }
 
     @Override

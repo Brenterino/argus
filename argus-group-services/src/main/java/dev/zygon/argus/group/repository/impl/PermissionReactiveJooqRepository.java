@@ -30,13 +30,13 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Pool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.Tuple;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Configuration;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -59,7 +59,7 @@ public class PermissionReactiveJooqRepository implements PermissionRepository {
     public PermissionReactiveJooqRepository(Pool pool, Configuration configuration) {
         this.pool = pool;
         this.configuration = configuration;
-        this.queryCache = new HashMap<>();
+        this.queryCache = new ConcurrentHashMap<>();
     }
 
     @Override

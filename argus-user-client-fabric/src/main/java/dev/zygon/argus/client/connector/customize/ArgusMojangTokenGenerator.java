@@ -151,6 +151,10 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
                 .orElse(null);
     }
 
+    public ArgusToken accessToken() {
+        return token.accessToken();
+    }
+
     public void clean() {
         this.username = null;
         this.server = null;

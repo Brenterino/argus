@@ -16,6 +16,8 @@ val modMenuVersion: String by project
 val clothConfigVersion: String by project
 val okHttpVersion: String by project
 val retrofitVersion: String by project
+val jacksonVersion: String by project
+val javalinVersion: String by project
 
 dependencies {
     // Fabric
@@ -39,6 +41,10 @@ dependencies {
     implementation(project(":argus-user-client"))
     implementation("com.squareup.okhttp3:okhttp:${okHttpVersion}")
     implementation("com.squareup.retrofit2:retrofit:${retrofitVersion}")
+    implementation("io.javalin:javalin:${javalinVersion}")
+    implementation(enforcedPlatform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}"))
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // 'Shade' these Dependencies into our JAR
     include(project(":argus-user-client"))

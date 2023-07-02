@@ -7,7 +7,7 @@
 			<th>Modify</th>
 			<th>Leave</th>
 		</tr>
-		<tr v-for="group in groups" :key="group.name">
+		<tr v-for="group in groupsStore.getGroups" :key="group.name">
 			<td class="custom-table-row">{{ group.name }}</td>
 			<td class="custom-table-row">
 				<input type="checkbox" v-model="group.readActive" :disabled="!group.readAvailable"
@@ -36,44 +36,17 @@
 </template>
 
 <script>
+import { useGroupsStore } from '../stores/groups'
+
 export default {
 	name: "group-list",
-	data: () => ({
-		groups: null
-	}),
+	data: () => ({}),
+	setup() {
+		const groupsStore = useGroupsStore();
+		return { groupsStore };
+	},
 	mounted() {
-		this.groups = [{
-			name: "Volterra",
-			readActive: true,
-			readAvailable: true,
-			writeActive: true,
-			writeAvailable: true,
-			admin: true
-		},
-		{
-			name: "Estalia",
-			readActive: true,
-			readAvailable: true,
-			writeActive: false,
-			writeAvailable: false,
-			admin: false
-		},
-		{
-			name: "Butternut",
-			readActive: false,
-			readAvailable: true,
-			writeActive: false,
-			writeAvailable: true,
-			admin: false
-		},
-		{
-			name: "Icenia",
-			readActive: false,
-			readAvailable: false,
-			writeActive: true,
-			writeAvailable: true,
-			admin: false
-		}];
+		this.groupsStore.fetchGroups()
 	},
 	methods: {
 		toggleRead(group) {

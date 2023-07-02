@@ -38,6 +38,12 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     private boolean verifyCertificateEnabled = false;
 
+    @ConfigEntry.Gui.Tooltip
+    private boolean webUiEnabled = true;
+
+    @ConfigEntry.Gui.Tooltip
+    private int webUiPort = 9000;
+
     @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
     @ConfigEntry.Gui.Tooltip
     private int refreshTokenCheckIntervalSeconds = 30;

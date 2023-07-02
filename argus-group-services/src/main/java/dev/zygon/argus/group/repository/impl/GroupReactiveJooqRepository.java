@@ -30,14 +30,14 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.sqlclient.Pool;
 import io.vertx.mutiny.sqlclient.SqlConnection;
 import io.vertx.mutiny.sqlclient.Tuple;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Configuration;
 import org.jooq.JSON;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static dev.zygon.argus.group.repository.impl.ColumnNames.*;
@@ -58,7 +58,7 @@ public class GroupReactiveJooqRepository implements GroupRepository {
     public GroupReactiveJooqRepository(Pool pool, Configuration configuration) {
         this.pool = pool;
         this.configuration = configuration;
-        this.queryCache = new HashMap<>();
+        this.queryCache = new ConcurrentHashMap<>();
     }
 
     @Override

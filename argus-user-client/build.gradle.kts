@@ -14,6 +14,7 @@ java {
 val okHttpVersion: String by project
 val retrofitVersion: String by project
 val jacksonVersion: String by project
+val javalinVersion: String by project
 
 dependencies {
     // OkHttp / Retrofit
@@ -24,6 +25,9 @@ dependencies {
     // Jackson
     implementation(enforcedPlatform("com.fasterxml.jackson:jackson-bom:${jacksonVersion}"))
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    // Javalin (shading for downstream project)
+    implementation("io.javalin:javalin:${javalinVersion}")
 
     // Argus
     implementation(project(":argus-commons"))

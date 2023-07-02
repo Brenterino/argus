@@ -25,6 +25,7 @@ import dev.zygon.argus.client.event.RemoteLocationHandler;
 import dev.zygon.argus.client.groups.GroupStorage;
 import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.scheduler.ClientScheduler;
+import dev.zygon.argus.client.ui.ArgusWebUi;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ScheduledFuture;
@@ -57,6 +58,9 @@ public enum ArgusClientConnector {
         initTokenGenerator(server, username);
         initGroupRefresh();
         initLocationTracking();
+
+        // Initialize Web UI
+        ArgusWebUi.INSTANCE.start();
     }
 
     private void initTokenGenerator(String server, String username) {
@@ -114,6 +118,7 @@ public enum ArgusClientConnector {
         ArgusMojangTokenGenerator.INSTANCE.clean();
         GroupStorage.INSTANCE.clean();
         LocationStorage.INSTANCE.clean();
+        ArgusWebUi.INSTANCE.stop();
     }
 
     private void safeCancel(ScheduledFuture<?> future) {

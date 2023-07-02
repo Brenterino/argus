@@ -24,13 +24,13 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Pool;
 import io.vertx.mutiny.sqlclient.Tuple;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Configuration;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.jooq.generated.Tables.NAMESPACES;
 import static org.jooq.generated.Tables.NAMESPACE_MAPPINGS;
@@ -48,7 +48,7 @@ public class NamespaceReactiveJooqRepository implements NamespaceRepository {
     public NamespaceReactiveJooqRepository(Pool pool, Configuration configuration) {
         this.pool = pool;
         this.configuration = configuration;
-        this.queryCache = new HashMap<>();
+        this.queryCache = new ConcurrentHashMap<>();
     }
 
     @Override
