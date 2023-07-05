@@ -67,7 +67,6 @@ export const useMembersStore = defineStore("membersStore", {
                 await axios.delete(local.host + '/groups/permissions/' +
                     group + '/admin', config)
             } catch (error) {
-                console.log(error)
                 alert(error?.response?.data)
             }
             await this.fetchMembers(group, page) // force refresh :)

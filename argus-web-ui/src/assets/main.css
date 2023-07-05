@@ -1,4 +1,6 @@
 .custom-table {
+	margin-left: auto;
+	margin-right: auto;
 	border-collapse: collapse;
 	font-size: 1rem;
 	font-family: sans-serif;
@@ -34,6 +36,8 @@
 }
 
 .navigation-table {
+	margin-left: auto;
+	margin-right: auto;
 	border-collapse: collapse;
 	font-size: 1rem;
 	font-family: sans-serif;

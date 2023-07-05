@@ -10,6 +10,7 @@ Not exhaustive, but here are the things that still need to be accomplished in or
 - Keys to toggle streamer mode, increase/decrease waypoint distances, show same dimension
 
 # Beyond MVP
+- Color picker for group categories
 - Implementation of Status Services which can be used to relay health, buff status, and other useful inventory
   information (ex. health pots, durability?)
 - Status Service would need to have an intuitive in-game HUD. May be difficult to do properly, but possibly add
