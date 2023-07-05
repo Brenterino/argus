@@ -1,30 +1,7 @@
 import { defineStore } from 'pinia'
 import { useLocalStore } from './local'
+import { isRead, isWrite, toRawPermission } from '../util/permission'
 import axios from 'axios'
-
-const isRead = (permission) => {
-    return permission === "READ" ||
-            permission === "READWRITE" ||
-            permission === "ADMIN";
-}
-
-const isWrite = (permission) => {
-    return permission === "WRITE" ||
-            permission === "READWRITE" ||
-            permission === "ADMIN";
-}
-
-const toRawPermission = (read, write) => {
-    if (read && write) {
-        return "READWRITE"
-    } else if (read) {
-        return "READ"
-    } else if (write) {
-        return "WRITE"
-    } else {
-        return "ACCESS"
-    }
-};
 
 const extractGroups = (data) => {
     let groups = [];

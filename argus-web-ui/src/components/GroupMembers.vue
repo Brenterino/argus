@@ -8,16 +8,19 @@
 				<th>Admin</th>
 				<th />
 			</tr>
-			<tr v-for="member in members" :key="member.uuid">
+			<tr v-for="member in membersStore.getMembers" :key="member.uuid">
 				<td class="custom-table-row">{{ member.uuid }}</td>
 				<td class="custom-table-row">
-					<input type="checkbox" v-model="member.canRead" @click="toggleRead(member.uuid)" />
+					<input type="checkbox" v-model="member.canRead" :disabled="!member.canToggle || member.isAdmin"
+						@click="toggle(member.uuid, true, false, false)"/>
 				</td>
 				<td class="custom-table-row">
-					<input type="checkbox" v-model="member.canWrite" @click="toggleWrite(member.uuid)" />
+					<input type="checkbox" v-model="member.canWrite" :disabled="!member.canToggle || member.isAdmin"
+						@click="toggle(member.uuid, false, true, false)" />
 				</td>
 				<td class="custom-table-row">
-					<input type="checkbox" v-model="member.isAdmin" @click="toggleAdmin(member.uuid)" />
+					<input type="checkbox" v-model="member.isAdmin" :disabled="!member.canToggle"
+						@click="toggle(member.uuid, false, false, true)" />
 				</td>
 				<td class="custom-table-row">
 					<button class="custom-table-button" @click="kickMember(member.uuid)">
@@ -30,10 +33,10 @@
 					<input class="custom-table-text-input" type="text" v-model="newUser.uuid" />
 				</td>
 				<td class="custom-table-row">
-					<input type="checkbox" v-model="newUser.canRead" />
+					<input type="checkbox" v-model="newUser.canRead" :disabled="newUser.isAdmin" />
 				</td>
 				<td class="custom-table-row">
-					<input type="checkbox" v-model="newUser.canWrite" />
+					<input type="checkbox" v-model="newUser.canWrite" :disabled="newUser.isAdmin" />
 				</td>
 				<td class="custom-table-row">
 					<input type="checkbox" v-model="newUser.isAdmin" />
@@ -54,14 +57,14 @@
 					<button class="navigation-table-button" :disabled="currentPage == 1" @click="pageLeft()">&lt;</button>
 				</td>
 				<td class="navigation-table-column-mid">
-					{{ currentPage }} / {{ totalPages }}
+					{{ currentPage }} / {{ membersStore.getPages }}
 				</td>
 				<td class="navigation-table-column-right">
-					<button class="navigation-table-button" :disabled="currentPage == totalPages"
+					<button class="navigation-table-button" :disabled="currentPage == membersStore.getPages"
 						@click="pageRight()">&gt;</button>
 				</td>
 				<td class="navigation-table-column-far-right">
-					<button class="navigation-table-button" :disabled="currentPage == totalPages"
+					<button class="navigation-table-button" :disabled="currentPage == membersStore.getPages"
 						@click="pageLast()">&Gt;</button>
 				</td>
 			</tr>
@@ -70,12 +73,13 @@
 </template>
 
 <script>
+import { useMembersStore } from '../stores/members'
+
 export default {
 	name: "group-members",
 	data: () => ({
+		group: null,
 		currentPage: null,
-		totalPages: null,
-		members: null,
 		newUser: {
 			uuid: "",
 			canRead: false,
@@ -83,63 +87,49 @@ export default {
 			isAdmin: false
 		}
 	}),
+	setup() {
+		const membersStore = useMembersStore();
+		return { membersStore };
+	},
 	mounted() {
 		this.currentPage = 1;
-		this.totalPages = 10;
-		this.members = [
-			{
-				uuid: "81646d40-0247-4768-b67b-25c22400406f",
-				canRead: true,
-				canWrite: true,
-				isAdmin: true
-			},
-			{
-				uuid: "851080f4-507f-4f71-995f-f992f1fe70d1",
-				canRead: true,
-				canWrite: true,
-				isAdmin: false
-			},
-			{
-				uuid: "4af4ccd3-0eb1-405d-aae1-bdaf9e9cf69d",
-				canRead: false,
-				canWrite: true,
-				isAdmin: false
-			},
-			{
-				uuid: "8c344f73-ebcd-4eda-9a4b-106abc8be1d1",
-				canRead: true,
-				canWrite: false,
-				isAdmin: false
-			}
-		];
+		this.group = this.$route.params.group;
+		this.membersStore.fetchMembers(this.group, this.currentPage - 1)
 	},
 	methods: {
 		pageFirst() {
 			this.currentPage = 1;
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
 		},
 		pageLeft() {
 			this.currentPage--;
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
 		},
 		pageRight() {
 			this.currentPage++;
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
 		},
 		pageLast() {
-			this.currentPage = this.totalPages;
+			this.currentPage = this.membersStore.getPages;
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
 		},
-		toggleRead(uuid) {
-			console.log("toggle read for " + uuid)
-		},
-		toggleWrite(uuid) {
-			console.log("toggle write for " + uuid)
-		},
-		toggleAdmin(uuid) {
-			console.log("toggle admin for " + uuid)
+		toggle(uuid, toggleRead, toggleWrite, toggleAdmin) {
+			this.membersStore.updatePermission(this.group, this.currentPage - 1,
+				uuid, toggleRead, toggleWrite, toggleAdmin)
 		},
 		kickMember(uuid) {
-			console.log("kicking member " + uuid)
+			this.membersStore.kickMember(this.group, this.currentPage - 1,
+				uuid)
 		},
 		addMember() {
-			console.log("adding member " + JSON.stringify(this.newUser))
+			this.membersStore.inviteMember(this.group, this.currentPage - 1,
+				this.newUser)
+			this.newUser = {
+				uuid: "",
+				canRead: false,
+				canWrite: false,
+				isAdmin: false
+			};
 		}
 	}
 }
