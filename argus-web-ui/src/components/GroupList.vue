@@ -10,12 +10,12 @@
 		<tr v-for="group in groupsStore.getGroups" :key="group.name">
 			<td class="custom-table-row">{{ group.name }}</td>
 			<td class="custom-table-row">
-				<input type="checkbox" v-model="group.readActive" :disabled="!group.readAvailable"
-					@click="toggleRead(group.name)" />
+				<input type="checkbox" v-model="group.readActive" :disabled="!group.readAvailable || !group.canToggle"
+					@click="toggle(group.name, !group.readActive, group.writeActive)" />
 			</td>
 			<td class="custom-table-row">
-				<input type="checkbox" v-model="group.writeActive" :disabled="!group.writeAvailable"
-					@click="toggleWrite(group.name)" />
+				<input type="checkbox" v-model="group.writeActive" :disabled="!group.writeAvailable || !group.canToggle"
+					@click="toggle(group.name, group.readActive, !group.writeActive)" />
 			</td>
 			<td class="custom-table-row">
 				<router-link :to="{ name: 'group-view', params: { group: group.name } }" custom v-slot="{ navigate }">
@@ -32,6 +32,19 @@
 				</button>
 			</td>
 		</tr>
+		<tr>
+			<td class="custom-table-row">
+				<input class="custom-table-text-input" type="text" v-model="newGroup.name" />
+			</td>
+			<td />
+			<td />
+			<td />
+			<td class="custom-table-row">
+				<button class="custom-table-button" @click="createGroup()">
+					<img src="../assets/add.svg" class="custom-table-button-svg" />
+				</button>
+			</td>
+		</tr>
 	</table>
 </template>
 
@@ -40,7 +53,11 @@ import { useGroupsStore } from '../stores/groups'
 
 export default {
 	name: "group-list",
-	data: () => ({}),
+	data: () => ({
+		newGroup: {
+			name: ""
+		}
+	}),
 	setup() {
 		const groupsStore = useGroupsStore();
 		return { groupsStore };
@@ -49,14 +66,15 @@ export default {
 		this.groupsStore.fetchGroups()
 	},
 	methods: {
-		toggleRead(group) {
-			console.log("toggling read for group " + group)
+		toggle(groupName, readActive, writeActive) {
+			this.groupsStore.updateElection(groupName, readActive, writeActive)
 		},
-		toggleWrite(group) {
-			console.log("toggling write for group " + group)
+		leaveGroup(groupName) {
+			this.groupsStore.leaveGroup(groupName)
 		},
-		leaveGroup(group) {
-			console.log("leaving group " + group)
+		createGroup() {
+			this.groupsStore.createGroup(this.newGroup.name)
+			this.newGroup.name = ""
 		}
 	}
 }

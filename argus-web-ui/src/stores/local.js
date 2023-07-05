@@ -7,6 +7,13 @@ export const useLocalStore = defineStore("localStore", {
         host: null
     }),
     getters: {
+        getTokenHeader(state) {
+            return {
+                headers: {
+                    'Authorization': 'Bearer ' + state.getToken
+                }
+            }
+        },
         getToken(state) {
             return state.tokenHolder.token
         },
