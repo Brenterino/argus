@@ -18,7 +18,10 @@
 package dev.zygon.argus.client.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import dev.zygon.argus.auth.ArgusToken;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -34,5 +37,22 @@ public class JacksonUtil {
         return JsonMapper.builder()
                 .findAndAddModules()
                 .build();
+    }
+
+    public static ObjectMapper jsr310ObjectMapper() {
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    }
+
+    private static final ObjectMapper TOKEN_MAPPER =
+            jsr310ObjectMapper();
+
+    public static String stringfyToken(ArgusToken token) {
+        try {
+            return TOKEN_MAPPER.writeValueAsString(token);
+        } catch (Exception e) { // swallow? :)
+            return "{}";
+        }
     }
 }

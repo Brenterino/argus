@@ -27,7 +27,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Javalin (shading for downstream project)
-    implementation("io.javalin:javalin:${javalinVersion}")
+    implementation("io.javalin:javalin:${javalinVersion}") {
+        exclude("org.ow2.asm") // do not include OW2 ASM
+    }
 
     // Argus
     implementation(project(":argus-commons"))

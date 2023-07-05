@@ -1,10 +1,8 @@
 package dev.zygon.argus.client.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
+import dev.zygon.argus.client.util.JacksonUtil;
 import io.javalin.Javalin;
 import io.javalin.plugin.bundled.CorsPluginConfig;
 import lombok.SneakyThrows;
@@ -14,13 +12,6 @@ public enum ArgusWebUi {
     INSTANCE;
 
     private Javalin javalin;
-    private final ObjectMapper mapper;
-
-    ArgusWebUi() {
-        this.mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    }
 
     public void start() {
         var config = ArgusClientConfig.getActiveConfig();
@@ -45,7 +36,7 @@ public enum ArgusWebUi {
     private String getTokenString() {
         var tokenGenerator = ArgusMojangTokenGenerator.INSTANCE;
         var accessToken = tokenGenerator.accessToken();
-        return mapper.writeValueAsString(accessToken);
+        return JacksonUtil.stringfyToken(accessToken);
     }
 
     public void stop() {

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.zygon.argus.client.auth.TokenGenerator;
 import dev.zygon.argus.client.util.HeaderUtil;
+import dev.zygon.argus.client.util.JacksonUtil;
 import dev.zygon.argus.location.Locations;
 import lombok.Getter;
 import lombok.NonNull;
@@ -47,9 +48,7 @@ public class ArgusLocationsClient implements Closeable {
     ArgusLocationsClient(OkHttpClient client, ArgusClientCustomizer customizer) {
         this.client = client;
         this.customizer = customizer;
-        this.mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        this.mapper = JacksonUtil.jsr310ObjectMapper();
         this.socketListener = new WebSocketListenerImpl();
         this.errorHandler = e -> {};
     }
