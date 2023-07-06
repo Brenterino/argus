@@ -12,38 +12,27 @@ export const useLocalStore = defineStore("localStore", {
                 headers: {
                     'Authorization': 'Bearer ' + state.getToken
                 }
-            }
+            };
         },
         getToken(state) {
-            return state.tokenHolder.token
-        },
-        isTokenExpired(state) {
-            if (state.tokenHolder === null)
-                return true;
-            const expiration = Date.parse(state.tokenHolder.expiration)
-                .getTime()
-            const now = Date.now()
-                .getTime()
-            return expiration > now
+            return state.tokenHolder.token;
         }
     },
     actions: {
         async fetchToken() {
             try {
-                const resp = await axios.get('http://localhost:9000/api/token')
-                this.tokenHolder = resp.data
+                const resp = await axios.get('http://localhost:9000/api/token');
+                this.tokenHolder = resp.data;
             } catch (error) {
-                alert("Could not fetch token from running instance.")
-                console.log(error)
+                alert("Could not fetch token from running instance.");
             }
         },
         async fetchHost() {
             try {
-                const resp = await axios.get('http://localhost:9000/api/host')
-                this.host = resp.data
+                const resp = await axios.get('http://localhost:9000/api/host');
+                this.host = resp.data;
             } catch (error) {
-                alert("Could not fetch host from running instance.")
-                console.log(error)
+                alert("Could not fetch host from running instance.");
             }
         }
     }

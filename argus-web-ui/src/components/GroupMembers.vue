@@ -12,7 +12,7 @@
 				<td class="custom-table-row">{{ member.uuid }}</td>
 				<td class="custom-table-row">
 					<input type="checkbox" v-model="member.canRead" :disabled="!member.canToggle || member.isAdmin"
-						@click="toggle(member.uuid, true, false, false)"/>
+						@click="toggle(member.uuid, true, false, false)" />
 				</td>
 				<td class="custom-table-row">
 					<input type="checkbox" v-model="member.canWrite" :disabled="!member.canToggle || member.isAdmin"
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { useMembersStore } from '../stores/members'
+import { useMembersStore } from '../stores/members.js';
 
 export default {
 	name: "group-members",
@@ -94,36 +94,34 @@ export default {
 	mounted() {
 		this.currentPage = 1;
 		this.group = this.$route.params.group;
-		this.membersStore.fetchMembers(this.group, this.currentPage - 1)
+		this.membersStore.fetchMembers(this.group, this.currentPage - 1);
 	},
 	methods: {
 		pageFirst() {
 			this.currentPage = 1;
-			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1);
 		},
 		pageLeft() {
 			this.currentPage--;
-			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1);
 		},
 		pageRight() {
 			this.currentPage++;
-			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1);
 		},
 		pageLast() {
 			this.currentPage = this.membersStore.getPages;
-			this.membersStore.fetchMembers(this.group, this.currentPage - 1)
+			this.membersStore.fetchMembers(this.group, this.currentPage - 1);
 		},
 		toggle(uuid, toggleRead, toggleWrite, toggleAdmin) {
 			this.membersStore.updatePermission(this.group, this.currentPage - 1,
-				uuid, toggleRead, toggleWrite, toggleAdmin)
+				uuid, toggleRead, toggleWrite, toggleAdmin);
 		},
 		kickMember(uuid) {
-			this.membersStore.kickMember(this.group, this.currentPage - 1,
-				uuid)
+			this.membersStore.kickMember(this.group, this.currentPage - 1, uuid);
 		},
 		addMember() {
-			this.membersStore.inviteMember(this.group, this.currentPage - 1,
-				this.newUser)
+			this.membersStore.inviteMember(this.group, this.currentPage - 1, this.newUser);
 			this.newUser = {
 				uuid: "",
 				canRead: false,

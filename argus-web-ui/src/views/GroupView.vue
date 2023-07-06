@@ -3,7 +3,8 @@
     <app-tabs :tab-list="tabList">
       <template v-slot:tabPanel-1><GroupMembers /></template>
       <template v-slot:tabPanel-2><GroupCategories /></template>
-      <template v-slot:tabPanel-3><GroupAudit /></template>
+      <template v-slot:tabPanel-3><GroupCategoryAssignments /></template>
+      <template v-slot:tabPanel-4><GroupAudit /></template>
     </app-tabs>
   </div>
 </template>
@@ -12,6 +13,7 @@
 import AppTabs from '@/components/AppTabs.vue';
 import GroupMembers from '../components/GroupMembers.vue';
 import GroupCategories from '../components/GroupCategories.vue';
+import GroupCategoryAssignments from '@/components/GroupCategoryAssignments.vue';
 import GroupAudit from '../components/GroupAudit.vue';
 
 export default {
@@ -20,10 +22,11 @@ export default {
     AppTabs,
     GroupMembers,
     GroupCategories,
+    GroupCategoryAssignments,
     GroupAudit
   },
   data: () => ({
-      tabList: [ "Members", "Categories", "Audit" ]
+      tabList: [ "Members", "Categories", "Assignments", "Audit" ]
   })
 }
 </script>

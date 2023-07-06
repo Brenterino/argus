@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory } from "vue-router"
-import GroupsView from "../views/GroupsView"
-import GroupView from "../views/GroupView"
+import { createRouter, createWebHistory } from "vue-router";
+import GroupsView from "../views/GroupsView";
+import GroupView from "../views/GroupView";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -18,4 +18,4 @@ const router = createRouter({
     ]
 })
 
-export default router
+export default router;

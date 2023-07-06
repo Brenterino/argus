@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { useGroupsStore } from '../stores/groups'
+import { useGroupsStore } from '../stores/groups.js';
 
 export default {
 	name: "group-list",
@@ -63,18 +63,20 @@ export default {
 		return { groupsStore };
 	},
 	mounted() {
-		this.groupsStore.fetchGroups()
+		this.groupsStore.fetchGroups();
 	},
 	methods: {
 		toggle(groupName, readActive, writeActive) {
-			this.groupsStore.updateElection(groupName, readActive, writeActive)
+			this.groupsStore.updateElection(groupName, readActive, writeActive);
 		},
 		leaveGroup(groupName) {
-			this.groupsStore.leaveGroup(groupName)
+			if (confirm("Are you sure you want to leave?")) {
+				this.groupsStore.leaveGroup(groupName);
+			}
 		},
 		createGroup() {
-			this.groupsStore.createGroup(this.newGroup.name)
-			this.newGroup.name = ""
+			this.groupsStore.createGroup(this.newGroup.name);
+			this.newGroup.name = "";
 		}
 	}
 }
