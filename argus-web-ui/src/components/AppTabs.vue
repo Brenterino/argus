@@ -49,6 +49,7 @@ export default {
 }
 
 .tab-header {
+  padding-inline-start: 0;
   list-style-type: none;
 }
 

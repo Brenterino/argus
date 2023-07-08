@@ -82,11 +82,11 @@ export default {
 	},
 	methods: {
 		deleteCategory(category) {
-			if (confirm("Are you sure you want to delete this category? This will delete all assignments using this category.")) {
+			if (confirm("Are you sure you want to delete this category? This will delete all alignments using this category.")) {
 				this.metadata.categories =
 					this.metadata.categories.filter(c => c.name != category);
 				this.metadata.categories =
-					this.metadata.assignments?.filter(a => a.assignment != category);
+					this.metadata.alignments?.filter(a => a.assignment != category);
 				this.groupsStore.updateMetadata(this.group);
 			}
 		},
