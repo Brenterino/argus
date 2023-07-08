@@ -4,8 +4,15 @@ import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
 import dev.zygon.argus.client.util.JacksonUtil;
 import io.javalin.Javalin;
-import io.javalin.plugin.bundled.CorsPluginConfig;
+import io.javalin.http.staticfiles.Location;
 import lombok.SneakyThrows;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.MessageType;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Util;
 
 public enum ArgusWebUi {
 
@@ -19,17 +26,28 @@ public enum ArgusWebUi {
             return;
 
         javalin = Javalin.create()
-                .updateConfig(cfg -> {
-                    // TODO remove this after webcontent is also
-                    //      served via Javalin
-                    cfg.plugins.enableCors(cors ->
-                            cors.add(CorsPluginConfig::anyHost));
-                })
+                .updateConfig(cfg -> cfg.staticFiles.add("/public", Location.CLASSPATH))
                 .get("/api/host", ctx ->
                         ctx.result(config.getArgusHost()))
                 .get("/api/token", ctx ->
                         ctx.result(getTokenString()))
                 .start(config.getWebUiPort());
+
+        var minecraft = MinecraftClient.getInstance();
+
+        // Drop a nice message so you can just clicky :)
+        var url = "http://localhost:" + config.getWebUiPort() + "/";
+        var clickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
+        var urlText = new LiteralText(url)
+                .setStyle(Style.EMPTY
+                        .withClickEvent(clickEvent)
+                        .withColor(0x54FCFC)
+                        .withUnderline(true));
+        var text = new TranslatableText("text.webui.argus.chatMessage")
+                .append(" ")
+                .append(urlText);
+        minecraft.inGameHud.addChatMessage(MessageType.SYSTEM,
+                text, Util.NIL_UUID);
     }
 
     @SneakyThrows // im a bad programmer B)

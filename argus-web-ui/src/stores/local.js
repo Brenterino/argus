@@ -21,7 +21,7 @@ export const useLocalStore = defineStore("localStore", {
     actions: {
         async fetchToken() {
             try {
-                const resp = await axios.get('http://localhost:9000/api/token');
+                const resp = await axios.get('http://' + location.host + '/api/token');
                 this.tokenHolder = resp.data;
             } catch (error) {
                 alert("Could not fetch token from running instance.");
@@ -29,7 +29,7 @@ export const useLocalStore = defineStore("localStore", {
         },
         async fetchHost() {
             try {
-                const resp = await axios.get('http://localhost:9000/api/host');
+                const resp = await axios.get('http://' + location.host + '/api/host');
                 this.host = resp.data;
             } catch (error) {
                 alert("Could not fetch host from running instance.");

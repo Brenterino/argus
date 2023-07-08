@@ -55,3 +55,19 @@ tasks {
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
+
+tasks.withType<Jar> {
+    // Warning: this is hacky AF :)
+    dependsOn(":argus-web-ui:build")
+    into("public") {
+        val dist = project(":argus-web-ui")
+            .layout
+            .projectDirectory
+            .dir("dist")
+            .asFile
+        println(dist.path)
+        from(dist) {
+            include()
+        }
+    }
+}

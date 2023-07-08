@@ -38,5 +38,6 @@
   "text.autoconfig.argus.option.broadcastSnitchesEnabled": "Share Chat Relay",
   "text.autoconfig.argus.option.broadcastSnitchesEnabled.@Tooltip": "If location data is relayed in chat, this will toggle sharing that data with others.",
   "text.autoconfig.argus.option.readLocalEntitiesEnabled": "Read Local Environment",
-  "text.autoconfig.argus.option.readLocalEntitiesEnabled.@Tooltip": "If enabled, you can see players that are around you and their location will be shared."
+  "text.autoconfig.argus.option.readLocalEntitiesEnabled.@Tooltip": "If enabled, you can see players that are around you and their location will be shared.",
+  "text.webui.argus.chatMessage": "§7[§cArgus§7] §dArgus Management UI is up and can be accessed here: "
 }
