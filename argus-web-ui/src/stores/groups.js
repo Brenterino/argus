@@ -84,6 +84,18 @@ export const useGroupsStore = defineStore("groupsStore", {
                 alert(error?.response?.data);
             }
         },
+        async deleteGroup(groupName) {
+            const local = useLocalStore();
+            await local.fetchHost();
+            await local.fetchToken();
+            try {
+                const config = local.getTokenHeader;
+                await axios.delete(local.host + '/groups/' + groupName + "/admin", config);
+                await this.fetchGroups();
+            } catch (error) {
+                alert(error?.response?.data);
+            }
+        },
         async updateMetadata(groupName) {
             const targetGroup = this.groups.find(group => group.name === groupName);
             const local = useLocalStore();
