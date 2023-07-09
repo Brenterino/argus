@@ -19,6 +19,7 @@ package dev.zygon.argus.client.groups;
 
 import dev.zygon.argus.client.api.ArgusGroupApi;
 import dev.zygon.argus.client.api.ArgusPermissionApi;
+import dev.zygon.argus.group.Group;
 import dev.zygon.argus.permission.GroupPermission;
 import dev.zygon.argus.permission.GroupPermissions;
 import lombok.Getter;
@@ -27,9 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 public enum GroupStorage {
@@ -41,10 +43,25 @@ public enum GroupStorage {
 
     @Setter @Getter private Set<GroupPermission> membership;
     @Setter @Getter private Set<GroupPermission> elections;
+    @Setter @Getter private Map<Group, GroupMetadata> metadata;
+    @Setter @Getter private Map<UUID, GroupAlignmentDisplay> displays;
 
     public void refreshMemberships() {
-        // TODO force close of locations sockets if membership changes?
-        doCall(groups.groups(), this::setMembership);
+        doCall(groups.groups(), this::updateMembership);
+    }
+
+    private void updateMembership(Set<GroupPermission> membership) {
+        var computedMetadata = membership.stream()
+                .map(GroupPermission::group)
+                .collect(Collectors.toMap(Function.identity(), GroupMetadataExtractor::fromGroup));
+        var computedDisplays = computedMetadata.values()
+                        .stream()
+                        .map(GroupMetadata::displays)
+                        .flatMap(display -> display.entrySet().stream())
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        setMembership(membership);
+        setMetadata(computedMetadata);
+        setDisplays(computedDisplays);
     }
 
     public void refreshElections() {

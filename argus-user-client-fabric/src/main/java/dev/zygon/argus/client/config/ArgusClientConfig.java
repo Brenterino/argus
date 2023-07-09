@@ -104,6 +104,10 @@ public class ArgusClientConfig implements ConfigData {
         return streamerModeEnabled || hideChatLocationsEnabled || hiddenGroupAlerts.contains(group);
     }
 
+    public boolean shouldHideNameOverwrite() {
+        return streamerModeEnabled || !coloredNamesEnabled;
+    }
+
     @Getter @Setter
     private static ArgusClientConfig activeConfig;
 }

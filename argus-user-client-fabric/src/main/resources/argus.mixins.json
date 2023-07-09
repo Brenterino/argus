@@ -10,6 +10,7 @@
     "ClientEntityManagerMixin",
     "ClientEntityManagerMixin$ListenerMixin",
     "ClientLoginNetworkHandlerMixin",
+    "PlayerListHudMixin",
     "WorldRendererMixin"
   ],
   "server": [],

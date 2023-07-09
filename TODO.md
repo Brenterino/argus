@@ -1,12 +1,13 @@
 # To-do List
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
-- Name coloring/symbols with group configuration (multi-group precedence TBD)
 - Rendering of waypoints/locations visually in-game
+- Find better way to determine when client is closing to avoid issues with it disconnecting randomly on join
 - Keys to toggle streamer mode, increase/decrease waypoint distances, show same dimension
+- Force location socket refresh when detected elections change
 
 # Beyond MVP
-- Color picker for group categories
+- Color picker for group categories on UI
 - Adapt UI to make standalone site would allow for making changes without logging into game.
 - Implementation of Status Services which can be used to relay health, buff status, and other useful inventory
   information (ex. health pots, durability?)
