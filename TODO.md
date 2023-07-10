@@ -1,16 +1,23 @@
 # To-do List
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
-- Find better way to determine when client is closing to avoid issues with it disconnecting randomly on join
+- Find better way to determine when client is disconnecting to avoid issues with it disconnecting randomly on join
 - Force location socket refresh when elections change
+- Check elections for at least READ access to enable metadata evaluation
+- Check 
 
 # Beyond MVP
-- Marshal waypoints into groups based on a radius so they will be combined instead of stack/improve readability
-- Maybe look at rendering colored names via teams?
 - Allow for banning of issuing tokens based on UUID
-- Precedence of group metadata, immediate obvious adjustment is filter out groups with ACCESS only election (maybe READ at least?)
+- Marshal waypoints into groups based on a radius, so they will be combined instead of stack/improve readability. Likely
+  to be implemented as a "latitudinal" slice on a sphere. Grouping boundary will be largest around 'y' level to avoid
+  issues with rendering.
+- Depending on heaviness of above, may need to extract rendering to be done in parallel to avoid destroying the main loop
+- In addition to above listings, possibly make a legend to indicate alignment counts for easier reference
+- Determine method for ordering precedence of group metadata
 - Color picker for group categories on UI
 - Adapt UI to make standalone site would allow for making changes without logging into game.
+
+# Experimental
 - Implementation of Status Services which can be used to relay health, buff status, and other useful inventory
   information (ex. health pots, durability?)
 - Status Service would need to have an intuitive in-game HUD. May be difficult to do properly, but possibly add
@@ -20,3 +27,4 @@ Not exhaustive, but here are the things that still need to be accomplished in or
   unsure of this. Note: moved this from MVP list because we are avoiding this by just sending the name in the location
   data. Group data UI will probably need to have people input UUID instead. We could maybe hook another API to do a
   name -> UUID lookup, but that'd have to be client-sided and only really for adding would it make sense :)
+- Maybe look at rendering colored names via teams?
