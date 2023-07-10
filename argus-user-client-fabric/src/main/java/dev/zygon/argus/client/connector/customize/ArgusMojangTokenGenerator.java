@@ -66,7 +66,8 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
         return Optional.ofNullable(token)
                 .map(tokenFromDual)
                 .map(ArgusToken::expiration)
-                .map(expiration -> expiration.minus(config.getRefreshTokenRenewBeforeExpirationSeconds(), ChronoUnit.SECONDS))
+                .map(expiration -> expiration.minus(config.getRefreshTokenRenewBeforeExpirationSeconds(),
+                        ChronoUnit.SECONDS))
                 .map(now::isAfter)
                 .orElse(true);
     }

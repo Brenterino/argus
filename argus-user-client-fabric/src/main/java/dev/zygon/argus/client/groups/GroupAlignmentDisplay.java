@@ -26,4 +26,7 @@ public record GroupAlignmentDisplay(@NonNull UUID target,
                                     @NonNull String name,
                                     @NonNull String symbol,
                                     @NonNull Color color) {
+
+    public static final GroupAlignmentDisplay DEFAULT_DISPLAY =
+            new GroupAlignmentDisplay(UUID.randomUUID(), "", "", Color.WHITE);
 }

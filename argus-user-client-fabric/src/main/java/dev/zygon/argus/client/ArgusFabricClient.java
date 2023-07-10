@@ -18,10 +18,13 @@
 package dev.zygon.argus.client;
 
 import dev.zygon.argus.client.config.ArgusClientConfig;
+import dev.zygon.argus.client.event.KeyPressHandler;
 import lombok.extern.slf4j.Slf4j;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.util.ActionResult;
 
 @Slf4j
@@ -32,6 +35,7 @@ public class ArgusFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         log.info("[ARGUS] Argus is loading.");
+        var keyPressHandler = new KeyPressHandler();
         var holder = AutoConfig.register(ArgusClientConfig.class,
                 JanksonConfigSerializer::new);
         holder.registerSaveListener((save, x) -> {
@@ -39,5 +43,6 @@ public class ArgusFabricClient implements ClientModInitializer {
             return ActionResult.SUCCESS;
         });
         ArgusClientConfig.setActiveConfig(holder.getConfig());
+        ClientTickEvents.END_CLIENT_TICK.register(keyPressHandler::onTick);
     }
 }

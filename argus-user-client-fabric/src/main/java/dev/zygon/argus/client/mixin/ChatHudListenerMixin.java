@@ -17,6 +17,7 @@
  */
 package dev.zygon.argus.client.mixin;
 
+import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.event.ChatEventHandler;
 import net.minecraft.client.gui.hud.ChatHudListener;
 import net.minecraft.network.MessageType;
@@ -36,20 +37,23 @@ public abstract class ChatHudListenerMixin {
 
     @Inject(at = @At("HEAD"), method = "onChatMessage", cancellable = true)
     public void onChatMessage(MessageType type, Text message, UUID sender, CallbackInfo ci) {
-        var text = message.getString();
-        var hoverText = message.getSiblings()
-                .stream()
-                .map(Text::getStyle)
-                .map(Style::getHoverEvent)
-                .filter(Objects::nonNull)
-                .map(event -> event.getValue(HoverEvent.Action.SHOW_TEXT))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .map(Text::getString)
-                .orElse(null);
-        var shouldCancel = ChatEventHandler.INSTANCE.onChatMessage(text, hoverText);
-        if (shouldCancel) {
-            ci.cancel();
+        var config = ArgusClientConfig.getActiveConfig();
+        if (config.isReadChatEnabled()) {
+            var text = message.getString();
+            var hoverText = message.getSiblings()
+                    .stream()
+                    .map(Text::getStyle)
+                    .map(Style::getHoverEvent)
+                    .filter(Objects::nonNull)
+                    .map(event -> event.getValue(HoverEvent.Action.SHOW_TEXT))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .map(Text::getString)
+                    .orElse(null);
+            var shouldCancel = ChatEventHandler.INSTANCE.onChatMessage(text, hoverText);
+            if (shouldCancel) {
+                ci.cancel();
+            }
         }
     }
 }

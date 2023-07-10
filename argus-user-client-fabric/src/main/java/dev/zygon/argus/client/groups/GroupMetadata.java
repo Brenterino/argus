@@ -21,9 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,18 +34,18 @@ public class GroupMetadata {
     private List<GroupCategory> categories;
 
     public Map<UUID, GroupAlignment> idToAlignment() {
-        return alignments.stream()
+        return Optional.ofNullable(alignments).stream().flatMap(Collection::stream)
                 .collect(Collectors.toMap(GroupAlignment::getUuid, Function.identity()));
     }
 
     public Map<String, GroupCategory> nameToCategory() {
-        return categories.stream()
+        return Optional.ofNullable(categories).stream().flatMap(Collection::stream)
                 .collect(Collectors.toMap(GroupCategory::getName, Function.identity()));
     }
 
     public Map<UUID, GroupAlignmentDisplay> displays() {
         var nameToCategory = nameToCategory();
-        return alignments.stream()
+        return Optional.ofNullable(alignments).stream().flatMap(Collection::stream)
                 .map(alignment -> fromAlignment(alignment, nameToCategory))
                 .collect(Collectors.toMap(GroupAlignmentDisplay::target, Function.identity()));
     }

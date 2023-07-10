@@ -20,10 +20,11 @@ package dev.zygon.argus.client.event;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
-import dev.zygon.argus.location.Dimension;
 import dev.zygon.argus.location.Coordinate;
+import dev.zygon.argus.location.Dimension;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -44,6 +45,7 @@ public enum PlayerMoveEventHandler {
             var playerId = profile.getId();
             var config = ArgusClientConfig.getActiveConfig();
             if (playerId.equals(entity.getUuid()) || config.isReadLocalEntitiesEnabled()) {
+                var player = (PlayerEntity) entity;
                 var dimension = Optional.of(minecraft)
                         .map(client -> client.player)
                         .map(Entity::getEntityWorld)
@@ -53,7 +55,7 @@ public enum PlayerMoveEventHandler {
                         .map(DimensionMapper::fromProximity)
                         .orElse(Dimension.OVERWORLD);
                 var uuid = entity.getUuid();
-                var position = entity.getBlockPos();
+                var position = player.getPos();
                 var location = new Coordinate(position.getX(), position.getY(), position.getZ(),
                         dimension.ordinal(), true, Instant.now());
                 LocationStorage.INSTANCE.trackPlayer(uuid, location);

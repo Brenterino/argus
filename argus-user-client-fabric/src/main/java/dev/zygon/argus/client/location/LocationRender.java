@@ -19,7 +19,17 @@ package dev.zygon.argus.client.location;
 
 import lombok.NonNull;
 
+import java.awt.*;
 import java.util.List;
 
-public record LocationRender(double yaw, double pitch, @NonNull List<LocationRenderEntry> entries) {
+public record LocationRender(double x, double y, double z, float scale, @NonNull List<LocationRenderEntry> entries) {
+
+    public Color averageColor() {
+        return entries.stream()
+                .map(LocationRenderEntry::color)
+                .reduce(Color.BLACK, (c1, c2) -> new Color(
+                        (c1.getRed() + c2.getRed()) / 2,
+                        (c1.getGreen() + c2.getGreen()) / 2,
+                        (c1.getBlue() + c2.getBlue()) / 2));
+    }
 }

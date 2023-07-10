@@ -21,6 +21,7 @@ import dev.zygon.argus.client.ArgusClient;
 import dev.zygon.argus.client.name.NameStorage;
 import dev.zygon.argus.location.*;
 import dev.zygon.argus.user.User;
+import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -33,7 +34,7 @@ public enum LocationStorage {
 
     // TODO clean up local storage and storage entries after X amount of time
     private final Map<LocationKey, Location> localStorage;
-    private final Map<LocationKey, Location> storage;
+    @Getter private final Map<LocationKey, Location> storage;
 
     LocationStorage() {
         localStorage = new ConcurrentHashMap<>();
@@ -81,6 +82,9 @@ public enum LocationStorage {
                 var oldTime = current.coordinates().time();
                 var newTime = location.coordinates().time();
                 if (oldTime.isBefore(newTime)) {
+                    // TODO possibly prioritize local over timestamp given a certain tolerance
+                    // primarily for people who are sending their data but there might be slightly
+                    // conflicting data due to other sources
                     storage.put(key, location);
                 }
             } else {
@@ -91,12 +95,10 @@ public enum LocationStorage {
 
     public void syncRemote(ArgusClient client) {
         var locations = new HashSet<Location>();
-        localStorage.keySet().forEach(k -> {
-            localStorage.compute(k, (ki, vi) -> {
-                locations.add(vi);
-                return null;
-            });
-        });
+        localStorage.keySet().forEach(k -> localStorage.compute(k, (ki, vi) -> {
+            locations.add(vi);
+            return null;
+        }));
         if (!locations.isEmpty()) {
             client.getLocations().sendLocations(new Locations(locations));
         }

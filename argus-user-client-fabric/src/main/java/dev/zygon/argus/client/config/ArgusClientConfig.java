@@ -31,72 +31,95 @@ import java.util.List;
 @Config(name = "argus")
 public class ArgusClientConfig implements ConfigData {
 
-    // Argus Connection Configuration
     @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.RequiresRestart
     private String argusHost = "http://localhost";
 
     @ConfigEntry.Gui.Tooltip
     private boolean verifyCertificateEnabled = false;
 
     @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.RequiresRestart
     private boolean webUiEnabled = true;
 
     @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.RequiresRestart
     private int webUiPort = 9000;
 
-    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
-    @ConfigEntry.Gui.Tooltip
-    private int refreshTokenCheckIntervalSeconds = 30;
-
-    @ConfigEntry.BoundedDiscrete(min = 60, max = 240)
-    @ConfigEntry.Gui.Tooltip
-    private int refreshTokenRenewBeforeExpirationSeconds = 60;
-
-    @ConfigEntry.BoundedDiscrete(min = 5, max = 30)
-    @ConfigEntry.Gui.Tooltip
-    private int refreshInitialWaitForTokenSeconds = 5;
-
-    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
-    @ConfigEntry.Gui.Tooltip
-    private int refreshMembershipIntervalSeconds = 60;
-
-    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
-    @ConfigEntry.Gui.Tooltip
-    private int refreshElectionsIntervalSeconds = 60;
-
-    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
-    @ConfigEntry.Gui.Tooltip
-    private int refreshLocationClientIntervalSeconds = 60;
-
-    @ConfigEntry.BoundedDiscrete(min = 10, max = 20)
-    @ConfigEntry.Gui.Tooltip
-    private int transmitInitialWaitForConnectionSeconds = 10;
-
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 5)
-    @ConfigEntry.Gui.Tooltip
-    private int transmitLocationsIntervalSeconds = 1;
-
-    // Client Visibility Related Configuration
+    @ConfigEntry.Category("visibility")
     @ConfigEntry.BoundedDiscrete(min = 1000, max = 100000)
     @ConfigEntry.Gui.Tooltip
     private int maxViewDistance = 10000;
 
+    @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
     private boolean streamerModeEnabled = false;
 
+    @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
     private boolean hideChatLocationsEnabled = false;
 
-    @ConfigEntry.Gui.Tooltip
-    private List<String> hiddenGroupAlerts = Collections.emptyList();
-
+    @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
     private boolean coloredNamesEnabled = true;
 
-    // Client Sharing Capabilities
+    @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
-    private boolean broadcastSnitchesEnabled = true;
+    private List<String> hiddenGroupAlerts = Collections.emptyList();
 
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int refreshTokenCheckIntervalSeconds = 30;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 240)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int refreshTokenRenewBeforeExpirationSeconds = 60;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 5, max = 30)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int refreshInitialWaitForTokenSeconds = 5;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int refreshMembershipIntervalSeconds = 60;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int refreshElectionsIntervalSeconds = 60;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int refreshLocationClientIntervalSeconds = 60;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 10)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int transmitInitialWaitForConnectionSeconds = 3;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 33, max = 1000)
+    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int transmitLocationsIntervalMillis = 100;
+
+    @ConfigEntry.Category("sourcing")
+    @ConfigEntry.Gui.Tooltip
+    private boolean readChatEnabled = true;
+
+    @ConfigEntry.Category("sourcing")
     @ConfigEntry.Gui.Tooltip
     private boolean readLocalEntitiesEnabled = false;
 
@@ -104,8 +127,8 @@ public class ArgusClientConfig implements ConfigData {
         return streamerModeEnabled || hideChatLocationsEnabled || hiddenGroupAlerts.contains(group);
     }
 
-    public boolean shouldHideNameOverwrite() {
-        return streamerModeEnabled || !coloredNamesEnabled;
+    public boolean shouldShowNameOverwrite() {
+        return !streamerModeEnabled && coloredNamesEnabled;
     }
 
     @Getter @Setter

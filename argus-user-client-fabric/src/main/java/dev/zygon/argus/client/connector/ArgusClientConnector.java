@@ -51,8 +51,8 @@ public enum ArgusClientConnector {
         log.info("[ARGUS] Connected to server {}. Starting Argus Client.", server);
 
         // Initialize client with host
-        var clientConfig = ArgusClientConfig.getActiveConfig();
-        client.init(clientConfig.getArgusHost());
+        var config = ArgusClientConfig.getActiveConfig();
+        client.init(config.getArgusHost());
 
         // Initialize Subcomponents
         initTokenGenerator(server, username);
@@ -102,8 +102,8 @@ public enum ArgusClientConnector {
                         config.getRefreshLocationClientIntervalSeconds(), TimeUnit.SECONDS);
         locationRemoteSync = ClientScheduler.INSTANCE
                 .registerWithDelay(() -> LocationStorage.INSTANCE.syncRemote(client),
-                        config.getTransmitInitialWaitForConnectionSeconds(),
-                        config.getTransmitLocationsIntervalSeconds(), TimeUnit.SECONDS);
+                        config.getTransmitInitialWaitForConnectionSeconds() * 1000L,
+                        config.getTransmitLocationsIntervalMillis(), TimeUnit.MILLISECONDS);
     }
 
     public void close() {

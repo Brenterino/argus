@@ -61,7 +61,7 @@ public enum ClientScheduler {
         public V call() {
             try {
                 return callable.call();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log.warn("[ARGUS] Caught exception from callable, swallowing...", e);
                 return null;
             }
@@ -74,7 +74,7 @@ public enum ClientScheduler {
         public void run() {
             try {
                 delegate.run();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log.warn("[ARGUS] Caught exception from runnable, swallowing...", e);
             }
         }

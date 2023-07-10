@@ -37,7 +37,7 @@ public class PlayerListHudMixin {
         var config = ArgusClientConfig.getActiveConfig();
         var displays = GroupStorage.INSTANCE.getDisplays();
         var noDisplays = displays == null || displays.isEmpty();
-        if (!config.shouldHideNameOverwrite() && !noDisplays) {
+        if (config.shouldShowNameOverwrite() && !noDisplays) {
             var uuid = entry.getProfile().getId();
             if (displays.containsKey(uuid)) {
                 var display = displays.get(uuid);

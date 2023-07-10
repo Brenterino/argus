@@ -21,8 +21,8 @@ import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.name.NameStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
-import dev.zygon.argus.location.Dimension;
 import dev.zygon.argus.location.Coordinate;
+import dev.zygon.argus.location.Dimension;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
