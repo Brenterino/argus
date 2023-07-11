@@ -58,15 +58,16 @@ public abstract class WorldRendererMixin {
         var now = Instant.now();
         var nextRenders = new ArrayList<LocationRender>();
         var chunkMaxViewDistance = renderDispatcher.gameOptions.getViewDistance();
-        var maxViewDistance = chunkMaxViewDistance * UNITS_PER_CHUNK;
+        var maxRenderDistance = chunkMaxViewDistance * UNITS_PER_CHUNK;
         var cameraPosition = renderDispatcher.camera.getPos();
         var self = client.getSession().getProfile().getId();
         // for now, we will just shove all waypoints on top of each other :)
         // we should find a way to group waypoints based on an angle
-        var maxDistance = config.getMaxViewDistance();
+        var maxViewDistance = config.getMaxViewDistance();
         var cameraX = cameraPosition.getX();
         var cameraY = cameraPosition.getY();
         var cameraZ = cameraPosition.getZ();
+        var segments = new HashMap<Integer, List<Location>>();
         for (var location : locations) {
             var coordinates = location.coordinates();
             var x = coordinates.x() - cameraX;
@@ -77,37 +78,75 @@ public abstract class WorldRendererMixin {
                 z += 0.5;
             }
             var distance = Math.sqrt(x * x + y * y + z * z);
-            var localDistance = distance;
             var user = location.user();
             var uuid = user.uuid();
-            if (distance > maxDistance || self.equals(uuid)) {
-                continue;
-            } else if (distance > maxViewDistance) {
-                x = x / distance * maxViewDistance;
-                y = y / distance * maxViewDistance;
-                z = z / distance * maxViewDistance;
-                localDistance = maxViewDistance;
-            } else if (location.type() == LocationType.USER && config.isReadLocalEntitiesEnabled()) {
-                var players = client.world.getPlayers();
-                var possiblePlayer = players.stream()
-                        .filter(p -> p.getUuid().equals(uuid))
-                        .findFirst();
-                if (possiblePlayer.isPresent()) { // overwrite to smooth out animation
-                    var player = possiblePlayer.get();
-                    var position = player.getPos();
-                    x = MathHelper.lerp(tickDelta, player.lastRenderX, position.getX()) - cameraX;
-                    y = MathHelper.lerp(tickDelta, player.lastRenderY, position.getY()) + 2.5 - cameraY;
-                    z = MathHelper.lerp(tickDelta, player.lastRenderZ, position.getZ()) - cameraZ;
-                    distance = Math.sqrt(x * x + y * y + z * z);
-                    localDistance = distance;
+            if (distance <= maxViewDistance && !self.equals(uuid)) {
+                if (distance > maxRenderDistance) { // render via slices
+                    var f = Math.sqrt(x * x + z * z);
+                    var yaw = Math.atan2(x, z) * (180.0d / Math.PI);
+                    var pitch = Math.atan2(y, f) * (180.0d / Math.PI);
+                    var yawSegment = (int) Math.floor(yaw / (double) config.getYawSliceDegrees());
+                    var pitchSegment = (int) Math.floor(pitch / (double) config.getPitchSliceDegrees());
+                    var segmentIndex = (yawSegment << 16) | pitchSegment;
+                    segments.putIfAbsent(segmentIndex, new ArrayList<>());
+                    segments.get(segmentIndex).add(location);
+                } else {
+                    // read local entities if location is a user to see if we can just track that way instead :)
+                    if (location.type() == LocationType.USER && config.isReadLocalEntitiesEnabled()) {
+                        var players = client.world.getPlayers();
+                        var possiblePlayer = players.stream()
+                                .filter(p -> p.getUuid().equals(uuid))
+                                .findFirst();
+                        if (possiblePlayer.isPresent()) { // overwrite to smooth out animation
+                            var player = possiblePlayer.get();
+                            var position = player.getPos();
+                            x = MathHelper.lerp(tickDelta, player.lastRenderX, position.getX()) - cameraX;
+                            y = MathHelper.lerp(tickDelta, player.lastRenderY, position.getY()) + 2.5 - cameraY;
+                            z = MathHelper.lerp(tickDelta, player.lastRenderZ, position.getZ()) - cameraZ;
+                            distance = Math.sqrt(x * x + y * y + z * z);
+                        }
+                    }
+                    var scale = (float) (0.0078125d * (distance + 4.0) / 3.0);
+                    var display = fetchDisplayFromUUID(uuid);
+                    var name = buildName(location, distance, display, now);
+                    var renderEntry = new LocationRenderEntry(name, display.color());
+                    var render = new LocationRender(x, y, z, scale, List.of(renderEntry));
+                    nextRenders.add(render);
                 }
             }
-            var scale = (float) (0.0078125d * (localDistance + 4.0) / 3.0);
-            var display = fetchDisplayFromUUID(uuid);
-            var name = buildName(location, distance, display, now);
-            var renderEntry = new LocationRenderEntry(name, display.color());
-            var render = new LocationRender(x, y, z, scale, List.of(renderEntry));
-            nextRenders.add(render);
+        }
+
+        for (var segment : segments.values()) {
+            var renderEntries = new ArrayList<LocationRenderEntry>(segment.size());
+            var x = 0.0d;
+            var y = 0.0d;
+            var z = 0.0d;
+            for (var location : segment) {
+                var coordinates = location.coordinates();
+                var lx = coordinates.x() - cameraX;
+                var ly = coordinates.y() - cameraY;
+                var lz = coordinates.z() - cameraZ;
+
+                var distance = Math.sqrt(lx * lx + ly * ly + lz * lz);
+                var user = location.user();
+                var uuid = user.uuid();
+                var display = fetchDisplayFromUUID(uuid);
+                var name = buildName(location, distance, display, now);
+
+                x += lx;
+                y += ly;
+                z += lz;
+                renderEntries.add(new LocationRenderEntry(name, display.color()));
+            }
+            x = (x / segment.size());
+            y = (y / segment.size());
+            z = (z / segment.size());
+            var distance = Math.sqrt(x * x + y * y + z * z);
+            x = x / distance * maxRenderDistance;
+            y = y / distance * maxRenderDistance;
+            z = z / distance * maxRenderDistance;
+            var scale = (float) (0.0078125d * (maxRenderDistance + 4.0) / 3.0);
+            nextRenders.add(new LocationRender(x, y, z, scale, renderEntries));
         }
         return nextRenders;
     }
@@ -179,7 +218,7 @@ public abstract class WorldRendererMixin {
         var matrix = stack.peek().getPositionMatrix();
         var waypointColor = render.averageColor();
         drawWaypoint(tessellator, buffer, matrix, waypointColor);
-        drawNameTags(tessellator, buffer, matrix, render);
+        drawNameTags(matrix, render);
 
         stack.pop();
         RenderSystem.depthMask(true);
@@ -190,54 +229,45 @@ public abstract class WorldRendererMixin {
     @Unique
     private void drawWaypoint(Tessellator tessellator, BufferBuilder buffer, Matrix4f matrix, Color waypointColor) {
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        buffer.vertex(matrix, -4.0f, 24.0f, 0.0f) // top left
+        buffer.vertex(matrix, -4.0f, 24.0f, 0.0f)
                 .color(waypointColor.getRed(), waypointColor.getGreen(), waypointColor.getBlue(), 0xFF)
                 .next();
-        buffer.vertex(matrix, 4.0f, 24.0f, 0.0f) // top right
+        buffer.vertex(matrix, 4.0f, 24.0f, 0.0f)
                 .color(waypointColor.getRed(), waypointColor.getGreen(), waypointColor.getBlue(), 0xFF)
                 .next();
-        buffer.vertex(matrix, 4.0f, 16.0f, 0.0f) // bottom right
+        buffer.vertex(matrix, 4.0f, 16.0f, 0.0f)
                 .color(waypointColor.getRed(), waypointColor.getGreen(), waypointColor.getBlue(), 0xFF)
                 .next();
-        buffer.vertex(matrix, -4.0f, 16.0f, 0.0f) // bottom left
+        buffer.vertex(matrix, -4.0f, 16.0f, 0.0f)
                 .color(waypointColor.getRed(), waypointColor.getGreen(), waypointColor.getBlue(), 0xFF)
                 .next();
         tessellator.draw();
     }
 
     @Unique
-    private void drawNameTags(Tessellator tessellator, BufferBuilder buffer, Matrix4f matrix, LocationRender render) {
+    private void drawNameTags(Matrix4f matrix, LocationRender render) {
         var client = MinecraftClient.getInstance();
         var builders = client.getBufferBuilders();
         var vertexConsumerProvider = builders.getEntityVertexConsumers();
         var textRenderer = client.textRenderer;
 
         // TODO calculate placement for text in a new form, thinking of using sqrt(entryCount) to shape it
+        RenderSystem.enableTexture();
+        var offset = 0.0f;
+        final var textHeight = textRenderer.fontHeight;
+        final var textStagger = 1.0f;
         for (var user : render.entries()) {
             var textWidth = textRenderer.getWidth(user.text());
             var textStart = textWidth / 2;
             var color = user.color().getRGB();
             var text = new LiteralText(user.text());
 
-            RenderSystem.disableTexture();
-            buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-            buffer.vertex(matrix, (float) (-textStart - 2), -3.0f, 0.0f)
-                    .color(0, 0, 0, 0x80) // TODO label opacity needs to be adjustable probably
-                    .next();
-            buffer.vertex(matrix, (float) (-textStart - 2), 10.0f, 0.0f)
-                    .color(0, 0, 0, 0x80) // TODO label opacity needs to be adjustable probably
-                    .next();
-            buffer.vertex(matrix, (float) (textStart + 2), 10.0f, 0.0f)
-                    .color(0, 0, 0, 0x80) // TODO label opacity needs to be adjustable probably
-                    .next();
-            buffer.vertex(matrix, (float) (textStart + 2), -3.0f, 0.0f)
-                    .color(0, 0, 0, 0x80) // TODO label opacity needs to be adjustable probably
-                    .next();
-            tessellator.draw();
-
-            RenderSystem.enableTexture();
-            textRenderer.draw(text, -textStart, 0.0f, color, false, matrix, vertexConsumerProvider, true, 0, 0xF000F0);
+            textRenderer.draw(text, -textStart, -textHeight * offset - textStagger * offset, color, false, matrix,
+                    vertexConsumerProvider, true, 0x60000000, 0xF000F0);
             vertexConsumerProvider.draw();
+
+            offset++;
         }
+        RenderSystem.disableTexture();
     }
 }

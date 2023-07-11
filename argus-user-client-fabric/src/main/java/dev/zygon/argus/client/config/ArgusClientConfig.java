@@ -49,6 +49,16 @@ public class ArgusClientConfig implements ConfigData {
     private int maxViewDistance = 10000;
 
     @ConfigEntry.Category("visibility")
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 180)
+    @ConfigEntry.Gui.Tooltip
+    private int pitchSliceDegrees = 30;
+
+    @ConfigEntry.Category("visibility")
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 180)
+    @ConfigEntry.Gui.Tooltip
+    private int yawSliceDegrees = 10;
+
+    @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
     private boolean streamerModeEnabled = false;
 

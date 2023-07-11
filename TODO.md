@@ -8,11 +8,7 @@ Not exhaustive, but here are the things that still need to be accomplished in or
 - Implement pinging
 - Need symbology to indicate dimensions (maybe ↑ and ↓), allow for toggling to show only same dimension locations
 - Allow for banning of issuing tokens based on UUID
-- Marshal waypoints into groups based on a radius, so they will be combined instead of stack/improve readability. Likely
-  to be implemented as a "latitudinal" slice on a sphere. Grouping boundary will be largest around 'y' level to avoid
-  issues with rendering.
-- Depending on heaviness of above, may need to extract rendering to be done in parallel to avoid destroying the main loop
-- In addition to above listings, possibly make a legend to indicate alignment counts for easier reference
+- In location stacking, make a legend to indicate alignment counts for easier reference
 - Determine method for ordering precedence of group metadata
 - Color picker for group categories on UI
 - Adapt UI to make standalone site would allow for making changes without logging into game.
