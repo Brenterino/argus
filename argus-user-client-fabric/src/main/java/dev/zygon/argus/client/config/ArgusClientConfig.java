@@ -33,10 +33,10 @@ public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.RequiresRestart
-    private String argusHost = "http://localhost";
+    private String argusHost = "https://argus.zygon.dev";
 
     @ConfigEntry.Gui.Tooltip
-    private boolean verifyCertificateEnabled = false;
+    private boolean verifyCertificateEnabled = true;
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.RequiresRestart

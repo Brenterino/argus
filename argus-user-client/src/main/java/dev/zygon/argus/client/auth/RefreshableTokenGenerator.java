@@ -26,4 +26,6 @@ public interface RefreshableTokenGenerator extends TokenGenerator {
     void refresh();
 
     void forceRefresh();
+
+    void onNextRefresh(Runnable action);
 }

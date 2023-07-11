@@ -18,20 +18,20 @@
 package dev.zygon.argus.client.mixin;
 
 import dev.zygon.argus.client.connector.ArgusClientConnector;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-import net.minecraft.network.ClientConnection;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Slf4j
-@Mixin(ClientConnection.class)
-public abstract class ClientConnectionMixin {
+@Mixin(MinecraftClient.class)
+public abstract class MinecraftClientMixin {
 
-    @Inject(at = @At("TAIL"), method = "channelInactive")
-    public void channelInactive(ChannelHandlerContext context, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V")
+    public void disconnect(Screen screen, CallbackInfo ci) {
         try {
             ArgusClientConnector.INSTANCE.close();
         } catch (Throwable t) {

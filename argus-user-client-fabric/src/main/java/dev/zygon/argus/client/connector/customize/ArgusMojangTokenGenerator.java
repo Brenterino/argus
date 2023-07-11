@@ -46,6 +46,7 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
     INSTANCE;
 
     private DualToken token;
+    private Runnable onNextRefresh;
     @Setter private String server;
     @Setter private String username;
     @Setter private ArgusAuthApi auth;
@@ -93,6 +94,17 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
         token = new DualToken(refreshToken, accessToken);
     }
 
+    public void onNextRefresh(Runnable action) {
+        this.onNextRefresh = action;
+    }
+
+    private void runOnNextRefresh() {
+        if (onNextRefresh != null) {
+            onNextRefresh.run();
+            onNextRefresh = null;
+        }
+    }
+
     private void retrieveToken() {
         if (isRefreshTokenExpired()) { // access token will also be refreshed
             ClientScheduler.INSTANCE
@@ -123,6 +135,7 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
         public void onResponse(Call<E> call, Response<E> response) {
             if (response.isSuccessful()) {
                 setToken(response.body());
+                runOnNextRefresh();
             } else {
                 log.warn("[ARGUS] Retrieval of token failed.");
             }

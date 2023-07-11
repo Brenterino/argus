@@ -15,8 +15,6 @@ public enum RemoteLocationHandler {
     @Setter private ArgusLocationsClient locations;
 
     public void onLocationsReceived(Locations data) {
-        // TODO for debugging purposes only...
-//        log.info("[ARGUS] Received location data: {}", data);
         LocationStorage.INSTANCE.fromRemote(data);
     }
 
@@ -33,5 +31,13 @@ public enum RemoteLocationHandler {
             var config = ArgusClientConfig.getActiveConfig();
             locations.init(config.getArgusHost());
         }
+    }
+
+    public void restartClient() {
+        if (!locations.isClosed()) {
+            locations.close();
+        }
+        var config = ArgusClientConfig.getActiveConfig();
+        locations.init(config.getArgusHost());
     }
 }

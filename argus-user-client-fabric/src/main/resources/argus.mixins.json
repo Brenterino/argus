@@ -6,10 +6,10 @@
   "mixins": [],
   "client": [
     "ChatHudListenerMixin",
-    "ClientConnectionMixin",
     "ClientEntityManagerMixin",
     "ClientEntityManagerMixin$ListenerMixin",
     "ClientLoginNetworkHandlerMixin",
+    "MinecraftClientMixin",
     "PlayerListHudMixin",
     "WorldRendererMixin"
   ],

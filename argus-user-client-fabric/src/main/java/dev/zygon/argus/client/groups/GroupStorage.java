@@ -19,6 +19,8 @@ package dev.zygon.argus.client.groups;
 
 import dev.zygon.argus.client.api.ArgusGroupApi;
 import dev.zygon.argus.client.api.ArgusPermissionApi;
+import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
+import dev.zygon.argus.client.event.RemoteLocationHandler;
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.permission.GroupPermission;
 import dev.zygon.argus.permission.GroupPermissions;
@@ -40,7 +42,6 @@ public enum GroupStorage {
 
     @Setter private ArgusGroupApi groups;
     @Setter private ArgusPermissionApi permissions;
-
     @Setter @Getter private Set<GroupPermission> membership;
     @Setter @Getter private Set<GroupPermission> elections;
     @Setter @Getter private Map<Group, GroupMetadata> metadata;
@@ -51,22 +52,42 @@ public enum GroupStorage {
     }
 
     private void updateMembership(Set<GroupPermission> membership) {
+        var metadataGroups = readGroups();
         var computedMetadata = membership.stream()
                 .map(GroupPermission::group)
+                .filter(metadataGroups::contains)
                 .collect(Collectors.toMap(Function.identity(), GroupMetadataExtractor::fromGroup));
         var computedDisplays = computedMetadata.values()
-                        .stream()
-                        .map(GroupMetadata::displays)
-                        .flatMap(display -> display.entrySet().stream())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .stream()
+                .map(GroupMetadata::displays)
+                .flatMap(display -> display.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         setMembership(membership);
         setMetadata(computedMetadata);
         setDisplays(computedDisplays);
     }
 
+    public List<Group> readGroups() {
+        return Optional.ofNullable(elections)
+                .stream()
+                .flatMap(Collection::stream)
+                .filter(gp -> gp.permission().canRead())
+                .map(GroupPermission::group)
+                .toList();
+    }
+
     public void refreshElections() {
-        // TODO force close of locations sockets if elections change?
-        doCall(permissions.elected(), this::setElections);
+        doCall(permissions.elected(), this::updateElections);
+    }
+
+    private void updateElections(Set<GroupPermission> nextElections) {
+        if (elections != null && !elections.equals(nextElections)) {
+            log.info("[ARGUS] Elections changed, forcing token refresh and reopening location socket on refresh.");
+            var tokens = ArgusMojangTokenGenerator.INSTANCE;
+            tokens.onNextRefresh(RemoteLocationHandler.INSTANCE::restartClient);
+            tokens.forceRefresh();
+        }
+        elections = nextElections;
     }
 
     private void doCall(Call<GroupPermissions> apiCall, Consumer<Set<GroupPermission>> setter) {

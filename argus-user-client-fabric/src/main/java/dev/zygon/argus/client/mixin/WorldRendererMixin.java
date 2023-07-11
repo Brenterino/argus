@@ -102,7 +102,7 @@ public abstract class WorldRendererMixin {
                     localDistance = distance;
                 }
             }
-            var scale = (float) (2.0d * 0.00390625d * (localDistance + 4.0) / 3.0);
+            var scale = (float) (0.0078125d * (localDistance + 4.0) / 3.0);
             var display = fetchDisplayFromUUID(uuid);
             var name = buildName(location, distance, display, now);
             var renderEntry = new LocationRenderEntry(name, display.color());

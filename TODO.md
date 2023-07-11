@@ -1,11 +1,12 @@
 # To-do List
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
-- Find better way to determine when client is disconnecting to avoid issues with it disconnecting randomly on join
-- Force location socket refresh when elections change
-- Check elections for at least READ access to enable metadata evaluation
+- Cleaning up waypoints after a configured timing
+- Verifying everything works :)
 
 # Beyond MVP
+- Display nicknames (?) in waypoint tag
+- Implement pinging
 - Need symbology to indicate dimensions (maybe ↑ and ↓), allow for toggling to show only same dimension locations
 - Allow for banning of issuing tokens based on UUID
 - Marshal waypoints into groups based on a radius, so they will be combined instead of stack/improve readability. Likely
