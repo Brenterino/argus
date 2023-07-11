@@ -38,8 +38,8 @@ public class JwtSessionAuthorizer implements SessionAuthorizer {
             authorizeInternal(session);
             return true;
         } catch (UnauthorizedException e) {
-            log.warn("Session with ID ({}) could not be authorized for access.",
-                    session.getId(), e);
+            log.warn("Session with ID ({}) could not be authorized for access. Reason: {}",
+                    session.getId(), e.getMessage());
             return false;
         }
     }

@@ -42,6 +42,7 @@ public enum ArgusClientConnector {
     private ScheduledFuture<?> electionsRefresh;
     private ScheduledFuture<?> locationKeepAlive;
     private ScheduledFuture<?> locationRemoteSync;
+    private ScheduledFuture<?> locationCleaner;
 
     ArgusClientConnector() {
         client = new ArgusClient(ArgusModClientCustomizer.INSTANCE);
@@ -104,6 +105,9 @@ public enum ArgusClientConnector {
                 .registerWithDelay(() -> LocationStorage.INSTANCE.syncRemote(client),
                         config.getTransmitInitialWaitForConnectionSeconds() * 1000L,
                         config.getTransmitLocationsIntervalMillis(), TimeUnit.MILLISECONDS);
+        locationCleaner = ClientScheduler.INSTANCE
+                .register(LocationStorage.INSTANCE::cleanLocations,
+                        config.getCleanLocationsIntervalSeconds(), TimeUnit.SECONDS);
     }
 
     public void close() {
@@ -113,6 +117,7 @@ public enum ArgusClientConnector {
         safeCancel(electionsRefresh);
         safeCancel(locationKeepAlive);
         safeCancel(locationRemoteSync);
+        safeCancel(locationCleaner);
 
         client.getLocations().close();
         ArgusMojangTokenGenerator.INSTANCE.clean();

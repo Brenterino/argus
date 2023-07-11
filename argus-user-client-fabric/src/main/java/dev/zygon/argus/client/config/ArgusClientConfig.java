@@ -32,18 +32,15 @@ import java.util.List;
 public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.Gui.RequiresRestart
     private String argusHost = "https://argus.zygon.dev";
 
     @ConfigEntry.Gui.Tooltip
     private boolean verifyCertificateEnabled = true;
 
     @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.Gui.RequiresRestart
     private boolean webUiEnabled = true;
 
     @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.Gui.RequiresRestart
     private int webUiPort = 9000;
 
     @ConfigEntry.Category("visibility")
@@ -69,49 +66,51 @@ public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
-    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.Gui.Tooltip
+    private int cleanLocationsIntervalSeconds = 30;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 5, max = 15)
+    @ConfigEntry.Gui.Tooltip
+    private int locationsExpirationMinutes = 15;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
     @ConfigEntry.Gui.Tooltip
     private int refreshTokenCheckIntervalSeconds = 30;
 
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 60, max = 240)
-    @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.Gui.Tooltip
     private int refreshTokenRenewBeforeExpirationSeconds = 60;
 
     @ConfigEntry.Category("timings")
-    @ConfigEntry.BoundedDiscrete(min = 5, max = 30)
-    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 30)
     @ConfigEntry.Gui.Tooltip
-    private int refreshInitialWaitForTokenSeconds = 5;
+    private int refreshInitialWaitForTokenSeconds = 2;
 
     @ConfigEntry.Category("timings")
-    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
-    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
     @ConfigEntry.Gui.Tooltip
     private int refreshMembershipIntervalSeconds = 60;
 
     @ConfigEntry.Category("timings")
-    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
-    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
     @ConfigEntry.Gui.Tooltip
     private int refreshElectionsIntervalSeconds = 60;
 
     @ConfigEntry.Category("timings")
-    @ConfigEntry.BoundedDiscrete(min = 60, max = 120)
-    @ConfigEntry.Gui.RequiresRestart
+    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
     @ConfigEntry.Gui.Tooltip
     private int refreshLocationClientIntervalSeconds = 60;
 
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 1, max = 10)
-    @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.Gui.Tooltip
     private int transmitInitialWaitForConnectionSeconds = 3;
 
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 33, max = 1000)
-    @ConfigEntry.Gui.RequiresRestart
     @ConfigEntry.Gui.Tooltip
     private int transmitLocationsIntervalMillis = 100;
 

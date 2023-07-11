@@ -104,5 +104,7 @@ public enum GroupStorage {
     public void clean() {
         membership = null;
         elections = null;
+        metadata = null;
+        displays = null;
     }
 }

@@ -1,7 +1,6 @@
 # To-do List
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
-- Cleaning up waypoints after a configured timing
 - Verifying everything works :)
 
 # Beyond MVP

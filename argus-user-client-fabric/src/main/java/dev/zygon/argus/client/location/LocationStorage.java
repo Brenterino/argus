@@ -18,11 +18,14 @@
 package dev.zygon.argus.client.location;
 
 import dev.zygon.argus.client.ArgusClient;
+import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.name.NameStorage;
 import dev.zygon.argus.location.*;
 import dev.zygon.argus.user.User;
 import lombok.Getter;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
@@ -102,6 +105,21 @@ public enum LocationStorage {
         if (!locations.isEmpty()) {
             client.getLocations().sendLocations(new Locations(locations));
         }
+    }
+
+    public void cleanLocations() {
+        var config = ArgusClientConfig.getActiveConfig();
+        var now = Instant.now();
+        storage.keySet().forEach(k -> storage.compute(k, (ki, vi) -> {
+            if (vi != null) {
+                var coordinates = vi.coordinates();
+                var duration = Duration.between(coordinates.time(), now);
+                if (duration.toMinutes() >= config.getLocationsExpirationMinutes()) {
+                    return null;
+                }
+            }
+            return vi;
+        }));
     }
 
     public void clean() {
