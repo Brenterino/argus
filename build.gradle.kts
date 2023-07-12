@@ -25,24 +25,4 @@ subprojects {
             }
         }
     }
-
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-    configure<PublishingExtension> {
-        publications {
-            register<MavenPublication>(rootProject.name) {
-                from(components["java"])
-            }
-        }
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/Brenterino/argus")
-                credentials {
-                    username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                    password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
-                }
-            }
-        }
-    }
 }

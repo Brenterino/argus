@@ -1,6 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
+    java
     id("com.github.node-gradle.node")
 }
 
@@ -21,6 +22,6 @@ tasks {
     }
 
     build {
-        dependsOn(clean, npmBuild)
+        dependsOn(npmBuild)
     }
 }
