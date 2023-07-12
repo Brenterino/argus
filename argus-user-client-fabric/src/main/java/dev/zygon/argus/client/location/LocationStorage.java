@@ -61,11 +61,13 @@ public enum LocationStorage {
     }
 
     private void trackInternal(UUID target, LocationType type, Coordinate coordinate) {
-        var user = new User(target, resolveNameFromUUIDAndType(target, type));
-        var location = new Location(user, type, coordinate);
-        var key = location.key();
-        localStorage.put(key, location);
-        storage.put(key, location);
+        if (target != null) { // if somehow the location target is null when it got here, avoid crashes
+            var user = new User(target, resolveNameFromUUIDAndType(target, type));
+            var location = new Location(user, type, coordinate);
+            var key = location.key();
+            localStorage.put(key, location);
+            storage.put(key, location);
+        }
     }
 
     private String resolveNameFromUUIDAndType(UUID target, LocationType type) {
