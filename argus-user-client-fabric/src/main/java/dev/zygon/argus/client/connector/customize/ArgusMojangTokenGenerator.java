@@ -98,13 +98,6 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
         this.onNextRefresh = action;
     }
 
-    private void runOnNextRefresh() {
-        if (onNextRefresh != null) {
-            onNextRefresh.run();
-            onNextRefresh = null;
-        }
-    }
-
     private void retrieveToken() {
         if (isRefreshTokenExpired()) { // access token will also be refreshed
             ClientScheduler.INSTANCE
@@ -148,6 +141,13 @@ public enum ArgusMojangTokenGenerator implements RefreshableTokenGenerator {
                 token = new DualToken(token.refreshToken(), accessToken);
             } else {
                 log.warn("[ARGUS] Received response via callback that was not of any expected type.");
+            }
+        }
+
+        private void runOnNextRefresh() {
+            if (onNextRefresh != null) {
+                onNextRefresh.run();
+                onNextRefresh = null;
             }
         }
 

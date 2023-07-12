@@ -42,12 +42,12 @@ public abstract class WorldRendererMixin {
                 .values()
                 .stream()
                 .toList(); // take sync hit once?
-        var renders = prepareInternal(locations, tickDelta);
+        var renders = prepareInternal(locations, camera, tickDelta);
         renders.forEach(render -> renderLocation(matrices, render));
     }
 
     @Unique
-    private List<LocationRender> prepareInternal(Collection<Location> locations, float tickDelta) {
+    private List<LocationRender> prepareInternal(Collection<Location> locations, Camera camera, float tickDelta) {
         final var UNITS_PER_CHUNK = 16;
         var client = MinecraftClient.getInstance();
         var renderDispatcher = client.getEntityRenderDispatcher();
@@ -59,7 +59,7 @@ public abstract class WorldRendererMixin {
         var nextRenders = new ArrayList<LocationRender>();
         var chunkMaxViewDistance = renderDispatcher.gameOptions.getViewDistance();
         var maxRenderDistance = chunkMaxViewDistance * UNITS_PER_CHUNK;
-        var cameraPosition = renderDispatcher.camera.getPos();
+        var cameraPosition = camera.getPos();
         var self = client.getSession().getProfile().getId();
         // for now, we will just shove all waypoints on top of each other :)
         // we should find a way to group waypoints based on an angle
@@ -82,14 +82,10 @@ public abstract class WorldRendererMixin {
             var uuid = user.uuid();
             if (distance <= maxViewDistance && !self.equals(uuid)) {
                 if (distance > maxRenderDistance) { // render via slices
-                    var f = Math.sqrt(x * x + z * z);
                     var yaw = Math.atan2(x, z) * (180.0d / Math.PI);
-                    var pitch = Math.atan2(y, f) * (180.0d / Math.PI);
                     var yawSegment = (int) Math.floor(yaw / (double) config.getYawSliceDegrees());
-                    var pitchSegment = (int) Math.floor(pitch / (double) config.getPitchSliceDegrees());
-                    var segmentIndex = (yawSegment << 16) | pitchSegment;
-                    segments.putIfAbsent(segmentIndex, new ArrayList<>());
-                    segments.get(segmentIndex).add(location);
+                    segments.putIfAbsent(yawSegment, new ArrayList<>());
+                    segments.get(yawSegment).add(location);
                 } else {
                     // read local entities if location is a user to see if we can just track that way instead :)
                     if (location.type() == LocationType.USER && config.isReadLocalEntitiesEnabled()) {

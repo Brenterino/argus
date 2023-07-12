@@ -56,15 +56,13 @@ public enum ArgusClientConnector {
         client.init(config.getArgusHost());
 
         // Initialize Subcomponents
-        initTokenGenerator(server, username);
-        initGroupRefresh();
-        initLocationTracking();
+        init(server, username);
 
         // Initialize Web UI
         ArgusWebUi.INSTANCE.start();
     }
 
-    private void initTokenGenerator(String server, String username) {
+    private void init(String server, String username) {
         var config = ArgusClientConfig.getActiveConfig();
         var tokenGenerator = ArgusMojangTokenGenerator.INSTANCE;
         tokenGenerator.setAuth(client.getAuth());
@@ -73,6 +71,11 @@ public enum ArgusClientConnector {
         tokenRefresh = ClientScheduler.INSTANCE
                 .register(tokenGenerator::refresh,
                         config.getRefreshTokenCheckIntervalSeconds(), TimeUnit.SECONDS);
+
+        tokenGenerator.onNextRefresh(() -> {
+            initGroupRefresh();
+            initLocationTracking();
+        });
     }
 
     private void initGroupRefresh() {
@@ -81,13 +84,9 @@ public enum ArgusClientConnector {
         groupStorage.setGroups(client.getGroups());
         groupStorage.setPermissions(client.getPermissions());
         membershipRefresh = ClientScheduler.INSTANCE
-                .registerWithDelay(groupStorage::refreshMemberships,
-                        config.getRefreshInitialWaitForTokenSeconds(),
-                        config.getRefreshMembershipIntervalSeconds(), TimeUnit.SECONDS);
+                .register(groupStorage::refreshMemberships, config.getRefreshMembershipIntervalSeconds(), TimeUnit.SECONDS);
         electionsRefresh = ClientScheduler.INSTANCE
-                .registerWithDelay(groupStorage::refreshElections,
-                        config.getRefreshInitialWaitForTokenSeconds(),
-                        config.getRefreshElectionsIntervalSeconds(), TimeUnit.SECONDS);
+                .register(groupStorage::refreshElections, config.getRefreshElectionsIntervalSeconds(), TimeUnit.SECONDS);
     }
 
     private void initLocationTracking() {
@@ -98,8 +97,7 @@ public enum ArgusClientConnector {
         locations.addListener(remoteHandler::onLocationsReceived);
         locations.addErrorHandler(remoteHandler::onRemoteSyncFailure);
         locationKeepAlive = ClientScheduler.INSTANCE
-                .registerWithDelay(remoteHandler::keepClientAlive,
-                        config.getRefreshInitialWaitForTokenSeconds(),
+                .register(remoteHandler::keepClientAlive,
                         config.getRefreshLocationClientIntervalSeconds(), TimeUnit.SECONDS);
         locationRemoteSync = ClientScheduler.INSTANCE
                 .registerWithDelay(() -> LocationStorage.INSTANCE.syncRemote(client),

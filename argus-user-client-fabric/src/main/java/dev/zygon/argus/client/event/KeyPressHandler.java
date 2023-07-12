@@ -36,13 +36,23 @@ public class KeyPressHandler {
     private static final int MIN_WAYPOINT_DISTANCE = 0;
     private static final int MAX_WAYPOINT_DISTANCE = 100000;
 
+    private static final int YAW_DEGREES_INCREMENT = 1;
+    private static final int MIN_YAW_DEGREES = 1;
+    private static final int MAX_YAW_DEGREES = 180;
+
     private final KeyBinding toggleStreamerMode;
     private final KeyBinding toggleColoredNames;
     private final KeyBinding toggleChatLocations;
     private final KeyBinding decreaseWaypointDistance;
     private final KeyBinding increaseWaypointDistance;
+    private final KeyBinding decreaseYawSliceDegrees;
+    private final KeyBinding increaseYawSliceDegrees;
 
     public KeyPressHandler() {
+        increaseYawSliceDegrees = registerKeyBinding(new KeyBinding("key.argus.yaw.slice.increase",
+                InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_KP_9, CATEGORY));
+        decreaseYawSliceDegrees = registerKeyBinding(new KeyBinding("key.argus.yaw.slice.decrease",
+                InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_KP_7, CATEGORY));
         increaseWaypointDistance = registerKeyBinding(new KeyBinding("key.argus.waypoint.distance.increase",
                 InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_KP_ADD, CATEGORY));
         decreaseWaypointDistance = registerKeyBinding(new KeyBinding("key.argus.waypoint.distance.decrease",
@@ -88,6 +98,20 @@ public class KeyPressHandler {
                     MAX_WAYPOINT_DISTANCE);
             config.setMaxViewDistance(nextDistance);
             dropMessage(client, "key.press.argus.waypoint.distance.increase", config.getMaxViewDistance() + " m");
+            change = true;
+        }
+        while (decreaseYawSliceDegrees.wasPressed()) {
+            var nextDegrees = Math.max(config.getYawSliceDegrees() - YAW_DEGREES_INCREMENT,
+                    MIN_YAW_DEGREES);
+            config.setYawSliceDegrees(nextDegrees);
+            dropMessage(client, "key.press.argus.yaw.slice.decrease", config.getYawSliceDegrees() + " deg");
+            change = true;
+        }
+        while (increaseYawSliceDegrees.wasPressed()) {
+            var nextDegrees = Math.min(config.getYawSliceDegrees() + YAW_DEGREES_INCREMENT,
+                    MAX_YAW_DEGREES);
+            config.setYawSliceDegrees(nextDegrees);
+            dropMessage(client, "key.press.argus.yaw.slice.increase", config.getYawSliceDegrees() + " deg");
             change = true;
         }
         if (change) {

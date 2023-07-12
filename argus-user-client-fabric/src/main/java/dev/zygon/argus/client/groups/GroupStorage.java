@@ -88,6 +88,7 @@ public enum GroupStorage {
             tokens.forceRefresh();
         }
         elections = nextElections;
+        updateMembership(membership); // force re-calculation of metadata
     }
 
     private void doCall(Call<GroupPermissions> apiCall, Consumer<Set<GroupPermission>> setter) {

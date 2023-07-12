@@ -49,14 +49,13 @@ public class ArgusClientConfig implements ConfigData {
     private int maxViewDistance = 10000;
 
     @ConfigEntry.Category("visibility")
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 180)
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 180)
     @ConfigEntry.Gui.Tooltip
-    private int pitchSliceDegrees = 30;
+    private int yawSliceDegrees = 30;
 
     @ConfigEntry.Category("visibility")
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 180)
     @ConfigEntry.Gui.Tooltip
-    private int yawSliceDegrees = 10;
+    private boolean showAlignmentsDigest = true;
 
     @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
@@ -95,11 +94,6 @@ public class ArgusClientConfig implements ConfigData {
     private int refreshTokenRenewBeforeExpirationSeconds = 60;
 
     @ConfigEntry.Category("timings")
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 30)
-    @ConfigEntry.Gui.Tooltip
-    private int refreshInitialWaitForTokenSeconds = 2;
-
-    @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
     @ConfigEntry.Gui.Tooltip
     private int refreshMembershipIntervalSeconds = 60;
@@ -117,7 +111,7 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 1, max = 10)
     @ConfigEntry.Gui.Tooltip
-    private int transmitInitialWaitForConnectionSeconds = 3;
+    private int transmitInitialWaitForConnectionSeconds = 1;
 
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 33, max = 1000)
