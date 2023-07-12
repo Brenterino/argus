@@ -9,14 +9,20 @@ import dev.zygon.argus.client.groups.GroupStorage;
 import dev.zygon.argus.client.location.LocationRender;
 import dev.zygon.argus.client.location.LocationRenderEntry;
 import dev.zygon.argus.client.location.LocationStorage;
+import dev.zygon.argus.client.util.DimensionMapper;
+import dev.zygon.argus.location.Dimension;
 import dev.zygon.argus.location.Location;
 import dev.zygon.argus.location.LocationType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,18 +57,26 @@ public abstract class WorldRendererMixin {
     @Unique
     private List<LocationRender> prepareInternal(Collection<Location> locations, Camera camera, float tickDelta) {
         final var UNITS_PER_CHUNK = 16;
-        var client = MinecraftClient.getInstance();
-        var renderDispatcher = client.getEntityRenderDispatcher();
+        var minecraft = MinecraftClient.getInstance();
+        var renderDispatcher = minecraft.getEntityRenderDispatcher();
+        var dimension = Optional.of(minecraft)
+                .map(client -> client.player)
+                .map(Entity::getEntityWorld)
+                .map(World::getRegistryKey)
+                .map(RegistryKey::getValue)
+                .map(Identifier::getPath)
+                .map(DimensionMapper::fromProximity)
+                .orElse(Dimension.OVERWORLD);
         var config = ArgusClientConfig.getActiveConfig();
         if (config.isStreamerModeEnabled() || renderDispatcher.gameOptions == null ||
-                renderDispatcher.camera == null || client.world == null)
+                renderDispatcher.camera == null || minecraft.world == null)
             return Collections.emptyList(); // game not ready :)
         var now = Instant.now();
         var nextRenders = new ArrayList<LocationRender>();
         var chunkMaxViewDistance = renderDispatcher.gameOptions.getViewDistance();
         var maxRenderDistance = chunkMaxViewDistance * UNITS_PER_CHUNK;
         var cameraPosition = camera.getPos();
-        var self = client.getSession().getProfile().getId();
+        var self = minecraft.getSession().getProfile().getId();
         // for now, we will just shove all waypoints on top of each other :)
         // we should find a way to group waypoints based on an angle
         var maxViewDistance = config.getMaxViewDistance();
@@ -72,6 +86,7 @@ public abstract class WorldRendererMixin {
         var segments = new HashMap<Integer, List<Location>>();
         for (var location : locations) {
             var coordinates = location.coordinates();
+            var w = coordinates.w();
             var x = coordinates.x() - cameraX;
             var y = coordinates.y() + 2.5 - cameraY;
             var z = coordinates.z() - cameraZ;
@@ -82,7 +97,7 @@ public abstract class WorldRendererMixin {
             var distance = Math.sqrt(x * x + y * y + z * z);
             var user = location.user();
             var uuid = user.uuid();
-            if (distance <= maxViewDistance && !self.equals(uuid)) {
+            if (distance <= maxViewDistance && !self.equals(uuid) && (!config.isSameDimensionOnly() || w == dimension.ordinal())) {
                 if (distance > maxRenderDistance) { // render via slices
                     var yaw = Math.atan2(x, z) * (180.0d / Math.PI);
                     var yawSegment = (int) Math.floor(yaw / (double) config.getYawSliceDegrees());
@@ -90,8 +105,10 @@ public abstract class WorldRendererMixin {
                     segments.get(yawSegment).add(location);
                 } else {
                     // read local entities if location is a user to see if we can just track that way instead :)
-                    if (location.type() == LocationType.USER && config.isReadLocalEntitiesEnabled()) {
-                        var players = client.world.getPlayers();
+                    if (location.type() == LocationType.USER
+                            && config.isReadLocalEntitiesEnabled()
+                            && w == dimension.ordinal()) {
+                        var players = minecraft.world.getPlayers();
                         var possiblePlayer = players.stream()
                                 .filter(p -> p.getUuid().equals(uuid))
                                 .findFirst();
@@ -106,7 +123,7 @@ public abstract class WorldRendererMixin {
                     }
                     var scale = (float) (0.0078125d * (distance + 4.0) / 3.0);
                     var display = fetchDisplayFromUUID(uuid);
-                    var name = buildName(location, distance, display, now);
+                    var name = buildName(location, distance, dimension, display, now);
                     var renderEntry = new LocationRenderEntry(name, display.color());
                     var render = new LocationRender(x, y, z, scale, Collections.emptyMap(), List.of(renderEntry));
                     nextRenders.add(render);
@@ -130,17 +147,17 @@ public abstract class WorldRendererMixin {
                 var user = location.user();
                 var uuid = user.uuid();
                 var display = fetchDisplayFromUUID(uuid);
-                var name = buildName(location, distance, display, now);
+                var name = buildName(location, distance, dimension, display, now);
 
                 x += lx;
                 y += ly;
                 z += lz;
                 renderEntries.add(new LocationRenderEntry(name, display.color()));
                 if (config.isShowAlignmentsDigest() && !display.symbol().isBlank()) {
-                        var key = new GroupAlignmentKey(display.symbol(), display.color());
-                        alignmentDigest.putIfAbsent(key, new AtomicInteger(0));
-                        alignmentDigest.get(key)
-                                .incrementAndGet();
+                    var key = new GroupAlignmentKey(display.symbol(), display.color());
+                    alignmentDigest.putIfAbsent(key, new AtomicInteger(0));
+                    alignmentDigest.get(key)
+                            .incrementAndGet();
                 }
             }
             Collections.sort(renderEntries);
@@ -158,10 +175,12 @@ public abstract class WorldRendererMixin {
     }
 
     @Unique
-    private String buildName(Location location, double distance, GroupAlignmentDisplay display, Instant now) {
+    private String buildName(Location location, double distance, Dimension dimension, GroupAlignmentDisplay display, Instant now) {
+        var config = ArgusClientConfig.getActiveConfig();
         var user = location.user();
         var symbol = display.symbol();
         var coordinates = location.coordinates();
+        var w = coordinates.w();
         var duration = Duration.between(coordinates.time(), now);
         var name = new StringBuilder();
         if (!symbol.isBlank()) {
@@ -169,7 +188,7 @@ public abstract class WorldRendererMixin {
         }
         name.append(user.name())
                 .append(" ");
-        if (duration.toSeconds() > 5L) { // TODO make this a configuration :)
+        if (duration.toSeconds() > config.getLocationTimerStartSeconds()) {
             var minutes = duration.toMinutesPart();
             var seconds = duration.toSecondsPart();
             if (minutes > 0) {
@@ -180,6 +199,9 @@ public abstract class WorldRendererMixin {
         name.append(" (")
                 .append((int) distance)
                 .append(" m)");
+        if (config.isShowDimensionIndicator() && w != dimension.ordinal()) {
+            name.append(" ").append(w > dimension.ordinal() ? "↑" : "↓");
+        }
         return name.toString();
     }
 
@@ -289,10 +311,10 @@ public abstract class WorldRendererMixin {
 
         final var BREAK_PIXEL_WIDTH = 2;
         var fullTextWidth = digest.entrySet()
-              .stream()
-              .map(e -> e.getKey().symbol() + " " + e.getValue().toString())
-              .map(textRenderer::getWidth)
-              .reduce(0, Integer::sum);
+                .stream()
+                .map(e -> e.getKey().symbol() + " " + e.getValue().toString())
+                .map(textRenderer::getWidth)
+                .reduce(0, Integer::sum);
         fullTextWidth += BREAK_PIXEL_WIDTH * digest.size(); // spaces between
         var textIndex = -fullTextWidth / 2;
         for (Map.Entry<GroupAlignmentKey, AtomicInteger> entry : digest.entrySet()) {

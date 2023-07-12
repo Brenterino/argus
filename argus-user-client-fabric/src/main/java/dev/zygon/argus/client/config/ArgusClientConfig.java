@@ -59,6 +59,14 @@ public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
+    private boolean showDimensionIndicator = true;
+
+    @ConfigEntry.Category("visibility")
+    @ConfigEntry.Gui.Tooltip
+    private boolean sameDimensionOnly = false;
+
+    @ConfigEntry.Category("visibility")
+    @ConfigEntry.Gui.Tooltip
     private boolean streamerModeEnabled = false;
 
     @ConfigEntry.Category("visibility")
@@ -72,6 +80,10 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
     private List<String> hiddenGroupAlerts = Collections.emptyList();
+
+    @ConfigEntry.Category("visibility")
+    @ConfigEntry.Gui.Tooltip
+    private long locationTimerStartSeconds = 5;
 
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 30, max = 120)

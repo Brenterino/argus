@@ -2,15 +2,18 @@
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
 - Verifying everything works :)
+- Verify dimensions symbology (maybe ↑ and ↓), allow for toggling to show only same dimension locations is working
 
 # Beyond MVP
 - Display nicknames (?) in waypoint tag
 - Implement pinging
-- Need symbology to indicate dimensions (maybe ↑ and ↓), allow for toggling to show only same dimension locations
 - Allow for banning of issuing tokens based on UUID
 - Determine method for ordering precedence of group metadata
 - Color picker for group categories on UI
 - Adapt UI to make standalone site would allow for making changes without logging into game.
+- Adapt slicing calc to take camera yaw as basis, I am thinking maybe this?: yaw - camera.yaw - sliceDeg / 2
+- Possibly taking pitch into account to avoid drawing combined waypoints as separation becomes larger, not sure if this
+  is necessary because it honestly might not be worth bothering with
 
 # Experimental
 - Implementation of Status Services which can be used to relay health, buff status, and other useful inventory
