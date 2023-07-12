@@ -10,17 +10,17 @@ node {
     download.set(true)
 }
 
-val cleanTask = tasks.register("clean") {
-    doFirst {
-        delete("dist")
-    }
-}
-
-val buildTaskUsingNpm = tasks.register<NpmTask>("npmBuild") {
-    dependsOn(cleanTask, tasks.npmInstall)
+val npmBuild = tasks.register<NpmTask>("npmBuild") {
+    dependsOn(tasks.npmInstall)
     npmCommand.set(listOf("run", "build"))
 }
 
-tasks.register("build") {
-    dependsOn(buildTaskUsingNpm)
+tasks {
+    clean {
+        delete("dist")
+    }
+
+    build {
+        dependsOn(clean, npmBuild)
+    }
 }

@@ -1,7 +1,3 @@
-plugins {
-    `maven-publish` apply false
-}
-
 allprojects {
     repositories {
         mavenLocal()
@@ -19,7 +15,7 @@ allprojects {
 
 subprojects {
     group = "dev.zygon.argus"
-    version = "1.0.0-SNAPSHOT"
+    version = "1.0.0-beta"
 
     // Copy license into JAR META-INF folder
     tasks.withType<Jar> {
@@ -30,21 +26,22 @@ subprojects {
         }
     }
 
+    apply(plugin = "java")
     apply(plugin = "maven-publish")
     configure<PublishingExtension> {
+        publications {
+            register<MavenPublication>(rootProject.name) {
+                from(components["java"])
+            }
+        }
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/OWNER/REPOSITORY")
+                url = uri("https://maven.pkg.github.com/Brenterino/argus")
                 credentials {
                     username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
                     password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
                 }
-            }
-        }
-        publications {
-            register<MavenPublication>("gpr") {
-                from(components["java"])
             }
         }
     }
