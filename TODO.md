@@ -8,7 +8,6 @@ Not exhaustive, but here are the things that still need to be accomplished in or
 - Implement pinging
 - Need symbology to indicate dimensions (maybe ↑ and ↓), allow for toggling to show only same dimension locations
 - Allow for banning of issuing tokens based on UUID
-- In location stacking, make a legend to indicate alignment counts for easier reference
 - Determine method for ordering precedence of group metadata
 - Color picker for group categories on UI
 - Adapt UI to make standalone site would allow for making changes without logging into game.
