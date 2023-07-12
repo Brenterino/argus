@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.groups.GroupAlignmentDisplay;
+import dev.zygon.argus.client.groups.GroupAlignmentKey;
 import dev.zygon.argus.client.groups.GroupStorage;
 import dev.zygon.argus.client.location.LocationRender;
 import dev.zygon.argus.client.location.LocationRenderEntry;
@@ -27,6 +28,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Mixin(value = WorldRenderer.class)
 public abstract class WorldRendererMixin {
@@ -106,13 +108,14 @@ public abstract class WorldRendererMixin {
                     var display = fetchDisplayFromUUID(uuid);
                     var name = buildName(location, distance, display, now);
                     var renderEntry = new LocationRenderEntry(name, display.color());
-                    var render = new LocationRender(x, y, z, scale, List.of(renderEntry));
+                    var render = new LocationRender(x, y, z, scale, Collections.emptyMap(), List.of(renderEntry));
                     nextRenders.add(render);
                 }
             }
         }
 
         for (var segment : segments.values()) {
+            var alignmentDigest = new HashMap<GroupAlignmentKey, AtomicInteger>();
             var renderEntries = new ArrayList<LocationRenderEntry>(segment.size());
             var x = 0.0d;
             var y = 0.0d;
@@ -133,6 +136,12 @@ public abstract class WorldRendererMixin {
                 y += ly;
                 z += lz;
                 renderEntries.add(new LocationRenderEntry(name, display.color()));
+                if (config.isShowAlignmentsDigest() && !display.symbol().isBlank()) {
+                        var key = new GroupAlignmentKey(display.symbol(), display.color());
+                        alignmentDigest.putIfAbsent(key, new AtomicInteger(0));
+                        alignmentDigest.get(key)
+                                .incrementAndGet();
+                }
             }
             Collections.sort(renderEntries);
             x = (x / segment.size());
@@ -143,7 +152,7 @@ public abstract class WorldRendererMixin {
             y = y / distance * maxRenderDistance;
             z = z / distance * maxRenderDistance;
             var scale = (float) (0.0078125d * (maxRenderDistance + 4.0) / 3.0);
-            nextRenders.add(new LocationRender(x, y, z, scale, renderEntries));
+            nextRenders.add(new LocationRender(x, y, z, scale, alignmentDigest, renderEntries));
         }
         return nextRenders;
     }
@@ -247,10 +256,13 @@ public abstract class WorldRendererMixin {
         var builders = client.getBufferBuilders();
         var vertexConsumerProvider = builders.getEntityVertexConsumers();
         var textRenderer = client.textRenderer;
+        var alignmentDigest = render.alignmentDigest();
 
-        // TODO calculate placement for text in a new form, thinking of using sqrt(entryCount) to shape it
         RenderSystem.enableTexture();
-        var offset = 0.0f;
+        var offset = alignmentDigest.isEmpty() ? 0.0f : 1.0f;
+        if (!alignmentDigest.isEmpty()) {
+            drawAlignmentDigest(matrix, alignmentDigest);
+        }
         final var textHeight = textRenderer.fontHeight;
         final var textStagger = 1.0f;
         for (var user : render.entries()) {
@@ -266,5 +278,32 @@ public abstract class WorldRendererMixin {
             offset++;
         }
         RenderSystem.disableTexture();
+    }
+
+    @Unique
+    private void drawAlignmentDigest(Matrix4f matrix, Map<GroupAlignmentKey, AtomicInteger> digest) {
+        var client = MinecraftClient.getInstance();
+        var builders = client.getBufferBuilders();
+        var vertexConsumerProvider = builders.getEntityVertexConsumers();
+        var textRenderer = client.textRenderer;
+
+        final var BREAK_PIXEL_WIDTH = 2;
+        var fullTextWidth = digest.entrySet()
+              .stream()
+              .map(e -> e.getKey().symbol() + " " + e.getValue().toString())
+              .map(textRenderer::getWidth)
+              .reduce(0, Integer::sum);
+        fullTextWidth += BREAK_PIXEL_WIDTH * digest.size(); // spaces between
+        var textIndex = -fullTextWidth / 2;
+        for (Map.Entry<GroupAlignmentKey, AtomicInteger> entry : digest.entrySet()) {
+            GroupAlignmentKey k = entry.getKey();
+            AtomicInteger v = entry.getValue();
+            var symbol = k.symbol();
+            var color = k.color();
+            var text = symbol + " " + v.toString();
+            textRenderer.draw(text, textIndex, 0, color.getRGB(), false, matrix,
+                    vertexConsumerProvider, true, 0x60000000, 0xF000F0);
+            textIndex += textRenderer.getWidth(text) + BREAK_PIXEL_WIDTH;
+        }
     }
 }

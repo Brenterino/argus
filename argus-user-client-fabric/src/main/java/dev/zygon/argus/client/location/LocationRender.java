@@ -17,12 +17,17 @@
  */
 package dev.zygon.argus.client.location;
 
+import dev.zygon.argus.client.groups.GroupAlignmentKey;
 import lombok.NonNull;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public record LocationRender(double x, double y, double z, float scale, @NonNull List<LocationRenderEntry> entries) {
+public record LocationRender(double x, double y, double z, float scale,
+                             @NonNull Map<GroupAlignmentKey, AtomicInteger> alignmentDigest,
+                             @NonNull List<LocationRenderEntry> entries) {
 
     public Color averageColor() {
         return entries.stream()
