@@ -134,6 +134,7 @@ public abstract class WorldRendererMixin {
                 z += lz;
                 renderEntries.add(new LocationRenderEntry(name, display.color()));
             }
+            Collections.sort(renderEntries);
             x = (x / segment.size());
             y = (y / segment.size());
             z = (z / segment.size());

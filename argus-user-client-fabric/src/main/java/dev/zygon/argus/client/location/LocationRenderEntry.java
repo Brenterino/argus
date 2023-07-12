@@ -18,8 +18,15 @@
 package dev.zygon.argus.client.location;
 
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public record LocationRenderEntry(@NonNull String text, @NonNull Color color) {
+public record LocationRenderEntry(@NonNull String text, @NonNull Color color)
+        implements Comparable<LocationRenderEntry> {
+
+    @Override
+    public int compareTo(@NotNull LocationRenderEntry o) {
+        return -text.compareTo(o.text);
+    }
 }
