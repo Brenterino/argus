@@ -14,6 +14,7 @@ Not exhaustive, but here are the things that still need to be accomplished in or
 - Adapt slicing calc to take camera yaw as basis, I am thinking maybe this?: yaw - camera.yaw - sliceDeg / 2
 - Possibly taking pitch into account to avoid drawing combined waypoints as separation becomes larger, not sure if this
   is necessary because it honestly might not be worth bothering with
+- Being able to pull audit log for individual users to request permission changes (maybe?)
 
 # Experimental
 - Implementation of Status Services which can be used to relay health, buff status, and other useful inventory

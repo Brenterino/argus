@@ -72,7 +72,7 @@ public enum ChatEventHandler {
                     .local(false)
                     .time(Instant.now())
                     .build();
-            LocationStorage.INSTANCE.trackPlayer(uuid, location);
+            LocationStorage.INSTANCE.trackPlayerMisc(uuid, location);
             return shouldHideMessage(group);
         } catch (NumberFormatException e) {
             log.warn("[ARGUS] Snitch hit data could not be translated to location data!", e);
