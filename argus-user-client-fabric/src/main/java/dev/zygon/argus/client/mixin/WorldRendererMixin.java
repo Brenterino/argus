@@ -186,9 +186,9 @@ public abstract class WorldRendererMixin {
         if (!symbol.isBlank()) {
             name.append("[").append(symbol).append("]");
         }
-        name.append(user.name())
-                .append(" ");
+        name.append(user.name());
         if (duration.toSeconds() > config.getLocationTimerStartSeconds()) {
+            name.append(" ");
             var minutes = duration.toMinutesPart();
             var seconds = duration.toSecondsPart();
             if (minutes > 0) {
