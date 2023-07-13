@@ -16,13 +16,9 @@ import dev.zygon.argus.location.LocationType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,6 +31,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static dev.zygon.argus.location.LocationType.BASIC_PING;
 
 @Mixin(value = WorldRenderer.class)
 public abstract class WorldRendererMixin {
@@ -59,14 +57,7 @@ public abstract class WorldRendererMixin {
         final var UNITS_PER_CHUNK = 16;
         var minecraft = MinecraftClient.getInstance();
         var renderDispatcher = minecraft.getEntityRenderDispatcher();
-        var dimension = Optional.of(minecraft)
-                .map(client -> client.player)
-                .map(Entity::getEntityWorld)
-                .map(World::getRegistryKey)
-                .map(RegistryKey::getValue)
-                .map(Identifier::getPath)
-                .map(DimensionMapper::fromProximity)
-                .orElse(Dimension.OVERWORLD);
+        var dimension = DimensionMapper.currentDimension();
         var config = ArgusClientConfig.getActiveConfig();
         if (config.isStreamerModeEnabled() || renderDispatcher.gameOptions == null ||
                 renderDispatcher.camera == null || minecraft.world == null)
@@ -88,21 +79,33 @@ public abstract class WorldRendererMixin {
             var coordinates = location.coordinates();
             var w = coordinates.w();
             var x = coordinates.x() - cameraX;
-            var y = coordinates.y() + 2.5 - cameraY;
+            var y = coordinates.y() + 0.5 - cameraY;
             var z = coordinates.z() - cameraZ;
-            if (location.type() == LocationType.MISC_USER) { // snitch is blockpos, so center it inside the block
+            var duration = Duration.between(coordinates.time(), now);
+            if (location.type() == LocationType.MISC_USER || location.type() == BASIC_PING) {
+                // these types are of blockpos variety, so offset them
                 x += 0.5;
+                y += 0.5;
                 z += 0.5;
+            } else {
+                y += 2.0;
             }
             var distance = Math.sqrt(x * x + y * y + z * z);
             var user = location.user();
             var uuid = user.uuid();
-            if (distance <= maxViewDistance && !self.equals(uuid) && (!config.isSameDimensionOnly() || w == dimension.ordinal())) {
+            var isPing = location.type() == BASIC_PING || location.type() == LocationType.FOCUS_PING;
+            var isExpired = isPing ? duration.toSeconds() >= config.getPingExpirationSeconds() :
+                    duration.toMinutes() >= config.getLocationsExpirationMinutes();
+            var canShowSelf = location.type() == BASIC_PING || !self.equals(uuid);
+            if (distance <= maxViewDistance && !isExpired && canShowSelf &&
+                    (!config.isSameDimensionOnly() || w == dimension.ordinal())) {
                 if (distance > maxRenderDistance) { // render via slices
-                    var yaw = Math.atan2(x, z) * (180.0d / Math.PI);
-                    var yawSegment = (int) Math.floor(yaw / (double) config.getYawSliceDegrees());
-                    segments.putIfAbsent(yawSegment, new ArrayList<>());
-                    segments.get(yawSegment).add(location);
+                    if (!isPing) {
+                        var yaw = Math.atan2(x, z) * (180.0d / Math.PI);
+                        var yawSegment = (int) Math.floor(yaw / (double) config.getYawSliceDegrees());
+                        segments.putIfAbsent(yawSegment, new ArrayList<>());
+                        segments.get(yawSegment).add(location);
+                    }
                 } else {
                     // read local entities if location is a user to see if we can just track that way instead :)
                     if (location.type() == LocationType.USER
@@ -121,12 +124,15 @@ public abstract class WorldRendererMixin {
                             distance = Math.sqrt(x * x + y * y + z * z);
                         }
                     }
-                    var scale = (float) (0.0078125d * (distance + 4.0) / 3.0);
-                    var display = fetchDisplayFromUUID(uuid);
-                    var name = buildName(location, distance, dimension, display, now);
-                    var renderEntry = new LocationRenderEntry(name, display.color());
-                    var render = new LocationRender(x, y, z, scale, Collections.emptyMap(), List.of(renderEntry));
-                    nextRenders.add(render);
+
+                    if (!isPing || w == dimension.ordinal()) {
+                        var scale = (float) (0.0078125d * (distance + 4.0) / 3.0);
+                        var display = fetchDisplayFromUUID(uuid);
+                        var name = buildName(location, distance, dimension, display, now);
+                        var renderEntry = new LocationRenderEntry(name, display.color());
+                        var render = new LocationRender(x, y, z, scale, Collections.emptyMap(), List.of(renderEntry));
+                        nextRenders.add(render);
+                    }
                 }
             }
         }
@@ -182,12 +188,13 @@ public abstract class WorldRendererMixin {
         var coordinates = location.coordinates();
         var w = coordinates.w();
         var duration = Duration.between(coordinates.time(), now);
+        var isPing = location.type() == BASIC_PING || location.type() == LocationType.FOCUS_PING;
         var name = new StringBuilder();
         if (!symbol.isBlank()) {
             name.append("[").append(symbol).append("]");
         }
         name.append(user.name());
-        if (duration.toSeconds() > config.getLocationTimerStartSeconds()) {
+        if (!isPing && duration.toSeconds() > config.getLocationTimerStartSeconds()) {
             name.append(" ");
             var minutes = duration.toMinutesPart();
             var seconds = duration.toSecondsPart();

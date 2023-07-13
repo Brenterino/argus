@@ -91,6 +91,11 @@ public class ArgusClientConfig implements ConfigData {
     private int cleanLocationsIntervalSeconds = 30;
 
     @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 120)
+    @ConfigEntry.Gui.Tooltip
+    private int pingExpirationSeconds = 10;
+
+    @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 5, max = 15)
     @ConfigEntry.Gui.Tooltip
     private int locationsExpirationMinutes = 15;

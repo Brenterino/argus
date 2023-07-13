@@ -40,6 +40,7 @@ public class KeyPressHandler {
     private static final int MIN_YAW_DEGREES = 1;
     private static final int MAX_YAW_DEGREES = 180;
 
+    private final KeyBinding ping;
     private final KeyBinding toggleStreamerMode;
     private final KeyBinding toggleColoredNames;
     private final KeyBinding toggleChatLocations;
@@ -49,6 +50,8 @@ public class KeyPressHandler {
     private final KeyBinding increaseYawSliceDegrees;
 
     public KeyPressHandler() {
+        ping = registerKeyBinding(new KeyBinding("key.argus.ping",
+                InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, CATEGORY));
         increaseYawSliceDegrees = registerKeyBinding(new KeyBinding("key.argus.yaw.slice.increase",
                 InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_KP_9, CATEGORY));
         decreaseYawSliceDegrees = registerKeyBinding(new KeyBinding("key.argus.yaw.slice.decrease",
@@ -68,6 +71,9 @@ public class KeyPressHandler {
     public void onTick(MinecraftClient client) {
         var config = ArgusClientConfig.getActiveConfig();
         var change = false;
+        while (ping.wasPressed()) {
+            PingPressHandler.INSTANCE.ping();
+        }
         while (toggleStreamerMode.wasPressed()) {
             config.setStreamerModeEnabled(!config.isStreamerModeEnabled());
             dropMessage(client, "key.press.argus.toggle.streaming",

@@ -20,6 +20,13 @@ package dev.zygon.argus.client.util;
 import dev.zygon.argus.location.Dimension;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
+
+import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DimensionMapper {
@@ -38,5 +45,17 @@ public class DimensionMapper {
             case "the_end" -> Dimension.END;
             default -> Dimension.OVERWORLD;
         };
+    }
+
+    public static Dimension currentDimension() {
+        var minecraft = MinecraftClient.getInstance();
+        return Optional.of(minecraft)
+                .map(client -> client.player)
+                .map(Entity::getEntityWorld)
+                .map(World::getRegistryKey)
+                .map(RegistryKey::getValue)
+                .map(Identifier::getPath)
+                .map(DimensionMapper::fromProximity)
+                .orElse(Dimension.OVERWORLD);
     }
 }

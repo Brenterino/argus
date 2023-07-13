@@ -6,7 +6,7 @@ Not exhaustive, but here are the things that still need to be accomplished in or
 
 # Beyond MVP
 - Display nicknames (?) in waypoint tag
-- Implement pinging
+- Add sounds to pings
 - Allow for banning of issuing tokens based on UUID
 - Determine method for ordering precedence of group metadata
 - Color picker for group categories on UI
