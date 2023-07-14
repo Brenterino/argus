@@ -2,7 +2,6 @@
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
 - Verifying everything works :)
-- Verify dimensions symbology (maybe ↑ and ↓), allow for toggling to show only same dimension locations is working
 
 # Beyond MVP
 - Display nicknames (?) in waypoint tag

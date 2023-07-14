@@ -65,14 +65,14 @@ public enum ChatEventHandler {
         var uuid = NameStorage.INSTANCE.idFromName(snitchHit.player());
         try {
             var location = Coordinate.builder()
-                    .x(Double.parseDouble(snitchHit.x()))
-                    .y(Double.parseDouble(snitchHit.y()))
-                    .z(Double.parseDouble(snitchHit.z()))
+                    .x(Double.parseDouble(snitchHit.x()) + 0.5d)
+                    .y(Double.parseDouble(snitchHit.y()) - 2.0d)
+                    .z(Double.parseDouble(snitchHit.z()) + 0.5d)
                     .w(dimension.ordinal())
                     .local(false)
                     .time(Instant.now())
                     .build();
-            LocationStorage.INSTANCE.trackPlayerMisc(uuid, location);
+            LocationStorage.INSTANCE.trackPlayer(uuid, location);
             return shouldHideMessage(group);
         } catch (NumberFormatException e) {
             log.warn("[ARGUS] Snitch hit data could not be translated to location data!", e);

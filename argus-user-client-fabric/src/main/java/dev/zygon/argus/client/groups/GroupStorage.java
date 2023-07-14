@@ -61,7 +61,7 @@ public enum GroupStorage {
                 .stream()
                 .map(GroupMetadata::displays)
                 .flatMap(display -> display.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (first, second) -> first));
         setMembership(membership);
         setMetadata(computedMetadata);
         setDisplays(computedDisplays);
