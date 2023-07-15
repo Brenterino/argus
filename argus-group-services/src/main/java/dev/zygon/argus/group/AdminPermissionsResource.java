@@ -19,30 +19,32 @@ package dev.zygon.argus.group;
 
 import dev.zygon.argus.group.audit.Audit;
 import dev.zygon.argus.group.audit.AuditAction;
-import dev.zygon.argus.group.auth.Authorizer;
 import dev.zygon.argus.group.exception.GroupException;
 import dev.zygon.argus.group.repository.AuditRepository;
 import dev.zygon.argus.group.repository.GroupRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
 import dev.zygon.argus.permission.Permission;
-import dev.zygon.argus.user.NamespaceUser;
-import dev.zygon.argus.user.User;
 import dev.zygon.argus.permission.UserPermission;
 import dev.zygon.argus.permission.UserPermissions;
+import dev.zygon.argus.status.auth.Authorizer;
+import dev.zygon.argus.user.NamespaceUser;
+import dev.zygon.argus.user.User;
 import io.quarkus.security.Authenticated;
 import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
-import org.jboss.resteasy.reactive.RestResponse;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.jboss.resteasy.reactive.RestResponse;
+
 import java.time.OffsetDateTime;
 
+import static dev.zygon.argus.group.mutiny.UniExtensions.*;
 import static dev.zygon.argus.permission.Permission.ACCESS;
 import static dev.zygon.argus.permission.Permission.ADMIN;
-import static dev.zygon.argus.group.mutiny.UniExtensions.*;
-import static jakarta.ws.rs.core.Response.Status.*;
+import static jakarta.ws.rs.core.Response.Status.CONFLICT;
+import static jakarta.ws.rs.core.Response.Status.FORBIDDEN;
+import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static org.jboss.resteasy.reactive.RestResponse.Status.BAD_REQUEST;
 import static org.jboss.resteasy.reactive.RestResponse.Status.CREATED;
 import static org.jboss.resteasy.reactive.RestResponse.Status.NOT_FOUND;

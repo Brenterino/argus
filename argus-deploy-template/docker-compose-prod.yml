@@ -80,3 +80,19 @@ services:
       - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_FILES=/etc/ssl/argus.key
       - ARGUS_AUTH_PUBLIC_KEY=https://argus-auth/auth/key
       - ARGUS_AUTH_ISSUER=https://localhost/auth
+  argus-statuses:
+    build:
+      context: ../argus-status-services
+      dockerfile: ../argus-status-services/src/main/docker/Dockerfile.jvm
+    image: zygon/argus-status-services
+    container_name: argus-statuses
+    volumes:
+      - ./argus.crt:/etc/ssl/argus.crt
+      - ./argus.key:/etc/ssl/argus.key
+    environment:
+      - QUARKUS_HTTP_SSL_PORT=443
+      - QUARKUS_HTTP_INSECURE_REQUESTS=disabled
+      - QUARKUS_HTTP_SSL_CERTIFICATE_FILES=/etc/ssl/argus.crt
+      - QUARKUS_HTTP_SSL_CERTIFICATE_KEY_FILES=/etc/ssl/argus.key
+      - ARGUS_AUTH_PUBLIC_KEY=https://argus-auth/auth/key
+      - ARGUS_AUTH_ISSUER=https://localhost/auth

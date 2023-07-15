@@ -17,18 +17,17 @@
  */
 package dev.zygon.argus.group;
 
-import dev.zygon.argus.group.auth.Authorizer;
 import dev.zygon.argus.group.exception.GroupException;
 import dev.zygon.argus.group.repository.GroupRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
 import dev.zygon.argus.permission.GroupPermissions;
+import dev.zygon.argus.status.auth.Authorizer;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
-import org.jboss.resteasy.reactive.RestResponse;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.jboss.resteasy.reactive.RestResponse;
 
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfTrue;

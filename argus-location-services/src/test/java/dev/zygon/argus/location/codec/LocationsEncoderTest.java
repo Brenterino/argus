@@ -18,15 +18,15 @@
 package dev.zygon.argus.location.codec;
 
 import dev.zygon.argus.location.Coordinate;
+import dev.zygon.argus.location.Location;
 import dev.zygon.argus.location.LocationType;
 import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.location.Location;
 import dev.zygon.argus.user.User;
+import jakarta.websocket.EncodeException;
+import jakarta.websocket.EndpointConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import jakarta.websocket.EncodeException;
-import jakarta.websocket.EndpointConfig;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Set;

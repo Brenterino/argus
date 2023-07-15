@@ -18,9 +18,10 @@
 package dev.zygon.argus.location;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.auth.SessionAuthorizer;
 import dev.zygon.argus.location.messaging.GroupLocationsLocalRelay;
-import dev.zygon.argus.location.session.SessionRegistry;
+import dev.zygon.argus.status.auth.SessionAuthorizer;
+import dev.zygon.argus.status.session.SessionRegistry;
+import jakarta.websocket.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import jakarta.websocket.Session;
 import java.util.Collections;
 import java.util.stream.Stream;
 
@@ -42,7 +42,7 @@ class LocationsSocketTest {
     private SessionAuthorizer authorizer;
 
     @Mock
-    private SessionRegistry<Group> registry;
+    private SessionRegistry<Group, Locations> registry;
 
     @Mock
     private GroupLocationsLocalRelay relay;

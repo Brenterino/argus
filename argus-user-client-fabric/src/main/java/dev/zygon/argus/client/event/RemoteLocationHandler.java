@@ -1,6 +1,6 @@
 package dev.zygon.argus.client.event;
 
-import dev.zygon.argus.client.ArgusLocationsClient;
+import dev.zygon.argus.client.ArgusWebSocketClient;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.location.Locations;
@@ -12,7 +12,9 @@ public enum RemoteLocationHandler {
 
     INSTANCE;
 
-    @Setter private ArgusLocationsClient locations;
+    private static final String ENDPOINT = "/locations";
+
+    @Setter private ArgusWebSocketClient<Locations> locations;
 
     public void onLocationsReceived(Locations data) {
         LocationStorage.INSTANCE.fromRemote(data);
@@ -29,7 +31,7 @@ public enum RemoteLocationHandler {
     public void keepClientAlive() {
         if (locations.isClosed()) {
             var config = ArgusClientConfig.getActiveConfig();
-            locations.init(config.getArgusHost());
+            locations.init(config.getArgusHost(), ENDPOINT);
         }
     }
 
@@ -38,6 +40,6 @@ public enum RemoteLocationHandler {
             locations.close();
         }
         var config = ArgusClientConfig.getActiveConfig();
-        locations.init(config.getArgusHost());
+        locations.init(config.getArgusHost(), ENDPOINT);
     }
 }

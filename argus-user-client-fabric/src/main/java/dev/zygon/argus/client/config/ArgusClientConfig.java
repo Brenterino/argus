@@ -123,7 +123,7 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
     @ConfigEntry.Gui.Tooltip
-    private int refreshLocationClientIntervalSeconds = 60;
+    private int refreshSocketClientIntervalSeconds = 60;
 
     @ConfigEntry.Category("timings")
     @ConfigEntry.BoundedDiscrete(min = 1, max = 10)
@@ -139,6 +139,11 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.BoundedDiscrete(min = 33, max = 1000)
     @ConfigEntry.Gui.Tooltip
     private int statusCheckerIntervalMillis = 250;
+
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 33, max = 1000)
+    @ConfigEntry.Gui.Tooltip
+    private int transmitStatusIntervalMillis = 500;
 
     @ConfigEntry.Category("sourcing")
     @ConfigEntry.Gui.Tooltip

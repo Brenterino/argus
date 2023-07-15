@@ -69,3 +69,15 @@ services:
       - QUARKUS_HTTP_CORS_ORIGINS=/.*/
       - ARGUS_AUTH_PUBLIC_KEY=http://argus-auth/auth/key
       - ARGUS_AUTH_ISSUER=http://localhost/auth
+  argus-statuses:
+    build:
+      context: ../argus-status-services
+      dockerfile: ../argus-status-services/src/main/docker/Dockerfile.jvm
+    image: zygon/argus-status-services
+    container_name: argus-statuses
+    environment:
+      - QUARKUS_HTTP_PORT=80
+      - QUARKUS_HTTP_CORS=true
+      - QUARKUS_HTTP_CORS_ORIGINS=/.*/
+      - ARGUS_AUTH_PUBLIC_KEY=http://argus-auth/auth/key
+      - ARGUS_AUTH_ISSUER=http://localhost/auth

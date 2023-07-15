@@ -1,11 +1,28 @@
+/*
+    Argus - Suite of services aimed to enhance Minecraft Multiplayer
+    Copyright (C) 2023 Zygon
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package dev.zygon.argus.location;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.location.auth.SessionAuthorizer;
+import dev.zygon.argus.status.auth.SessionAuthorizer;
 import dev.zygon.argus.location.codec.LocationsDecoder;
 import dev.zygon.argus.location.codec.LocationsEncoder;
 import dev.zygon.argus.location.messaging.GroupLocationsLocalRelay;
-import dev.zygon.argus.location.session.SessionRegistry;
+import dev.zygon.argus.status.session.SessionRegistry;
 import io.quarkus.security.Authenticated;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,11 +41,11 @@ import jakarta.websocket.server.ServerEndpoint;
 public class LocationsSocket {
 
     private final SessionAuthorizer authorizer;
-    private final SessionRegistry<Group> registry;
+    private final SessionRegistry<Group, Locations> registry;
     private final GroupLocationsLocalRelay relay;
 
     public LocationsSocket(SessionAuthorizer authorizer,
-                           SessionRegistry<Group> registry,
+                           SessionRegistry<Group, Locations> registry,
                            GroupLocationsLocalRelay relay) {
         this.authorizer = authorizer;
         this.registry = registry;

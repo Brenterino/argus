@@ -23,6 +23,8 @@ import dev.zygon.argus.client.api.ArgusGroupApi;
 import dev.zygon.argus.client.api.ArgusPermissionApi;
 import dev.zygon.argus.client.auth.AuthInterceptor;
 import dev.zygon.argus.client.util.JacksonUtil;
+import dev.zygon.argus.location.Locations;
+import dev.zygon.argus.status.UserStatus;
 import lombok.Getter;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -36,7 +38,8 @@ public class ArgusClient implements Closeable {
     private @Getter ArgusGroupApi groups;
     private @Getter ArgusAuditApi audit;
     private @Getter ArgusPermissionApi permissions;
-    private final @Getter ArgusLocationsClient locations;
+    private final @Getter ArgusWebSocketClient<Locations> locations;
+    private final @Getter ArgusWebSocketClient<UserStatus> statuses;
 
     public ArgusClient(ArgusClientCustomizer customizer) {
         this.client = new OkHttpClient.Builder()
@@ -45,7 +48,8 @@ public class ArgusClient implements Closeable {
                 .sslSocketFactory(customizer.sslSocketFactory(),
                         customizer.trustManager())
                 .build();
-        this.locations = new ArgusLocationsClient(client, customizer);
+        this.locations = new ArgusWebSocketClient<>(client, customizer, Locations.class);
+        this.statuses = new ArgusWebSocketClient<>(client, customizer, UserStatus.class);
     }
 
     public void init(String argusBaseUrl) {
@@ -63,6 +67,7 @@ public class ArgusClient implements Closeable {
     @Override
     public void close() {
         locations.close();
+        statuses.close();
         client.dispatcher().executorService().shutdown();
         client.connectionPool().evictAll();
     }

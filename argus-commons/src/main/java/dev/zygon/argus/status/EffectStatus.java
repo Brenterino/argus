@@ -19,7 +19,9 @@ package dev.zygon.argus.status;
 
 import lombok.NonNull;
 
-public record EffectStatus(int color, @NonNull String symbol, int duration)
+import java.time.Instant;
+
+public record EffectStatus(int color, @NonNull String symbol, Instant expiration)
         implements Comparable<EffectStatus> {
 
     @Override

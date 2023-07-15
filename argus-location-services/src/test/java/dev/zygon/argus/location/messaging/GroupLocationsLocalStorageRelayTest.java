@@ -22,8 +22,8 @@ import dev.zygon.argus.location.Coordinate;
 import dev.zygon.argus.location.Location;
 import dev.zygon.argus.location.LocationType;
 import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.location.session.SessionRegistry;
 import dev.zygon.argus.location.storage.GroupLocationsStorage;
+import dev.zygon.argus.status.session.SessionRegistry;
 import dev.zygon.argus.user.User;
 import jakarta.websocket.RemoteEndpoint.Async;
 import jakarta.websocket.Session;
@@ -47,7 +47,7 @@ class GroupLocationsLocalStorageRelayTest {
     private GroupLocationsStorage storage;
 
     @Mock
-    private SessionRegistry<Group> registry;
+    private SessionRegistry<Group, Locations> registry;
 
     @InjectMocks
     private GroupLocationsLocalStorageRelay relay;

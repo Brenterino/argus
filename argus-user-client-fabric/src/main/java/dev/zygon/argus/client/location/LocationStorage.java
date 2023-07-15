@@ -35,7 +35,6 @@ public enum LocationStorage {
 
     INSTANCE;
 
-    // TODO clean up local storage and storage entries after X amount of time
     private final Map<LocationKey, Location> localStorage;
     @Getter private final Map<LocationKey, Location> storage;
 
@@ -105,7 +104,7 @@ public enum LocationStorage {
             return null;
         }));
         if (!locations.isEmpty()) {
-            client.getLocations().sendLocations(new Locations(locations));
+            client.getLocations().send(new Locations(locations));
         }
     }
 

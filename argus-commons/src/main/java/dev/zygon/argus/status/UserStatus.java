@@ -20,6 +20,19 @@ package dev.zygon.argus.status;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
-public record UserStatus(@NonNull List<ItemStatus> items, @NonNull List<EffectStatus> effects) {
+public record UserStatus(@NonNull UUID source, float health, @NonNull List<ItemStatus> items, @NonNull List<EffectStatus> effects) {
+
+    @Override
+    public int hashCode() {
+        return source.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof UserStatus status &&
+                Objects.equals(source, status.source);
+    }
 }

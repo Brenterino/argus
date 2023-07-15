@@ -19,22 +19,22 @@ package dev.zygon.argus.group;
 
 import dev.zygon.argus.group.audit.Audit;
 import dev.zygon.argus.group.audit.AuditAction;
-import dev.zygon.argus.group.auth.Authorizer;
 import dev.zygon.argus.group.exception.GroupException;
 import dev.zygon.argus.group.repository.AuditRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
 import dev.zygon.argus.permission.GroupPermissions;
 import dev.zygon.argus.permission.Permission;
 import dev.zygon.argus.permission.UserPermission;
+import dev.zygon.argus.status.auth.Authorizer;
 import dev.zygon.argus.user.NamespaceUser;
 import io.quarkus.security.Authenticated;
 import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
-import org.jboss.resteasy.reactive.RestResponse;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.jboss.resteasy.reactive.RestResponse;
+
 import java.time.OffsetDateTime;
 
 import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;

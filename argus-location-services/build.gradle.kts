@@ -28,6 +28,7 @@ dependencies {
 
     // Argus
     implementation(project(":argus-commons"))
+    implementation(project(":argus-commons-services"))
 
     // Slf4j
     implementation("org.slf4j:slf4j-api")

@@ -33,6 +33,7 @@ import net.minecraft.potion.Potions;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public enum UserStatusChecker {
         if (player != null && duration.toMillis() >= config.getStatusCheckerIntervalMillis()) {
             checkInventory(player);
             checkStatusEffects(player);
-            updateStatus();
+            updateStatus(player);
             effects.clear();
             items.clear();
             lastCheck = Instant.now();
@@ -113,18 +114,21 @@ public enum UserStatusChecker {
     private void checkStatusEffects(ClientPlayerEntity player) {
         final var buffSymbol = "↑"; // TODO make config?
         final var debuffSymbol = "↓"; // TODO make config?
+        final var TICKS_PER_SECOND = 20;
+        final var currentTime = Instant.now();
         var stati = player.getStatusEffects();
         for (var status : stati) {
             var type = status.getEffectType();
             var color = type.getColor();
             var symbol = !type.isBeneficial() ? debuffSymbol : buffSymbol;
-            var duration = status.getDuration();
-            var effect = new EffectStatus(color, symbol, duration);
+            var durationSeconds = status.getDuration() / TICKS_PER_SECOND;
+            var effect = new EffectStatus(color, symbol,
+                    currentTime.plus(durationSeconds, ChronoUnit.SECONDS));
             effects.put(color, effect);
         }
     }
 
-    private void updateStatus() {
+    private void updateStatus(ClientPlayerEntity player) {
         var itemStatuses = items.values()
                 .stream()
                 .sorted()
@@ -133,6 +137,7 @@ public enum UserStatusChecker {
                 .stream()
                 .sorted()
                 .toList();
-        this.userStatus = new UserStatus(itemStatuses, effectStatuses);
+        this.userStatus = new UserStatus(player.getUuid(), player.getHealth(),
+                itemStatuses, effectStatuses);
     }
 }

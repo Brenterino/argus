@@ -21,6 +21,7 @@ import dev.zygon.argus.client.api.ArgusGroupApi;
 import dev.zygon.argus.client.api.ArgusPermissionApi;
 import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
 import dev.zygon.argus.client.event.RemoteLocationHandler;
+import dev.zygon.argus.client.event.RemoteStatusHandler;
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.permission.GroupPermission;
 import dev.zygon.argus.permission.GroupPermissions;
@@ -84,7 +85,10 @@ public enum GroupStorage {
         if (elections != null && !elections.equals(nextElections)) {
             log.info("[ARGUS] Elections changed, forcing token refresh and reopening location socket on refresh.");
             var tokens = ArgusMojangTokenGenerator.INSTANCE;
-            tokens.onNextRefresh(RemoteLocationHandler.INSTANCE::restartClient);
+            tokens.onNextRefresh(() -> {
+                RemoteLocationHandler.INSTANCE.restartClient();
+                RemoteStatusHandler.INSTANCE.restartClient();
+            });
             tokens.forceRefresh();
         }
         elections = nextElections;

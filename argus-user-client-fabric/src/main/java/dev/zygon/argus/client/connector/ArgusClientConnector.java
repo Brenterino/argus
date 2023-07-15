@@ -22,9 +22,11 @@ import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.connector.customize.ArgusModClientCustomizer;
 import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
 import dev.zygon.argus.client.event.RemoteLocationHandler;
+import dev.zygon.argus.client.event.RemoteStatusHandler;
 import dev.zygon.argus.client.groups.GroupStorage;
 import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.scheduler.ClientScheduler;
+import dev.zygon.argus.client.status.StatusStorage;
 import dev.zygon.argus.client.ui.ArgusWebUi;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +45,8 @@ public enum ArgusClientConnector {
     private ScheduledFuture<?> locationKeepAlive;
     private ScheduledFuture<?> locationRemoteSync;
     private ScheduledFuture<?> locationCleaner;
+    private ScheduledFuture<?> statusKeepAlive;
+    private ScheduledFuture<?> statusRemoteSync;
 
     ArgusClientConnector() {
         client = new ArgusClient(ArgusModClientCustomizer.INSTANCE);
@@ -75,6 +79,7 @@ public enum ArgusClientConnector {
         tokenGenerator.onNextRefresh(() -> {
             initGroupRefresh();
             initLocationTracking();
+            initStatusTracking();
         });
     }
 
@@ -98,7 +103,7 @@ public enum ArgusClientConnector {
         locations.addErrorHandler(remoteHandler::onRemoteSyncFailure);
         locationKeepAlive = ClientScheduler.INSTANCE
                 .register(remoteHandler::keepClientAlive,
-                        config.getRefreshLocationClientIntervalSeconds(), TimeUnit.SECONDS);
+                        config.getRefreshSocketClientIntervalSeconds(), TimeUnit.SECONDS);
         locationRemoteSync = ClientScheduler.INSTANCE
                 .registerWithDelay(() -> LocationStorage.INSTANCE.syncRemote(client),
                         config.getTransmitInitialWaitForConnectionSeconds() * 1000L,
@@ -106,6 +111,22 @@ public enum ArgusClientConnector {
         locationCleaner = ClientScheduler.INSTANCE
                 .register(LocationStorage.INSTANCE::cleanLocations,
                         config.getCleanLocationsIntervalSeconds(), TimeUnit.SECONDS);
+    }
+
+    private void initStatusTracking() {
+        var config = ArgusClientConfig.getActiveConfig();
+        var statuses = client.getStatuses();
+        var remoteHandler = RemoteStatusHandler.INSTANCE;
+        remoteHandler.setStatuses(statuses);
+        statuses.addListener(remoteHandler::onStatusReceived);
+        statuses.addErrorHandler(remoteHandler::onRemoteSyncFailure);
+        statusKeepAlive = ClientScheduler.INSTANCE
+                .register(remoteHandler::keepClientAlive,
+                        config.getRefreshSocketClientIntervalSeconds(), TimeUnit.SECONDS);
+        statusRemoteSync = ClientScheduler.INSTANCE
+                .registerWithDelay(() -> StatusStorage.INSTANCE.syncRemote(client),
+                        config.getTransmitInitialWaitForConnectionSeconds() * 1000L,
+                        config.getTransmitStatusIntervalMillis(), TimeUnit.MILLISECONDS);
     }
 
     public void close() {
@@ -116,8 +137,11 @@ public enum ArgusClientConnector {
         safeCancel(locationKeepAlive);
         safeCancel(locationRemoteSync);
         safeCancel(locationCleaner);
+        safeCancel(statusKeepAlive);
+        safeCancel(statusRemoteSync);
 
         client.getLocations().close();
+        client.getStatuses().close();
         ArgusMojangTokenGenerator.INSTANCE.clean();
         GroupStorage.INSTANCE.clean();
         LocationStorage.INSTANCE.clean();
