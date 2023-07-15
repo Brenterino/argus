@@ -21,12 +21,16 @@ import lombok.NonNull;
 
 import java.time.Instant;
 
-public record EffectStatus(int color, @NonNull String symbol, Instant expiration)
+public record EffectStatus(int color, @NonNull String symbol, @NonNull Instant expiration)
         implements Comparable<EffectStatus> {
 
     @Override
     public int compareTo(@NonNull EffectStatus o) {
         var symbolCompare = symbol.compareTo(o.symbol);
         return symbolCompare != 0 ? symbolCompare : Integer.compare(color, o.color);
+    }
+
+    public boolean isExpired(Instant now) {
+        return now.isAfter(expiration);
     }
 }

@@ -2,6 +2,8 @@
 Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
 
 - Verifying everything works :)
+- Verify status services are working properly, may want to adjust default configuration delays
+  depending on feedback
 
 # Beyond MVP
 - Display nicknames (?) in waypoint tag
@@ -16,10 +18,7 @@ Not exhaustive, but here are the things that still need to be accomplished in or
 - Being able to pull audit log for individual users to request permission changes (maybe?)
 
 # Experimental
-- Implementation of Status Services which can be used to relay health, buff status, and other useful inventory
-  information (ex. health pots, durability?)
-- Status Service would need to have an intuitive in-game HUD. May be difficult to do properly, but possibly add
-  the most critical (health + pots) as a part of the nametag?
+- Extension of status rendering to have an in-game HUD which can provide more detailed information if desired?
 - Implement name services for read/write of UUID-to-name mappings, may need to be privileged, but not entirely sure how
   this would be handled. Perhaps it could be a part of the claims set on a namespace basis? Possibly a free-for-all, but
   unsure of this. Note: moved this from MVP list because we are avoiding this by just sending the name in the location

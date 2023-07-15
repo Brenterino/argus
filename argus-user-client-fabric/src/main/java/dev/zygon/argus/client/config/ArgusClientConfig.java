@@ -79,6 +79,14 @@ public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
+    private boolean showStatusEnabled = true;
+
+    @ConfigEntry.Category("visibility")
+    @ConfigEntry.Gui.Tooltip
+    private boolean showHealthOnly = false;
+
+    @ConfigEntry.Category("visibility")
+    @ConfigEntry.Gui.Tooltip
     private List<String> hiddenGroupAlerts = Collections.emptyList();
 
     @ConfigEntry.Category("visibility")
@@ -151,6 +159,10 @@ public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Category("sourcing")
     @ConfigEntry.Gui.Tooltip
+    private boolean readStatusEnabled = true;
+
+    @ConfigEntry.Category("sourcing")
+    @ConfigEntry.Gui.Tooltip
     private boolean readLocalEntitiesEnabled = false;
 
     public boolean shouldHideGroupAlert(String group) {
@@ -159,6 +171,10 @@ public class ArgusClientConfig implements ConfigData {
 
     public boolean shouldShowNameOverwrite() {
         return !streamerModeEnabled && coloredNamesEnabled;
+    }
+
+    public boolean shouldShowStatusInformation() {
+        return !streamerModeEnabled && showStatusEnabled;
     }
 
     @Getter @Setter

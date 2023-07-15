@@ -9,16 +9,20 @@ import dev.zygon.argus.client.groups.GroupStorage;
 import dev.zygon.argus.client.location.LocationRender;
 import dev.zygon.argus.client.location.LocationRenderEntry;
 import dev.zygon.argus.client.location.LocationStorage;
+import dev.zygon.argus.client.status.StatusStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Dimension;
 import dev.zygon.argus.location.Location;
 import dev.zygon.argus.location.LocationType;
+import dev.zygon.argus.status.EffectStatus;
+import dev.zygon.argus.status.UserStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -128,8 +132,9 @@ public abstract class WorldRendererMixin {
                     if (!isPing || w == dimension.ordinal()) {
                         var scale = (float) (0.0078125d * (distance + 4.0) / 3.0);
                         var display = fetchDisplayFromUUID(uuid);
+                        var status = !isPing ? fetchStatusFromUUID(uuid) : null;
                         var name = buildName(location, distance, dimension, display, now);
-                        var renderEntry = new LocationRenderEntry(name, display.color());
+                        var renderEntry = new LocationRenderEntry(name, display.color(), status);
                         var render = new LocationRender(x, y, z, scale, Collections.emptyMap(), List.of(renderEntry));
                         nextRenders.add(render);
                     }
@@ -158,7 +163,7 @@ public abstract class WorldRendererMixin {
                 x += lx;
                 y += ly;
                 z += lz;
-                renderEntries.add(new LocationRenderEntry(name, display.color()));
+                renderEntries.add(new LocationRenderEntry(name, display.color(), null));
                 if (config.isShowAlignmentsDigest() && !display.symbol().isBlank()) {
                     var key = new GroupAlignmentKey(display.symbol(), display.color());
                     alignmentDigest.putIfAbsent(key, new AtomicInteger(0));
@@ -221,6 +226,22 @@ public abstract class WorldRendererMixin {
             return displays.getOrDefault(uuid, GroupAlignmentDisplay.DEFAULT_DISPLAY);
         } else {
             return GroupAlignmentDisplay.DEFAULT_DISPLAY;
+        }
+    }
+
+    @Unique @Nullable
+    private UserStatus fetchStatusFromUUID(UUID uuid) {
+        var config = ArgusClientConfig.getActiveConfig();
+        var statuses = StatusStorage.INSTANCE.getStorage();
+        var noStatuses = statuses == null || statuses.isEmpty();
+        if (config.shouldShowStatusInformation() && !noStatuses) {
+            var status = statuses.get(uuid);
+            if (status != null && config.isShowHealthOnly()) {
+                status = new UserStatus(uuid, status.health(), List.of(), List.of());
+            }
+            return status;
+        } else {
+            return null;
         }
     }
 
@@ -300,6 +321,10 @@ public abstract class WorldRendererMixin {
             var color = user.color().getRGB();
             var text = new LiteralText(user.text());
 
+            if (user.status() != null) {
+                drawUserStatus(matrix, user.status(), offset);
+                offset++;
+            }
             textRenderer.draw(text, -textStart, -textHeight * offset - textStagger * offset, color, false, matrix,
                     vertexConsumerProvider, true, 0x60000000, 0xF000F0);
             vertexConsumerProvider.draw();
@@ -307,6 +332,62 @@ public abstract class WorldRendererMixin {
             offset++;
         }
         RenderSystem.disableTexture();
+    }
+
+    @Unique
+    private void drawUserStatus(Matrix4f matrix, UserStatus status, float offset) {
+        var now = Instant.now(); // less precise compared to start of render, but close enough together probably :)
+        var client = MinecraftClient.getInstance();
+        var builders = client.getBufferBuilders();
+        var vertexConsumerProvider = builders.getEntityVertexConsumers();
+        var textRenderer = client.textRenderer;
+        final var textHeight = textRenderer.fontHeight;
+        final var textStagger = 1.0f;
+        final var BREAK_PIXEL_WIDTH = 2;
+
+        var healthColor = Color.RED.getRGB(); // TODO make this configurable?
+        var healthText = "♥ " + status.health(); // TODO make this configurable?
+        var items = status.items();
+        var activeEffects = status.effects()
+                .stream()
+                .filter(e -> !e.isExpired(now))
+                .toList();
+
+        var fullHealthTextWidth = textRenderer.getWidth(healthText);
+        var fullItemTextWidth = items.stream()
+                .map(i -> i.symbol() + " " + i.count())
+                .map(textRenderer::getWidth)
+                .reduce(0, Integer::sum) + BREAK_PIXEL_WIDTH * items.size();
+        var fullEffectTextWidth = activeEffects.stream()
+                        .map(EffectStatus::symbol)
+                        .map(textRenderer::getWidth)
+                        .reduce(0, Integer::sum) + BREAK_PIXEL_WIDTH * activeEffects.size();
+        var breakCount = 1 + (items.isEmpty() ? 0 : 1) +
+                (activeEffects.isEmpty() ? 0 : 1);
+        var fullTextWidth = fullHealthTextWidth + fullItemTextWidth + fullEffectTextWidth +
+                BREAK_PIXEL_WIDTH * breakCount;
+        var textIndex = -fullTextWidth / 2;
+        var y = -textHeight * offset - textStagger * offset;
+
+        // render health
+        textRenderer.draw(healthText, textIndex, y, healthColor, false, matrix,
+                vertexConsumerProvider, true, 0x60000000, 0xF000F0);
+        textIndex += fullHealthTextWidth + BREAK_PIXEL_WIDTH;
+
+        // render effects
+        for (var effect : activeEffects) {
+            textRenderer.draw(effect.symbol(), textIndex, y, effect.color(), false, matrix,
+                    vertexConsumerProvider, true, 0x60000000, 0xF000F0);
+            textIndex += textRenderer.getWidth(effect.symbol()) + BREAK_PIXEL_WIDTH;
+        }
+
+        // render items
+        for (var item : items) {
+            var itemText = item.symbol() + " " + item.count();
+            textRenderer.draw(itemText, textIndex, y, item.color(), false, matrix,
+                    vertexConsumerProvider, true, 0x60000000, 0xF000F0);
+            textIndex += textRenderer.getWidth(itemText) + BREAK_PIXEL_WIDTH;
+        }
     }
 
     @Unique
@@ -324,9 +405,9 @@ public abstract class WorldRendererMixin {
                 .reduce(0, Integer::sum);
         fullTextWidth += BREAK_PIXEL_WIDTH * digest.size(); // spaces between
         var textIndex = -fullTextWidth / 2;
-        for (Map.Entry<GroupAlignmentKey, AtomicInteger> entry : digest.entrySet()) {
-            GroupAlignmentKey k = entry.getKey();
-            AtomicInteger v = entry.getValue();
+        for (var entry : digest.entrySet()) {
+            var k = entry.getKey();
+            var v = entry.getValue();
             var symbol = k.symbol();
             var color = k.color();
             var text = symbol + " " + v.toString();

@@ -57,7 +57,8 @@ public enum UserStatusChecker {
         var player = client.player;
         var config = ArgusClientConfig.getActiveConfig();
         var duration = Duration.between(lastCheck, Instant.now());
-        if (player != null && duration.toMillis() >= config.getStatusCheckerIntervalMillis()) {
+        if (config.isReadStatusEnabled() && player != null &&
+                duration.toMillis() >= config.getStatusCheckerIntervalMillis()) {
             checkInventory(player);
             checkStatusEffects(player);
             updateStatus(player);

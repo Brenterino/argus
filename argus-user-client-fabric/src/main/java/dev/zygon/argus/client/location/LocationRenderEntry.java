@@ -17,12 +17,13 @@
  */
 package dev.zygon.argus.client.location;
 
-import lombok.NonNull;
+import dev.zygon.argus.status.UserStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-public record LocationRenderEntry(@NonNull String text, @NonNull Color color)
+public record LocationRenderEntry(@NotNull String text, @NotNull Color color, @Nullable UserStatus status)
         implements Comparable<LocationRenderEntry> {
 
     @Override

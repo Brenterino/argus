@@ -44,6 +44,7 @@ public class KeyPressHandler {
     private final KeyBinding toggleStreamerMode;
     private final KeyBinding toggleColoredNames;
     private final KeyBinding toggleChatLocations;
+    private final KeyBinding toggleHealthOnly;
     private final KeyBinding decreaseWaypointDistance;
     private final KeyBinding increaseWaypointDistance;
     private final KeyBinding decreaseYawSliceDegrees;
@@ -66,6 +67,8 @@ public class KeyPressHandler {
                 InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_KP_5, CATEGORY));
         toggleStreamerMode = registerKeyBinding(new KeyBinding("key.argus.toggle.streaming",
                 InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_KP_4, CATEGORY));
+        toggleHealthOnly = registerKeyBinding(new KeyBinding("key.argus.toggle.status.health",
+                InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_KP_0, CATEGORY));
     }
 
     public void onTick(MinecraftClient client) {
@@ -90,6 +93,12 @@ public class KeyPressHandler {
             config.setHideChatLocationsEnabled(!config.isHideChatLocationsEnabled());
             dropMessage(client, "key.press.argus.toggle.chat",
                     toggleText(config.isHideChatLocationsEnabled()));
+            change = true;
+        }
+        while (toggleHealthOnly.wasPressed()) {
+            config.setShowHealthOnly(!config.isShowHealthOnly());
+            dropMessage(client, "key.press.argus.toggle.status.health",
+                    toggleText(config.isShowHealthOnly()));
             change = true;
         }
         while (decreaseWaypointDistance.wasPressed()) {
