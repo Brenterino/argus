@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     id("io.freefair.lombok")
+    id("org.kordamp.gradle.jandex")
 }
 
 java {
@@ -22,7 +23,11 @@ dependencies {
 }
 
 tasks {
+    compileTestJava {
+        dependsOn(jandex)
+    }
     test {
+        dependsOn(jandex)
         useJUnitPlatform()
     }
 }

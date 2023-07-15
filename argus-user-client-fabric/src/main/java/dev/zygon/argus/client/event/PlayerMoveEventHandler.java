@@ -23,6 +23,7 @@ import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Coordinate;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.world.entity.EntityLike;
 
 import java.time.Instant;

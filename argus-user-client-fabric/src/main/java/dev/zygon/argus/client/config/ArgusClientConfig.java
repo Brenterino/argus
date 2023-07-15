@@ -135,6 +135,11 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     private int transmitLocationsIntervalMillis = 100;
 
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 33, max = 1000)
+    @ConfigEntry.Gui.Tooltip
+    private int statusCheckerIntervalMillis = 250;
+
     @ConfigEntry.Category("sourcing")
     @ConfigEntry.Gui.Tooltip
     private boolean readChatEnabled = true;

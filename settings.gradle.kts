@@ -12,6 +12,7 @@ include(
 
 pluginManagement {
     val quarkusVersion: String by settings
+    val jandexPluginVersion: String by settings
     val lombokPluginVersion: String by settings
     val jooqPluginVersion: String by settings
     val fabricLoomPluginVersion: String by settings
@@ -28,6 +29,7 @@ pluginManagement {
     }
     plugins {
         id("io.quarkus") version quarkusVersion
+        id("org.kordamp.gradle.jandex") version jandexPluginVersion
         id("io.freefair.lombok") version lombokPluginVersion
         id("nu.studer.jooq") version jooqPluginVersion
         id("fabric-loom") version fabricLoomPluginVersion

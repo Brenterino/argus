@@ -71,6 +71,8 @@
   "text.autoconfig.argus.option.transmitInitialWaitForConnectionSeconds.@Tooltip": "How long to wait for a connection to be established for location sharing",
   "text.autoconfig.argus.option.transmitLocationsIntervalMillis": "Locations Transmit Interval (ms)",
   "text.autoconfig.argus.option.transmitLocationsIntervalMillis.@Tooltip": "How frequently location data should be shared to the main server.",
+  "text.autoconfig.argus.option.statusCheckerIntervalMillis": "Check Status Interval (ms)",
+  "text.autoconfig.argus.option.statusCheckerIntervalMillis.@Tooltip": "How frequently status data should be updated locally before sending it.",
   "text.autoconfig.argus.option.readChatEnabled": "Read Chat",
   "text.autoconfig.argus.option.readChatEnabled.@Tooltip": "If location data is relayed in chat, this will toggle read it.",
   "text.autoconfig.argus.option.readLocalEntitiesEnabled": "Read Local Environment",
