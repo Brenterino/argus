@@ -3,6 +3,7 @@
 		<table class="custom-table">
 			<tr class="custom-table-header">
 				<th>UUID</th>
+				<th>Name</th>
 				<th>Read</th>
 				<th>Write</th>
 				<th>Admin</th>
@@ -10,6 +11,7 @@
 			</tr>
 			<tr v-for="member in membersStore.getMembers" :key="member.uuid">
 				<td class="custom-table-row">{{ member.uuid }}</td>
+				<td class="custom-table-row">{{ getNameByUUID(member.uuid) }}</td>
 				<td class="custom-table-row">
 					<input type="checkbox" v-model="member.canRead" :disabled="!member.canToggle || member.isAdmin"
 						@click="toggle(member.uuid, true, false, false)" />
@@ -32,6 +34,7 @@
 				<td class="custom-table-row">
 					<input class="custom-table-text-input" type="text" v-model="newUser.uuid" />
 				</td>
+				<td class="custom-table-row"></td>
 				<td class="custom-table-row">
 					<input type="checkbox" v-model="newUser.canRead" :disabled="newUser.isAdmin" />
 				</td>
@@ -73,6 +76,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useGroupsStore } from '../stores/groups.js';
 import { useMembersStore } from '../stores/members.js';
 
 export default {
@@ -85,16 +90,23 @@ export default {
 			canRead: false,
 			canWrite: false,
 			isAdmin: false
-		}
+		},
+		metadata: []
 	}),
 	setup() {
+		const groupsStore = useGroupsStore();
 		const membersStore = useMembersStore();
-		return { membersStore };
+		return { groupsStore, membersStore };
 	},
 	mounted() {
 		this.currentPage = 1;
 		this.group = this.$route.params.group;
+		this.groupsStore.fetchGroups();
 		this.membersStore.fetchMembers(this.group, this.currentPage - 1);
+		this.metadata = computed(() => {
+			return this.groupsStore.getGroups
+				.find(g => g.name === this.group)?.metadata;
+		});
 	},
 	methods: {
 		pageFirst() {
@@ -128,6 +140,10 @@ export default {
 				canWrite: false,
 				isAdmin: false
 			};
+		},
+		getNameByUUID(uuid) {
+			const alignment = this.metadata?.alignments?.find(a => a.uuid === uuid);
+			return alignment?.name || 'N/A';
 		}
 	}
 }

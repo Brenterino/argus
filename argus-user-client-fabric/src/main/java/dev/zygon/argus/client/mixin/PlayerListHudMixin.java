@@ -29,6 +29,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.awt.*;
+
 @Mixin(PlayerListHud.class)
 public class PlayerListHudMixin {
 
@@ -39,9 +41,9 @@ public class PlayerListHudMixin {
         var noDisplays = displays == null || displays.isEmpty();
         if (config.shouldShowNameOverwrite() && !noDisplays) {
             var uuid = entry.getProfile().getId();
+            var name = entry.getProfile().getName();
             if (displays.containsKey(uuid)) {
                 var display = displays.get(uuid);
-                var name = entry.getProfile().getName();
                 var symbol = display.symbol();
                 var color = display.color();
                 var textBuilder = new StringBuilder();
@@ -51,6 +53,10 @@ public class PlayerListHudMixin {
                 textBuilder.append(name);
                 var text = new LiteralText(textBuilder.toString())
                         .setStyle(Style.EMPTY.withColor(color.getRGB()));
+                cir.setReturnValue(text);
+            } else if (config.isOverwriteDefaultNamesEnabled()) {
+                var text = new LiteralText(name)
+                        .setStyle(Style.EMPTY.withColor(Color.WHITE.getRGB()));
                 cir.setReturnValue(text);
             }
         }

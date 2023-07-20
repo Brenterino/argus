@@ -49,6 +49,8 @@
   "text.autoconfig.argus.option.hideChatLocationsEnabled.@Tooltip": "If location data is relayed in chat, this will disable it from being shown. Data may still be shared.",
   "text.autoconfig.argus.option.coloredNamesEnabled": "Colored Names",
   "text.autoconfig.argus.option.coloredNamesEnabled.@Tooltip": "Toggle the ability for names to be colored in waypoints and online player display.",
+  "text.autoconfig.argus.option.overwriteDefaultNamesEnabled": "Overwrite Default Names",
+  "text.autoconfig.argus.option.overwriteDefaultNamesEnabled.@Tooltip": "Whether or not names in player list should be what the server provides or white.",
   "text.autoconfig.argus.option.showStatusEnabled": "Status Information",
   "text.autoconfig.argus.option.showStatusEnabled.@Tooltip": "Toggle the ability for status information to be displayed below a player's name tag when in range.",
   "text.autoconfig.argus.option.showHealthOnly": "Show Health Status Only",

@@ -79,6 +79,10 @@ public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Category("visibility")
     @ConfigEntry.Gui.Tooltip
+    private boolean overwriteDefaultNamesEnabled = false;
+
+    @ConfigEntry.Category("visibility")
+    @ConfigEntry.Gui.Tooltip
     private boolean showStatusEnabled = true;
 
     @ConfigEntry.Category("visibility")
