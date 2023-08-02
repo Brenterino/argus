@@ -20,6 +20,7 @@ package dev.zygon.argus.client.status;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.status.EffectStatus;
 import dev.zygon.argus.status.ItemStatus;
+import dev.zygon.argus.status.UserMetadata;
 import dev.zygon.argus.status.UserStatus;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -130,6 +131,8 @@ public enum UserStatusChecker {
     }
 
     private void updateStatus(ClientPlayerEntity player) {
+        var config = ArgusClientConfig.getActiveConfig();
+        var pingColor = config.getPingColor();
         var itemStatuses = items.values()
                 .stream()
                 .sorted()
@@ -138,7 +141,8 @@ public enum UserStatusChecker {
                 .stream()
                 .sorted()
                 .toList();
+        var metadata = new UserMetadata(pingColor);
         this.userStatus = new UserStatus(player.getUuid(), player.getHealth(),
-                itemStatuses, effectStatuses);
+                itemStatuses, effectStatuses, metadata);
     }
 }

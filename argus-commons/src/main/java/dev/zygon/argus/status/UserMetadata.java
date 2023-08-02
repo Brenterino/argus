@@ -15,19 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.client.location;
+package dev.zygon.argus.status;
 
-import dev.zygon.argus.status.UserStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-
-public record LocationRenderEntry(@NotNull String text, Color color, @Nullable UserStatus status)
-        implements Comparable<LocationRenderEntry> {
-
-    @Override
-    public int compareTo(@NotNull LocationRenderEntry o) {
-        return -text.compareTo(o.text);
-    }
+public record UserMetadata(int pingColor) {
 }

@@ -21,9 +21,17 @@ import lombok.NonNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
-public record UserStatus(@NonNull UUID source, float health, @NonNull List<ItemStatus> items, @NonNull List<EffectStatus> effects) {
+public record UserStatus(@NonNull UUID source, float health,
+                         @NonNull List<ItemStatus> items, @NonNull List<EffectStatus> effects,
+                         UserMetadata metadata) {
+
+    public UserStatus(@NonNull UUID source, float health,
+                      @NonNull List<ItemStatus> items, @NonNull List<EffectStatus> effects) {
+        this(source, health, items, effects, null);
+    }
 
     @Override
     public int hashCode() {

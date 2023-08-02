@@ -33,6 +33,8 @@
   "text.autoconfig.argus.option.webUiEnabled.@Tooltip": "Whether or not the Management UI should be started upon connecting to a server.",
   "text.autoconfig.argus.option.webUiPort": "Management UI Port",
   "text.autoconfig.argus.option.webUiPort.@Tooltip": "Which port the Management UI should run on to be accessed by a browser.",
+  "text.autoconfig.argus.option.pingColor": "Ping Color",
+  "text.autoconfig.argus.option.pingColor.@Tooltip": "What color your pings will appear as in-game.",
   "text.autoconfig.argus.option.maxViewDistance": "Max View Distance (m)",
   "text.autoconfig.argus.option.maxViewDistance.@Tooltip": "How many blocks (or meters) away locations can be seen from.",
   "text.autoconfig.argus.option.yawSliceDegrees": "Yaw View Slice (deg)",

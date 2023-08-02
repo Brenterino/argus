@@ -58,7 +58,7 @@ class UserStatusEncoderTest {
 
         var json = encoder.encode(status);
 
-        assertEquals("{\"source\":\"5fc03087-d265-11e7-b8c6-83e29cd24f4c\",\"health\":20.0,\"items\":[],\"effects\":[]}", json);
+        assertEquals("{\"source\":\"5fc03087-d265-11e7-b8c6-83e29cd24f4c\",\"health\":20.0,\"items\":[],\"effects\":[],\"metadata\":null}", json);
     }
 
     @Test
@@ -70,7 +70,7 @@ class UserStatusEncoderTest {
 
         var json = encoder.encode(status);
 
-        assertEquals("{\"source\":\"5fc03087-d265-11e7-b8c6-83e29cd24f4c\",\"health\":5.5,\"items\":[{\"color\":0,\"symbol\":\"L\",\"count\":5}],\"effects\":[{\"color\":0,\"symbol\":\"G\",\"expiration\":\"2022-11-23T18:17:44.323877200Z\"}]}",
+        assertEquals("{\"source\":\"5fc03087-d265-11e7-b8c6-83e29cd24f4c\",\"health\":5.5,\"items\":[{\"color\":0,\"symbol\":\"L\",\"count\":5}],\"effects\":[{\"color\":0,\"symbol\":\"G\",\"expiration\":\"2022-11-23T18:17:44.323877200Z\"}],\"metadata\":null}",
                 json);
     }
 

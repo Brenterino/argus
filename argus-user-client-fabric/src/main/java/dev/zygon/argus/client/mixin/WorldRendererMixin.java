@@ -15,6 +15,7 @@ import dev.zygon.argus.location.Dimension;
 import dev.zygon.argus.location.Location;
 import dev.zygon.argus.location.LocationType;
 import dev.zygon.argus.status.EffectStatus;
+import dev.zygon.argus.status.UserMetadata;
 import dev.zygon.argus.status.UserStatus;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
@@ -132,9 +133,14 @@ public abstract class WorldRendererMixin {
                     if (!isPing || w == dimension.ordinal()) {
                         var scale = (float) (0.0078125d * (distance + 4.0) / 3.0);
                         var display = fetchDisplayFromUUID(uuid);
-                        var status = !isPing ? fetchStatusFromUUID(uuid) : null;
+                        var status = fetchStatusFromUUID(uuid);
+                        var color = Optional.ofNullable(status)
+                                .map(UserStatus::metadata)
+                                .map(UserMetadata::pingColor)
+                                .map(Color::new)
+                                .orElse(display.color());
                         var name = buildName(location, distance, dimension, display, now);
-                        var renderEntry = new LocationRenderEntry(name, display.color(), status);
+                        var renderEntry = new LocationRenderEntry(name, color, !isPing ? status : null);
                         var render = new LocationRender(x, y, z, scale, Collections.emptyMap(), List.of(renderEntry));
                         nextRenders.add(render);
                     }

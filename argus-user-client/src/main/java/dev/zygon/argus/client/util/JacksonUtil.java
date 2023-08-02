@@ -17,6 +17,7 @@
  */
 package dev.zygon.argus.client.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -36,13 +37,15 @@ public class JacksonUtil {
     public static ObjectMapper customObjectMapper() {
         return JsonMapper.builder()
                 .findAndAddModules()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
     }
 
     public static ObjectMapper jsr310ObjectMapper() {
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule())
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     private static final ObjectMapper TOKEN_MAPPER =

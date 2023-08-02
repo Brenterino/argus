@@ -6,9 +6,9 @@ Not exhaustive, but here are the things that still need to be accomplished in or
   depending on feedback
 
 # Beyond MVP
+- Allow for banning of issuing tokens based on UUID
 - Display nicknames (?) in waypoint tag
 - Add sounds to pings
-- Allow for banning of issuing tokens based on UUID
 - Determine method for ordering precedence of group metadata
 - Color picker for group categories on UI
 - Adapt UI to make standalone site would allow for making changes without logging into game.

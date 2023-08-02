@@ -15,7 +15,7 @@ allprojects {
 
 subprojects {
     group = "dev.zygon.argus"
-    version = "1.0.0-beta6"
+    version = "1.0.0-beta7"
 
     // Copy license into JAR META-INF folder
     tasks.withType<Jar> {

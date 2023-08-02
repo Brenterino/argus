@@ -44,6 +44,11 @@ public class ArgusClientConfig implements ConfigData {
     private int webUiPort = 9000;
 
     @ConfigEntry.Category("visibility")
+    @ConfigEntry.ColorPicker
+    @ConfigEntry.Gui.Tooltip
+    private int pingColor = 0xFFFFFF;
+
+    @ConfigEntry.Category("visibility")
     @ConfigEntry.BoundedDiscrete(min = 1000, max = 100000)
     @ConfigEntry.Gui.Tooltip
     private int maxViewDistance = 10000;
