@@ -135,6 +135,7 @@ public abstract class WorldRendererMixin {
                         var display = fetchDisplayFromUUID(uuid);
                         var status = fetchStatusFromUUID(uuid);
                         var color = Optional.ofNullable(status)
+                                .filter(c -> isPing)
                                 .map(UserStatus::metadata)
                                 .map(UserMetadata::pingColor)
                                 .map(Color::new)
