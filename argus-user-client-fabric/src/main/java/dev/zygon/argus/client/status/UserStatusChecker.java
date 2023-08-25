@@ -142,7 +142,8 @@ public enum UserStatusChecker {
                 .sorted()
                 .toList();
         var metadata = new UserMetadata(pingColor);
-        this.userStatus = new UserStatus(player.getUuid(), player.getHealth(),
+        var health = Math.round(player.getHealth());
+        this.userStatus = new UserStatus(player.getUuid(), health,
                 itemStatuses, effectStatuses, metadata);
     }
 }
