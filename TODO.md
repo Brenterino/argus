@@ -1,21 +1,19 @@
-# To-do List
-Not exhaustive, but here are the things that still need to be accomplished in order of priority for MVP:
-
-- Verifying everything works :)
-- Verify status services are working properly, may want to adjust default configuration delays
-  depending on feedback
+# Tweaks
+- Extract pre-rendering out into separate thread. There may be some funkiness with this, but it should
+  speed up actual rendering and reduce possible pauses
 
 # Beyond MVP
 - Allow for banning of issuing tokens based on UUID
-- Display nicknames (?) in waypoint tag
-- Add sounds to pings
 - Determine method for ordering precedence of group metadata
-- Color picker for group categories on UI
+- Display nicknames (?) in waypoint tag
 - Adapt UI to make standalone site would allow for making changes without logging into game.
 - Adapt slicing calc to take camera yaw as basis, I am thinking maybe this?: yaw - camera.yaw - sliceDeg / 2
 - Possibly taking pitch into account to avoid drawing combined waypoints as separation becomes larger, not sure if this
   is necessary because it honestly might not be worth bothering with
+- Color picker for group categories on UI
 - Being able to pull audit log for individual users to request permission changes (maybe?)
+- Add sounds to pings
+- Support Forge (?)
 
 # Experimental
 - Extension of status rendering to have an in-game HUD which can provide more detailed information if desired?

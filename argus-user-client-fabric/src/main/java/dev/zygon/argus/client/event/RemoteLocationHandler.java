@@ -3,9 +3,14 @@ package dev.zygon.argus.client.event;
 import dev.zygon.argus.client.ArgusWebSocketClient;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.location.LocationStorage;
+import dev.zygon.argus.client.util.DimensionMapper;
+import dev.zygon.argus.location.Coordinate;
 import dev.zygon.argus.location.Locations;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.minecraft.client.MinecraftClient;
+
+import java.time.Instant;
 
 @Slf4j
 public enum RemoteLocationHandler {
@@ -41,5 +46,17 @@ public enum RemoteLocationHandler {
         }
         var config = ArgusClientConfig.getActiveConfig();
         locations.init(config.getArgusHost(), ENDPOINT);
+    }
+
+    public void updatePlayerLocation() {
+        var minecraft = MinecraftClient.getInstance();
+        var player = minecraft.player;
+        if (player != null) {
+            var dimension = DimensionMapper.currentDimension();
+            var position = player.getPos();
+            var location = new Coordinate(position.getX(), position.getY(), position.getZ(),
+                    dimension.ordinal(), true, Instant.now());
+            LocationStorage.INSTANCE.trackPlayer(player.getUuid(), location);
+        }
     }
 }

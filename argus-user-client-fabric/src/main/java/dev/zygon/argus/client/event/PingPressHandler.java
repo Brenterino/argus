@@ -17,6 +17,7 @@
  */
 package dev.zygon.argus.client.event;
 
+import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.location.LocationStorage;
 import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.client.util.Raycaster;
@@ -36,11 +37,14 @@ public enum PingPressHandler {
     INSTANCE;
 
     public void ping() {
-        var raycast = Raycaster.raycast();
-        if (raycast.getType() == HitResult.Type.ENTITY) {
-            hitEntity(raycast);
-        } else if (raycast.getType() == HitResult.Type.BLOCK) {
-            hitBlock(raycast);
+        var config = ArgusClientConfig.getActiveConfig();
+        if (config.isReadLocalEnvironmentEnabled()) {
+            var raycast = Raycaster.raycast();
+            if (raycast.getType() == HitResult.Type.ENTITY) {
+                hitEntity(raycast);
+            } else if (raycast.getType() == HitResult.Type.BLOCK) {
+                hitBlock(raycast);
+            }
         }
     }
 

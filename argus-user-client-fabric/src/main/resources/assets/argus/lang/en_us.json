@@ -85,11 +85,13 @@
   "text.autoconfig.argus.option.statusCheckerIntervalMillis.@Tooltip": "How frequently status data should be updated locally before sending it.",
   "text.autoconfig.argus.option.transmitStatusIntervalMillis": "Status Transmit Interval (ms)",
   "text.autoconfig.argus.option.transmitStatusIntervalMillis.@Tooltip": "How frequently status data should be shared to the main server.",
+  "text.autoconfig.argus.option.transmitPlayerLocationIntervalSeconds": "Player Location Transmit Interval (s)",
+  "text.autoconfig.argus.option.transmitPlayerLocationIntervalSeconds.@Tooltip": "How frequently your location should be sent to the server forcibly.",
   "text.autoconfig.argus.option.readChatEnabled": "Read Chat",
   "text.autoconfig.argus.option.readChatEnabled.@Tooltip": "If location data is relayed in chat, this will toggle read it.",
   "text.autoconfig.argus.option.readStatusEnabled": "Read Status",
   "text.autoconfig.argus.option.readStatusEnabled.@Tooltip": "If enabled, your status information will be shared.",
-  "text.autoconfig.argus.option.readLocalEntitiesEnabled": "Read Local Environment",
-  "text.autoconfig.argus.option.readLocalEntitiesEnabled.@Tooltip": "If enabled, you can see players that are around you and their location will be shared.",
+  "text.autoconfig.argus.option.readLocalEnvironmentEnabled": "Read Local Environment",
+  "text.autoconfig.argus.option.readLocalEnvironmentEnabled.@Tooltip": "If enabled, you can see players that are around you and their location will be shared. This enables pings as well.",
   "text.webui.argus.chatMessage": "§7[§cArgus§7] §dArgus Management UI is up and can be accessed here: "
 }

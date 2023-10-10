@@ -23,7 +23,6 @@ import dev.zygon.argus.client.util.DimensionMapper;
 import dev.zygon.argus.location.Coordinate;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.world.entity.EntityLike;
 
 import java.time.Instant;
@@ -39,7 +38,7 @@ public enum PlayerMoveEventHandler {
             var profile = session.getProfile();
             var playerId = profile.getId();
             var config = ArgusClientConfig.getActiveConfig();
-            if (playerId.equals(entity.getUuid()) || config.isReadLocalEntitiesEnabled()) {
+            if (playerId.equals(entity.getUuid()) || config.isReadLocalEnvironmentEnabled()) {
                 var player = (PlayerEntity) entity;
                 var dimension = DimensionMapper.currentDimension();
                 var uuid = entity.getUuid();

@@ -99,6 +99,7 @@ public class ArgusClientConfig implements ConfigData {
     private List<String> hiddenGroupAlerts = Collections.emptyList();
 
     @ConfigEntry.Category("visibility")
+    @ConfigEntry.BoundedDiscrete(min = 5, max = 120)
     @ConfigEntry.Gui.Tooltip
     private long locationTimerStartSeconds = 5;
 
@@ -138,7 +139,7 @@ public class ArgusClientConfig implements ConfigData {
     private int refreshElectionsIntervalSeconds = 60;
 
     @ConfigEntry.Category("timings")
-    @ConfigEntry.BoundedDiscrete(min = 30, max = 120)
+    @ConfigEntry.BoundedDiscrete(min = 5, max = 60)
     @ConfigEntry.Gui.Tooltip
     private int refreshSocketClientIntervalSeconds = 60;
 
@@ -162,6 +163,11 @@ public class ArgusClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     private int transmitStatusIntervalMillis = 500;
 
+    @ConfigEntry.Category("timings")
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 120)
+    @ConfigEntry.Gui.Tooltip
+    private int transmitPlayerLocationIntervalSeconds = 3;
+
     @ConfigEntry.Category("sourcing")
     @ConfigEntry.Gui.Tooltip
     private boolean readChatEnabled = true;
@@ -172,7 +178,7 @@ public class ArgusClientConfig implements ConfigData {
 
     @ConfigEntry.Category("sourcing")
     @ConfigEntry.Gui.Tooltip
-    private boolean readLocalEntitiesEnabled = false;
+    private boolean readLocalEnvironmentEnabled = false;
 
     public boolean shouldHideGroupAlert(String group) {
         return streamerModeEnabled || hideChatLocationsEnabled || hiddenGroupAlerts.contains(group);

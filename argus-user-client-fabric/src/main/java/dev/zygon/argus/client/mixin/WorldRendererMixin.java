@@ -114,7 +114,7 @@ public abstract class WorldRendererMixin {
                 } else {
                     // read local entities if location is a user to see if we can just track that way instead :)
                     if (location.type() == LocationType.USER
-                            && config.isReadLocalEntitiesEnabled()
+                            && config.isReadLocalEnvironmentEnabled()
                             && w == dimension.ordinal()) {
                         var players = minecraft.world.getPlayers();
                         var possiblePlayer = players.stream()
