@@ -15,29 +15,26 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.client.api;
+package dev.zygon.argus.auth;
 
-import dev.zygon.argus.auth.ArgusToken;
-import dev.zygon.argus.auth.DualToken;
-import dev.zygon.argus.auth.MojangAuthData;
-import dev.zygon.argus.auth.OneTimePassword;
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Tag;
+import dev.zygon.argus.group.Group;
+import dev.zygon.argus.user.NamespaceUser;
+import io.quarkus.security.UnauthorizedException;
 
-public interface ArgusAuthApi {
+import java.util.Map;
+import java.util.UUID;
 
-    @GET("/auth/key")
-    Call<String> publicKey();
+public interface Authorizer {
 
-    @POST("/auth/mojang")
-    Call<DualToken> authMojang(@Body MojangAuthData authData);
+    String rawToken();
 
-    @POST("/auth/refresh")
-    Call<ArgusToken> refresh(@Tag ArgusToken refreshToken);
+    boolean isAccessToken();
 
-    @GET("/auth/otp")
-    Call<OneTimePassword> generateOTP();
+    NamespaceUser namespaceUser() throws UnauthorizedException;
+
+    NamespaceUser user(UUID uuid) throws UnauthorizedException;
+
+    Group group(String groupName) throws UnauthorizedException;
+
+    Group group(String groupName, Map<String, Object> metadata);
 }

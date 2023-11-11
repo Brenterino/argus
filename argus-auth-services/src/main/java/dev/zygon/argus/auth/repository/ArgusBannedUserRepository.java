@@ -15,29 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.client.api;
+package dev.zygon.argus.auth.repository;
 
-import dev.zygon.argus.auth.ArgusToken;
-import dev.zygon.argus.auth.DualToken;
-import dev.zygon.argus.auth.MojangAuthData;
-import dev.zygon.argus.auth.OneTimePassword;
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Tag;
+import dev.zygon.argus.user.User;
+import io.smallrye.mutiny.Uni;
 
-public interface ArgusAuthApi {
+import java.util.UUID;
 
-    @GET("/auth/key")
-    Call<String> publicKey();
+public interface ArgusBannedUserRepository {
 
-    @POST("/auth/mojang")
-    Call<DualToken> authMojang(@Body MojangAuthData authData);
+    Uni<Boolean> isUserBanned(User user);
 
-    @POST("/auth/refresh")
-    Call<ArgusToken> refresh(@Tag ArgusToken refreshToken);
-
-    @GET("/auth/otp")
-    Call<OneTimePassword> generateOTP();
+    Uni<Boolean> isUserBanned(UUID uuid);
 }

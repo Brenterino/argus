@@ -15,8 +15,9 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.status.auth;
+package dev.zygon.argus.auth;
 
+import dev.zygon.argus.auth.JwtSessionAuthorizer;
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.permission.Permission;
 import dev.zygon.argus.permission.Permissions;
@@ -36,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static dev.zygon.argus.status.auth.JwtSessionAuthorizer.PERMISSION_ATTRIBUTE_NAME;
+import static dev.zygon.argus.auth.JwtSessionAuthorizer.PERMISSION_ATTRIBUTE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

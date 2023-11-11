@@ -15,29 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.client.api;
+package dev.zygon.argus.mutiny;
 
-import dev.zygon.argus.auth.ArgusToken;
-import dev.zygon.argus.auth.DualToken;
-import dev.zygon.argus.auth.MojangAuthData;
-import dev.zygon.argus.auth.OneTimePassword;
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Tag;
+import io.smallrye.mutiny.Uni;
 
-public interface ArgusAuthApi {
+import java.util.function.Function;
 
-    @GET("/auth/key")
-    Call<String> publicKey();
+public record Fork<O>(Uni<O> ifTrue, Uni<O> ifFalse) implements Function<Uni<Boolean>, Uni<O>> {
 
-    @POST("/auth/mojang")
-    Call<DualToken> authMojang(@Body MojangAuthData authData);
-
-    @POST("/auth/refresh")
-    Call<ArgusToken> refresh(@Tag ArgusToken refreshToken);
-
-    @GET("/auth/otp")
-    Call<OneTimePassword> generateOTP();
+    @Override
+    public Uni<O> apply(Uni<Boolean> condition) {
+        return condition.flatMap(value -> value ? ifTrue : ifFalse);
+    }
 }

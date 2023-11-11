@@ -24,10 +24,9 @@ import dev.zygon.argus.group.exception.GroupException;
 import dev.zygon.argus.group.repository.AuditRepository;
 import dev.zygon.argus.group.repository.GroupRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
-import dev.zygon.argus.status.auth.Authorizer;
+import dev.zygon.argus.auth.Authorizer;
 import dev.zygon.argus.user.NamespaceUser;
 import io.quarkus.security.Authenticated;
-import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
@@ -40,8 +39,8 @@ import java.util.Set;
 
 import static dev.zygon.argus.group.audit.AuditAction.CREATE;
 import static dev.zygon.argus.group.audit.AuditAction.UPDATE;
-import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
-import static dev.zygon.argus.group.mutiny.UniExtensions.failIfTrue;
+import static dev.zygon.argus.mutiny.UniExtensions.failIfFalse;
+import static dev.zygon.argus.mutiny.UniExtensions.failIfTrue;
 import static dev.zygon.argus.permission.Permission.ADMIN;
 import static jakarta.ws.rs.core.Response.Status.*;
 
@@ -72,7 +71,7 @@ public class AdminGroupsResource {
 
     @POST
     public Uni<RestResponse<Void>> create(@PathParam("groupName") String groupName,
-                                          @Body Map<String, Object> metadata) {
+                                          Map<String, Object> metadata) {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName, metadata);
         var audit = createAudit(namespaceUser, CREATE);
@@ -92,7 +91,7 @@ public class AdminGroupsResource {
 
     @PUT
     public Uni<RestResponse<Void>> update(@PathParam("groupName") String groupName,
-                                          @Body Map<String, Object> metadata) {
+                                          Map<String, Object> metadata) {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName, metadata);
         var audit = createAudit(namespaceUser, UPDATE);

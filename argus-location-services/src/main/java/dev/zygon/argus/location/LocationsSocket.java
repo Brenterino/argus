@@ -18,11 +18,11 @@
 package dev.zygon.argus.location;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.status.auth.SessionAuthorizer;
+import dev.zygon.argus.auth.SessionAuthorizer;
 import dev.zygon.argus.location.codec.LocationsDecoder;
 import dev.zygon.argus.location.codec.LocationsEncoder;
 import dev.zygon.argus.location.messaging.GroupLocationsLocalRelay;
-import dev.zygon.argus.status.session.SessionRegistry;
+import dev.zygon.argus.session.SessionRegistry;
 import io.quarkus.security.Authenticated;
 import lombok.extern.slf4j.Slf4j;
 

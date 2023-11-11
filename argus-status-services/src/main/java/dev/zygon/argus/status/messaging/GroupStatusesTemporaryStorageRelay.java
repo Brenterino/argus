@@ -19,7 +19,7 @@ package dev.zygon.argus.status.messaging;
 
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.status.UserStatus;
-import dev.zygon.argus.status.session.SessionRegistry;
+import dev.zygon.argus.session.SessionRegistry;
 import dev.zygon.argus.status.storage.GroupUserStatusStorage;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;

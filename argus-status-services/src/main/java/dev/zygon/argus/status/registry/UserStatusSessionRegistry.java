@@ -18,7 +18,7 @@
 package dev.zygon.argus.status.registry;
 
 import dev.zygon.argus.status.UserStatus;
-import dev.zygon.argus.status.session.GroupSessionRegistry;
+import dev.zygon.argus.session.GroupSessionRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**

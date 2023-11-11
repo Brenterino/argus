@@ -15,10 +15,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.status.session;
+package dev.zygon.argus.session;
 
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.location.Locations;
+import dev.zygon.argus.session.GroupSessionPool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

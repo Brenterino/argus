@@ -18,7 +18,7 @@
 package dev.zygon.argus.location.registry;
 
 import dev.zygon.argus.location.Locations;
-import dev.zygon.argus.status.session.GroupSessionRegistry;
+import dev.zygon.argus.session.GroupSessionRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 
 /**

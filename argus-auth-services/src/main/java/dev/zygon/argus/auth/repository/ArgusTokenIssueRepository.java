@@ -17,16 +17,15 @@
  */
 package dev.zygon.argus.auth.repository;
 
-import dev.zygon.argus.auth.ArgusToken;
-import dev.zygon.argus.auth.DualToken;
-import dev.zygon.argus.auth.MojangAuthData;
-import dev.zygon.argus.auth.MojangAuthStatus;
+import dev.zygon.argus.auth.*;
 import dev.zygon.argus.user.NamespaceUser;
 import io.smallrye.mutiny.Uni;
 
 public interface ArgusTokenIssueRepository {
 
     Uni<DualToken> fromMojang(MojangAuthData data, MojangAuthStatus status);
+
+    Uni<DualToken> fromOneTimePass(OneTimePassword password);
 
     Uni<ArgusToken> fromRefresh(ArgusToken refreshToken, NamespaceUser namespaceUser);
 }

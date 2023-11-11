@@ -26,11 +26,10 @@ import dev.zygon.argus.group.repository.PermissionRepository;
 import dev.zygon.argus.permission.Permission;
 import dev.zygon.argus.permission.UserPermission;
 import dev.zygon.argus.permission.UserPermissions;
-import dev.zygon.argus.status.auth.Authorizer;
+import dev.zygon.argus.auth.Authorizer;
 import dev.zygon.argus.user.NamespaceUser;
 import dev.zygon.argus.user.User;
 import io.quarkus.security.Authenticated;
-import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
@@ -39,7 +38,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 
 import java.time.OffsetDateTime;
 
-import static dev.zygon.argus.group.mutiny.UniExtensions.*;
+import static dev.zygon.argus.mutiny.UniExtensions.*;
 import static dev.zygon.argus.permission.Permission.ACCESS;
 import static dev.zygon.argus.permission.Permission.ADMIN;
 import static jakarta.ws.rs.core.Response.Status.CONFLICT;
@@ -88,7 +87,7 @@ public class AdminPermissionsResource {
 
     @POST
     public Uni<RestResponse<Void>> invite(@PathParam("groupName") String groupName,
-                                          @Body UserPermission target) {
+                                          UserPermission target) {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName);
         var targetNamespaceUser = authorizer.user(target.uuid());
@@ -114,7 +113,7 @@ public class AdminPermissionsResource {
 
     @PUT
     public Uni<RestResponse<Void>> modify(@PathParam("groupName") String groupName,
-                                          @Body UserPermission target) {
+                                          UserPermission target) {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName);
         var targetNamespaceUser = authorizer.user(target.uuid());
@@ -141,7 +140,7 @@ public class AdminPermissionsResource {
 
     @DELETE
     public Uni<RestResponse<Void>> kick(@PathParam("groupName") String groupName,
-                                        @Body User target) {
+                                        User target) {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName);
         var targetNamespaceUser = authorizer.user(target.uuid());

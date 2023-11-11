@@ -18,6 +18,7 @@
 package dev.zygon.argus.client.connector;
 
 import dev.zygon.argus.client.ArgusClient;
+import dev.zygon.argus.client.command.ArgusClientCommandHandler;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.connector.customize.ArgusModClientCustomizer;
 import dev.zygon.argus.client.connector.customize.ArgusMojangTokenGenerator;
@@ -81,6 +82,7 @@ public enum ArgusClientConnector {
             initGroupRefresh();
             initLocationTracking();
             initStatusTracking();
+            initClientCommands();
         });
     }
 
@@ -134,6 +136,11 @@ public enum ArgusClientConnector {
                         config.getTransmitStatusIntervalMillis(), TimeUnit.MILLISECONDS);
     }
 
+    private void initClientCommands() {
+        var commands = ArgusClientCommandHandler.INSTANCE;
+        commands.setAuth(client.getAuth());
+    }
+
     public void close() {
         log.info("[ARGUS] Disconnected from server, cleaning up...");
         safeCancel(tokenRefresh);
@@ -141,6 +148,7 @@ public enum ArgusClientConnector {
         safeCancel(electionsRefresh);
         safeCancel(locationKeepAlive);
         safeCancel(locationRemoteSync);
+        safeCancel(locationUserSync);
         safeCancel(locationCleaner);
         safeCancel(statusKeepAlive);
         safeCancel(statusRemoteSync);

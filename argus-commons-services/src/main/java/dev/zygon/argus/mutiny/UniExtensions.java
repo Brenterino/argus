@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.group.mutiny;
+package dev.zygon.argus.mutiny;
 
 import io.smallrye.mutiny.Uni;
 import lombok.AccessLevel;
@@ -25,14 +25,6 @@ import java.util.function.Function;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UniExtensions {
-
-    private record Fork<O>(Uni<O> ifTrue, Uni<O> ifFalse) implements Function<Uni<Boolean>, Uni<O>> {
-
-        @Override
-        public Uni<O> apply(Uni<Boolean> condition) {
-            return condition.flatMap(value -> value ? ifTrue : ifFalse);
-        }
-    }
 
     public static <T> Fork<T> fork(Uni<T> ifTrue, Uni<T> ifFalse) {
         return new Fork<>(ifTrue, ifFalse);

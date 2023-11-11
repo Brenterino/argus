@@ -1,9 +1,9 @@
 # Tweaks
+- Fix to resolve UUID/Name in case of server creating temporary/fake player with same name, but different UUID
 - Extract pre-rendering out into separate thread. There may be some funkiness with this, but it should
   speed up actual rendering and reduce possible pauses
 
 # Beyond MVP
-- Allow for banning of issuing tokens based on UUID
 - Determine method for ordering precedence of group metadata
 - Display nicknames (?) in waypoint tag
 - Adapt UI to make standalone site would allow for making changes without logging into game.
@@ -12,6 +12,7 @@
   is necessary because it honestly might not be worth bothering with
 - Color picker for group categories on UI
 - Being able to pull audit log for individual users to request permission changes (maybe?)
+- Integration with mapping solutions such as JourneyMap, Voxel, Xaero's
 - Add sounds to pings
 - Support Forge (?)
 

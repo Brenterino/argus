@@ -48,6 +48,7 @@ tasks.withType<JavaCompile> {
 val shadowJar = tasks.withType<ShadowJar> {
     archiveClassifier.convention("")
     archiveClassifier.set("")
+    exclude("META-INF/LICENSE*")
 }
 
 tasks.getByName("build") {

@@ -25,10 +25,9 @@ import dev.zygon.argus.group.repository.PermissionRepository;
 import dev.zygon.argus.permission.GroupPermissions;
 import dev.zygon.argus.permission.Permission;
 import dev.zygon.argus.permission.UserPermission;
-import dev.zygon.argus.status.auth.Authorizer;
+import dev.zygon.argus.auth.Authorizer;
 import dev.zygon.argus.user.NamespaceUser;
 import io.quarkus.security.Authenticated;
-import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
@@ -37,7 +36,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 
 import java.time.OffsetDateTime;
 
-import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
+import static dev.zygon.argus.mutiny.UniExtensions.failIfFalse;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static org.jboss.resteasy.reactive.RestResponse.Status.FORBIDDEN;
 
@@ -70,7 +69,7 @@ public class UserPermissionsResource {
     @PUT
     @Path("/{groupName}")
     public Uni<RestResponse<Void>> elect(@PathParam("groupName") String groupName,
-                                         @Body UserPermission userPermission) {
+                                         UserPermission userPermission) {
         var namespaceUser = authorizer.namespaceUser();
         var group = authorizer.group(groupName);
         var permission = userPermission.permission();

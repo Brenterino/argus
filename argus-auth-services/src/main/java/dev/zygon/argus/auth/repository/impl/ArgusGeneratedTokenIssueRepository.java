@@ -17,51 +17,67 @@
  */
 package dev.zygon.argus.auth.repository.impl;
 
-import dev.zygon.argus.auth.ArgusToken;
-import dev.zygon.argus.auth.DualToken;
-import dev.zygon.argus.auth.MojangAuthData;
-import dev.zygon.argus.auth.MojangAuthStatus;
+import dev.zygon.argus.auth.*;
+import dev.zygon.argus.auth.repository.ArgusBannedUserRepository;
 import dev.zygon.argus.auth.repository.ArgusTokenIssueRepository;
 import dev.zygon.argus.auth.service.ArgusGroupService;
 import dev.zygon.argus.auth.service.ArgusTokenGenerator;
 import dev.zygon.argus.namespace.Namespace;
 import dev.zygon.argus.user.NamespaceUser;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.util.UUID;
+
+import static dev.zygon.argus.mutiny.UniExtensions.failIfTrue;
 
 @ApplicationScoped
 public class ArgusGeneratedTokenIssueRepository implements ArgusTokenIssueRepository {
 
     private final ArgusGroupService groups;
     private final ArgusTokenGenerator generator;
+    private final ArgusBannedUserRepository bannedUsers;
 
     public ArgusGeneratedTokenIssueRepository(@RestClient ArgusGroupService groups,
-                                              ArgusTokenGenerator generator) {
+                                              ArgusTokenGenerator generator,
+                                              ArgusBannedUserRepository bannedUsers) {
         this.groups = groups;
         this.generator = generator;
+        this.bannedUsers = bannedUsers;
     }
 
     @Override
     public Uni<DualToken> fromMojang(MojangAuthData data, MojangAuthStatus status) {
-        return groups.namespace(data.server())
+        return bannedUsers.isUserBanned(status.uuid())
+                .plug(failIfTrue(new IllegalArgumentException("Cannot generate Mojang token as this user is banned from the system.")))
+                .replaceWith(groups.namespace(data.server()))
                 .flatMap(namespace -> issueDualFromMojang(namespace, status));
+    }
+
+    @Override
+    public Uni<DualToken> fromOneTimePass(OneTimePassword password) {
+        return bannedUsers.isUserBanned(password.uuid())
+                .plug(failIfTrue(new IllegalArgumentException("Cannot generate One Time Password token as this user is banned from the system.")))
+                .replaceWith(issueDualFromNamespaceAndUuid(password.namespace(), password.uuid()));
     }
 
     @Override
     public Uni<ArgusToken> fromRefresh(ArgusToken refreshToken, NamespaceUser namespaceUser) {
         var namespace = new Namespace(namespaceUser.namespace());
         var user = namespaceUser.user();
-        return issueFromRefresh(refreshToken,
-                namespace,
-                user.uuid());
+        return bannedUsers.isUserBanned(user.uuid())
+                .plug(failIfTrue(new IllegalArgumentException("Cannot generate Access token as this user is banned from the system.")))
+                .replaceWith(issueFromRefresh(refreshToken, namespace, user.uuid()));
     }
 
     private Uni<DualToken> issueDualFromMojang(Namespace namespace, MojangAuthStatus status) {
-        var refreshToken = generator.generateRefreshToken(status.uuid(), namespace.name());
-        return issueFromRefresh(refreshToken, namespace, status.uuid())
+        return issueDualFromNamespaceAndUuid(namespace, status.uuid());
+    }
+
+    private Uni<DualToken> issueDualFromNamespaceAndUuid(Namespace namespace, UUID uuid) {
+        var refreshToken = generator.generateRefreshToken(uuid, namespace.name());
+        return issueFromRefresh(refreshToken, namespace, uuid)
                 .map(accessToken -> new DualToken(refreshToken, accessToken));
     }
 

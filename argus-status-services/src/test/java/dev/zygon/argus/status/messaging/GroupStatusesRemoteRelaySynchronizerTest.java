@@ -22,7 +22,7 @@ import dev.zygon.argus.status.EffectStatus;
 import dev.zygon.argus.status.GroupUserStatuses;
 import dev.zygon.argus.status.ItemStatus;
 import dev.zygon.argus.status.UserStatus;
-import dev.zygon.argus.status.session.SessionRegistry;
+import dev.zygon.argus.session.SessionRegistry;
 import dev.zygon.argus.status.storage.GroupUserStatusStorage;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;

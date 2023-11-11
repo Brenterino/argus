@@ -15,22 +15,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.status.auth;
+package dev.zygon.argus.auth.repository.impl;
 
-import dev.zygon.argus.group.Group;
-import dev.zygon.argus.user.NamespaceUser;
-import io.quarkus.security.UnauthorizedException;
+import dev.zygon.argus.auth.configuration.AuthConfiguration;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.Produces;
+import org.jooq.Configuration;
+import org.jooq.impl.DefaultConfiguration;
 
-import java.util.Map;
-import java.util.UUID;
+public class JooqConfiguration {
 
-public interface Authorizer {
-
-    NamespaceUser namespaceUser() throws UnauthorizedException;
-
-    NamespaceUser user(UUID uuid) throws UnauthorizedException;
-
-    Group group(String groupName) throws UnauthorizedException;
-
-    Group group(String groupName, Map<String, Object> metadata);
+    @Produces
+    @ApplicationScoped
+    public Configuration jooqConfiguration(AuthConfiguration config) {
+        var configuration = new DefaultConfiguration();
+        configuration.set(config.jooqDialect());
+        return configuration;
+    }
 }

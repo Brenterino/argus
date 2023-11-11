@@ -20,7 +20,7 @@ package dev.zygon.argus.location.messaging;
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.location.Locations;
 import dev.zygon.argus.location.storage.GroupLocationsStorage;
-import dev.zygon.argus.status.session.SessionRegistry;
+import dev.zygon.argus.session.SessionRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.websocket.Session;
 import lombok.extern.slf4j.Slf4j;

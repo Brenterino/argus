@@ -18,43 +18,46 @@
 package dev.zygon.argus.auth;
 
 import dev.zygon.argus.auth.repository.ArgusTokenIssueRepository;
+import dev.zygon.argus.auth.service.ArgusOneTimePasswordService;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.jboss.resteasy.reactive.RestResponse;
 
-import java.time.Instant;
-
 @ApplicationScoped
-@Authenticated
-@Path("/auth/refresh")
+@Path("/auth/otp")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class RefreshAuthResource {
+public class OneTimePassAuthResource {
 
     private final ArgusTokenIssueRepository tokens;
+    private final ArgusOneTimePasswordService passwords;
     private final Authorizer authorizer;
 
-    public RefreshAuthResource(ArgusTokenIssueRepository tokens,
-                               Authorizer authorizer) {
+    public OneTimePassAuthResource(ArgusTokenIssueRepository tokens,
+                                   ArgusOneTimePasswordService passwords,
+                                   Authorizer authorizer) {
         this.tokens = tokens;
+        this.passwords = passwords;
         this.authorizer = authorizer;
     }
 
-    @POST
-    public Uni<RestResponse<ArgusToken>> auth() {
-        // avoid allowing passing of access token
+    @Authenticated
+    @GET
+    public Uni<RestResponse<OneTimePassword>> generate() {
         if (authorizer.isAccessToken()) {
-            throw new IllegalArgumentException("Access token cannot be used as a refresh token.");
+            throw new IllegalArgumentException("Access token cannot be used to generate a one time password.");
         }
-        // note: expiration time here is not important, but have to pass as is marked non-null
-        var refreshToken = new ArgusToken(authorizer.rawToken(), Instant.now());
-        return tokens.fromRefresh(refreshToken, authorizer.namespaceUser())
+        return passwords.generate(authorizer.namespaceUser())
+                .map(RestResponse::ok);
+    }
+
+    @POST
+    public Uni<RestResponse<DualToken>> auth(OneTimePassword password) {
+        return passwords.verify(password)
+                .flatMap(tokens::fromOneTimePass)
                 .map(RestResponse::ok);
     }
 }

@@ -21,7 +21,6 @@ import lombok.NonNull;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 public record UserStatus(@NonNull UUID source, float health,

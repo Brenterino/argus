@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.status.auth;
+package dev.zygon.argus.auth;
 
 import dev.zygon.argus.group.Group;
 import dev.zygon.argus.user.NamespaceUser;
@@ -45,6 +45,17 @@ public class JwtAuthorizer implements Authorizer {
 
     public JwtAuthorizer(JsonWebToken token) {
         this.token = token;
+    }
+
+    @Override
+    public String rawToken() {
+        return token.getRawToken();
+    }
+
+    @Override
+    public boolean isAccessToken() {
+        return !token.getGroups()
+                .isEmpty();
     }
 
     @Override

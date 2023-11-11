@@ -93,5 +93,9 @@
   "text.autoconfig.argus.option.readStatusEnabled.@Tooltip": "If enabled, your status information will be shared.",
   "text.autoconfig.argus.option.readLocalEnvironmentEnabled": "Read Local Environment",
   "text.autoconfig.argus.option.readLocalEnvironmentEnabled.@Tooltip": "If enabled, you can see players that are around you and their location will be shared. This enables pings as well.",
-  "text.webui.argus.chatMessage": "§7[§cArgus§7] §dArgus Management UI is up and can be accessed here: "
+  "text.webui.argus.chatMessage": "§7[§cArgus§7] §dArgus Management UI is up and can be accessed here: ",
+  "text.command.argus.otp.success.webui": "§7[§cArgus§7] §dConnect UI via: ",
+  "text.command.argus.otp.success.uuid": "§7[§cArgus§7] §dOne-Time-Password UUID: ",
+  "text.command.argus.otp.success.pass": "§7[§cArgus§7] §dOne-Time-Password: ",
+  "text.command.argus.otp.failure": "§7[§cArgus§7] §dSomething went wrong and a one-time-password could not be retrieved."
 }

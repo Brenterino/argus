@@ -17,6 +17,7 @@
  */
 package dev.zygon.argus.auth.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
@@ -25,10 +26,17 @@ import jakarta.ws.rs.WebApplicationException;
 import static org.jboss.resteasy.reactive.RestResponse.Status.BAD_REQUEST;
 import static org.jboss.resteasy.reactive.RestResponse.Status.INTERNAL_SERVER_ERROR;
 
+@Slf4j
 public class AuthExceptionMapper {
 
     @ServerExceptionMapper
     public RestResponse<String> mapException(IllegalArgumentException e) {
+        return RestResponse
+                .status(BAD_REQUEST, e.getMessage());
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<String> mapException(IllegalStateException e) {
         return RestResponse
                 .status(BAD_REQUEST, e.getMessage());
     }

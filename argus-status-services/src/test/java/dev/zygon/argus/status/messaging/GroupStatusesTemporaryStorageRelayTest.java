@@ -21,7 +21,7 @@ import dev.zygon.argus.group.Group;
 import dev.zygon.argus.status.EffectStatus;
 import dev.zygon.argus.status.ItemStatus;
 import dev.zygon.argus.status.UserStatus;
-import dev.zygon.argus.status.session.SessionRegistry;
+import dev.zygon.argus.session.SessionRegistry;
 import dev.zygon.argus.status.storage.GroupUserStatusStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

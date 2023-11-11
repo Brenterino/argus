@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.status.session;
+package dev.zygon.argus.session;
 
 import jakarta.websocket.Session;
 

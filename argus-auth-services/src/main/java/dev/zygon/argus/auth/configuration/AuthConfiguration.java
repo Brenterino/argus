@@ -19,6 +19,7 @@ package dev.zygon.argus.auth.configuration;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
+import org.jooq.SQLDialect;
 
 @ConfigMapping(prefix = "argus.auth")
 public interface AuthConfiguration {
@@ -37,4 +38,19 @@ public interface AuthConfiguration {
 
     @WithDefault("3")
     int accessTokenExpirationMinutes();
+
+    @WithDefault("32")
+    int otpLength();
+
+    @WithDefault("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")
+    String otpAllowedCharacters();
+
+    @WithDefault("10")
+    int otpExpirationTimeMinutes();
+
+    @WithDefault("2")
+    int otpReissueDelayMinutes();
+
+    @WithDefault("DEFAULT")
+    SQLDialect jooqDialect();
 }

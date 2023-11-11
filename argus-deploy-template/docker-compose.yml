@@ -26,6 +26,8 @@ services:
       dockerfile: ../argus-auth-services/src/main/docker/Dockerfile.jvm
     image: zygon/argus-auth-services
     container_name: argus-auth
+    depends_on:
+      - postgres
     volumes:
       - ./public.pem:/etc/jwt/public.pem
       - ./private.pem:/etc/jwt/private.pem
@@ -37,12 +39,21 @@ services:
       - ARGUS_AUTH_PUBLIC_KEY=/etc/jwt/public.pem
       - ARGUS_AUTH_PRIVATE_KEY=/etc/jwt/private.pem
       - ARGUS_AUTH_ISSUER=http://localhost/auth
+      - ARGUS_AUTH_JOOQ_DIALECT=POSTGRES
+      - QUARKUS_DATASOURCE_DB_KIND=postgresql
+      - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://postgres:5432/argus?search_path=auth
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://postgres:5432/argus?search_path=auth
+      - QUARKUS_DATASOURCE_USERNAME=argus
+      - QUARKUS_DATASOURCE_PASSWORD=changeme
+      - QUARKUS_FLYWAY_DEFAULT_SCHEMA=auth
   argus-groups:
     build:
       context: ../argus-group-services
       dockerfile: ../argus-group-services/src/main/docker/Dockerfile.jvm
     image: zygon/argus-group-services
     container_name: argus-groups
+    depends_on:
+      - postgres
     environment:
       - QUARKUS_HTTP_PORT=80
       - QUARKUS_HTTP_CORS=true
@@ -52,11 +63,11 @@ services:
       - ARGUS_GROUP_MAX_OWNED_GROUPS=3
       - ARGUS_GROUP_JOOQ_DIALECT=POSTGRES
       - QUARKUS_DATASOURCE_DB_KIND=postgresql
-      - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://postgres:5432/argus?search_path=argus
-      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://postgres:5432/argus?search_path=argus
+      - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://postgres:5432/argus?search_path=groups
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://postgres:5432/argus?search_path=groups
       - QUARKUS_DATASOURCE_USERNAME=argus
       - QUARKUS_DATASOURCE_PASSWORD=changeme
-      - QUARKUS_FLYWAY_DEFAULT_SCHEMA=argus
+      - QUARKUS_FLYWAY_DEFAULT_SCHEMA=groups
   argus-locations:
     build:
       context: ../argus-location-services

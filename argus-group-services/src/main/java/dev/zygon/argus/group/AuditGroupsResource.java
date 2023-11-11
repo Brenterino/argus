@@ -21,7 +21,7 @@ import dev.zygon.argus.group.audit.AuditLog;
 import dev.zygon.argus.group.exception.GroupException;
 import dev.zygon.argus.group.repository.AuditRepository;
 import dev.zygon.argus.group.repository.PermissionRepository;
-import dev.zygon.argus.status.auth.Authorizer;
+import dev.zygon.argus.auth.Authorizer;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,7 +29,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.jboss.resteasy.reactive.RestResponse;
 
-import static dev.zygon.argus.group.mutiny.UniExtensions.failIfFalse;
+import static dev.zygon.argus.mutiny.UniExtensions.failIfFalse;
 import static dev.zygon.argus.permission.Permission.ADMIN;
 import static org.jboss.resteasy.reactive.RestResponse.Status.BAD_REQUEST;
 import static org.jboss.resteasy.reactive.RestResponse.Status.FORBIDDEN;

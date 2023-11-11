@@ -18,9 +18,9 @@
 package dev.zygon.argus.status;
 
 import dev.zygon.argus.group.Group;
-import dev.zygon.argus.status.auth.SessionAuthorizer;
+import dev.zygon.argus.auth.SessionAuthorizer;
 import dev.zygon.argus.status.messaging.UserStatusLocalRelay;
-import dev.zygon.argus.status.session.SessionRegistry;
+import dev.zygon.argus.session.SessionRegistry;
 import jakarta.websocket.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

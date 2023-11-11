@@ -19,16 +19,14 @@ package dev.zygon.argus.auth;
 
 import dev.zygon.argus.auth.repository.ArgusTokenIssueRepository;
 import dev.zygon.argus.auth.repository.MojangAuthRepository;
-import io.quarkus.vertx.web.Body;
 import io.smallrye.mutiny.Uni;
-import org.jboss.resteasy.reactive.RestResponse;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.jboss.resteasy.reactive.RestResponse;
 
 @ApplicationScoped
 @Path("/auth/mojang")
@@ -46,7 +44,7 @@ public class MojangAuthResource {
     }
 
     @POST
-    public Uni<RestResponse<DualToken>> auth(@Body MojangAuthData authData) {
+    public Uni<RestResponse<DualToken>> auth(MojangAuthData authData) {
         return mojang.status(authData)
                 .flatMap(authStatus -> tokens.fromMojang(authData, authStatus))
                 .map(RestResponse::ok);

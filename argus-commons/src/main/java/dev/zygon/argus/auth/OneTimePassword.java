@@ -15,15 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package dev.zygon.argus.auth.service;
+package dev.zygon.argus.auth;
 
-import dev.zygon.argus.user.NamespaceUser;
+import dev.zygon.argus.namespace.Namespace;
+import lombok.Builder;
+import lombok.NonNull;
 
-public interface ArgusTokenReader {
+import java.util.UUID;
 
-    String rawToken();
-
-    boolean isAccessToken();
-
-    NamespaceUser namespaceUser();
+@Builder
+public record OneTimePassword(@NonNull UUID uuid,
+                              @NonNull Namespace namespace,
+                              @NonNull String password) {
 }
