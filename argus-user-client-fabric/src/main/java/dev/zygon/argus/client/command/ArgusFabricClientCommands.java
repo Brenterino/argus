@@ -1,11 +1,14 @@
 package dev.zygon.argus.client.command;
 
 import com.mojang.brigadier.context.CommandContext;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.minecraft.command.CommandSource;
 
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArgusFabricClientCommands {
 
     public static void registerCommands() {

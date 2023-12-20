@@ -29,4 +29,6 @@ public interface ArgusOneTimePasswordRepository {
     Uni<Boolean> verifyPassword(OneTimePassword password);
 
     Uni<Boolean> deletePassword(OneTimePassword password);
+
+    Uni<Boolean> deleteExpiredPasswords();
 }

@@ -17,7 +17,6 @@
  */
 package dev.zygon.argus.client;
 
-import dev.zygon.argus.client.command.ArgusClientCommandHandler;
 import dev.zygon.argus.client.command.ArgusFabricClientCommands;
 import dev.zygon.argus.client.config.ArgusClientConfig;
 import dev.zygon.argus.client.event.KeyPressHandler;
@@ -26,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.util.ActionResult;
 

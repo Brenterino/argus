@@ -35,7 +35,7 @@ public enum ChatEventHandler {
 
     INSTANCE;
 
-    private static final String SNITCH_PATTERN_TEXT = ".{2}(Login|Logout|Enter)\\s{2}.{2}(.+)\\s{2}.{2}(.+)\\s{2}.{2}\\[((.+)\\s)?(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)]\\s{2}(.{2}\\[(\\d+)m\\s.{2}(.+).{2}])?";
+    private static final String SNITCH_PATTERN_TEXT = ".{2}(.{2}Login|.{2}Logout|Enter)\\s{2}.{2}(.+)\\s{2}.{2}(.+)\\s{2}.{2}\\[((.+)\\s)?(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)]\\s{2}(.{2}\\[(\\d+)m\\s.{2}(.+).{2}])?";
     private static final String SNITCH_HOVER_PATTERN_TEXT = ".{2}(Location:)\\s.{2}\\((.+)\\)\\s\\[(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)]\\s.{2}(Name:)\\s.{2}(.+)\\s.{2}(Group:)\\s.{2}(.+)";
     private static final String PEARL_PATTERN_TEXT = "(.{2}\\[(.+)]\\s)?.{2}(Your pearl is held by|The pearl of .{2}(.+) is held by)\\s.{2}(.+)\\s.{2}\\[(-?\\d+)\\s(-?\\d+)\\s(-?\\d+)\\s(.+)?]";
 

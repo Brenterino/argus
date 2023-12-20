@@ -208,4 +208,31 @@ public class ArgusOneTimePasswordReactiveJooqRepository implements ArgusOneTimeP
                 .where(ONE_TIME_PASSWORDS.UUID.eq(field("$1", UUID.class)))
                 .getSQL();
     }
+
+    @Override
+    public Uni<Boolean> deleteExpiredPasswords() {
+        final var DELETE_EXPIRED_PASSWORDS = "DELETE_EXPIRED_PASSWORDS";
+        var currentTime = Instant.now()
+                .atOffset(ZoneOffset.UTC);
+        var deleteExpiredPasswordsSql = queryCache.computeIfAbsent(DELETE_EXPIRED_PASSWORDS,
+                k -> renderDeleteExpiredPasswordsSql());
+        if (log.isDebugEnabled()) {
+            log.debug("Operation(Deleted Expired Passwords) SQL: {}", deleteExpiredPasswordsSql);
+            log.debug("Operation(Deleted Expired Passwords) Params: now({})", currentTime);
+        }
+        return pool.preparedQuery(deleteExpiredPasswordsSql)
+                .execute(Tuple.of(currentTime))
+                .onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
+                .collect().first()
+                .map(row -> true)
+                .onFailure()
+                .transform(e -> new WebApplicationException(""));
+    }
+
+    private String renderDeleteExpiredPasswordsSql() {
+        return using(config)
+                .deleteFrom(ONE_TIME_PASSWORDS)
+                .where(ONE_TIME_PASSWORDS.EXPIRATION.le(field("$1", OffsetDateTime.class)))
+                .getSQL();
+    }
 }
