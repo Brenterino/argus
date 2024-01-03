@@ -125,7 +125,7 @@ configure<PublishingExtension> {
     publications {
         register<MavenPublication>(rootProject.name) {
             from(components["java"])
-            artifactId = rootProject.name + "-" + minecraftVersion + "-" + rootProject.version + "-" + project.name
+            artifactId = rootProject.name + "-" + minecraftVersion + "-" + project.name
         }
     }
     repositories {
