@@ -14,7 +14,6 @@
 - Being able to pull audit log for individual users to request permission changes (maybe?)
 - Integration with mapping solutions such as JourneyMap, Voxel, Xaero's
 - Add sounds to pings
-- Support Forge (?)
 
 # Experimental
 - Extension of status rendering to have an in-game HUD which can provide more detailed information if desired?

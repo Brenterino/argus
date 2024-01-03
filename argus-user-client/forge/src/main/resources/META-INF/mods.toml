@@ -1,0 +1,34 @@
+modLoader = "javafml"
+loaderVersion = "[40,)"
+issueTrackerURL = "https://github.com/Brenterino/argus/issues"
+license = "AGPL-3.0"
+
+[[mods]]
+modId = "argus"
+version = "1.0.0"
+displayName = "Argus"
+authors = "Zygon"
+description = '''
+Client module for interactions with the Argus system.'''
+logoFile = "icon.png"
+
+[[dependencies.argus]]
+modId = "forge"
+mandatory = true
+versionRange = "[40,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[depedencies.argus]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18.2,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[depedencies.argus]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "[6.4.90,)"
+ordering = "NONE"
+side = "CLIENT"
